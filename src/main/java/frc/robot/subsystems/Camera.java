@@ -16,14 +16,17 @@ public class Camera implements Subsystem {
         camera.setDriverMode(false);
         camera.setPipelineIndex(0);
     }
+
     @Override
     public void periodic() {
         PhotonPipelineResult result = camera.getLatestResult();
-        if(!result.hasTargets()) {return;}
+        if (!result.hasTargets()) {
+            return;
+        }
 
         System.out.println("updating");
 
-        PhotonTrackedTarget target =  result.getBestTarget();
+        PhotonTrackedTarget target = result.getBestTarget();
 
         Pose3d robotPos = Constants.Field.aprilTags.get(target.getFiducialId()).transformBy(target.getBestCameraToTarget());
 
