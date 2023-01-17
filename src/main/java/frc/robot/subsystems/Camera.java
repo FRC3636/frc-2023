@@ -10,7 +10,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Camera implements Subsystem {
 
-    PhotonCamera camera;
+    private PhotonCamera camera;
 
     public Camera() {
         camera = new PhotonCamera("test-camera");
@@ -28,6 +28,6 @@ public class Camera implements Subsystem {
 
         Pose3d robotPos = FieldConstants.aprilTags.get(target.getFiducialId()).transformBy(target.getBestCameraToTarget());
 
-        RobotContainer.testField.setRobotPose(robotPos.toPose2d());
+//        RobotContainer.testField.setRobotPose(robotPos.toPose2d());
     }
 }
