@@ -29,6 +29,7 @@ public class RobotContainer {
     // Dashboard
     private static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
     public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+    public static final ShuffleboardTab swerve = Shuffleboard.getTab("Swerve");
 
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
     private static NetworkTableEntry driveSchemeEntry;

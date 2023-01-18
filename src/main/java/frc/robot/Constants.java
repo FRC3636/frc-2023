@@ -16,7 +16,6 @@ import java.util.Map;
 
 import static com.revrobotics.CANSparkMax.IdleMode;
 
-
 public final class Constants {
     public static class Controls {
         public static final int JOYSTICK_RIGHT_PORT = 0;
@@ -30,9 +29,9 @@ public final class Constants {
         public static final double MAX_ANGULAR_SPEED = 2 * Math.PI; // radians per second
 
         // Chassis configuration
-        public static final double TRACK_WIDTH = Units.inchesToMeters(26.5);
+        public static final double TRACK_WIDTH = Units.inchesToMeters(22.5);
         // Distance between centers of right and left wheels on robot
-        public static final double WHEEL_BASE = Units.inchesToMeters(26.5);
+        public static final double WHEEL_BASE = Units.inchesToMeters(24.5);
         // Distance between front and back wheels on robot
         public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
                 new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
@@ -43,8 +42,8 @@ public final class Constants {
         // Angular offsets of the modules relative to the chassis in radians
         public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -Math.PI / 2;
         public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0;
-        public static final double BACK_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI;
-        public static final double BACK_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
+        public static final double REAR_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI;
+        public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
 
         // SPARK MAX CAN IDs
         public static final int FRONT_LEFT_DRIVING_CAN_ID = 11;
@@ -64,7 +63,7 @@ public final class Constants {
         // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
         // This changes the drive speed of the module (a pinion gear with more teeth will result in a
         // robot that drives faster).
-        public static final int DRIVING_MOTOR_PINION_TEETH = 14;
+        public static final int DRIVING_MOTOR_PINION_TEETH = 13;
 
         // Invert the turning encoder, since the output shaft rotates in the opposite direction of
         // the steering motor in the MAXSwerve Module.
@@ -72,16 +71,16 @@ public final class Constants {
 
         // Calculations required for driving motor conversion factors and feed forward
         public static final double DRIVING_MOTOR_FREE_SPEED_RPS = NeoMotorConstants.FREE_SPEED_RPM / 60;
-        public static final double WHEEL_DIAMETER_METERS = 0.0762;
+        public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
         public static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
         // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
         public static final double DRIVING_MOTOR_REDUCTION = (45.0 * 22) / (DRIVING_MOTOR_PINION_TEETH * 15);
         public static final double DRIVE_WHEEL_FREE_SPEED_RPS = (DRIVING_MOTOR_FREE_SPEED_RPS * WHEEL_CIRCUMFERENCE_METERS)
                 / DRIVING_MOTOR_REDUCTION;
 
-        public static final double DRIVING_ENCODER_POSITION_FACTOR = (WHEEL_DIAMETER_METERS * Math.PI)
+        public static final double DRIVING_ENCODER_POSITION_FACTOR = WHEEL_CIRCUMFERENCE_METERS
                 / DRIVING_MOTOR_REDUCTION; // meters
-        public static final double DRIVING_ENCODER_VELOCITY_FACTOR = ((WHEEL_DIAMETER_METERS * Math.PI)
+        public static final double DRIVING_ENCODER_VELOCITY_FACTOR = (WHEEL_CIRCUMFERENCE_METERS
                 / DRIVING_MOTOR_REDUCTION) / 60.0; // meters per second
 
         public static final double TURNING_ENCODER_POSITION_FACTOR = (2 * Math.PI); // radians
@@ -109,10 +108,6 @@ public final class Constants {
 
         public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps
         public static final int TURNING_MOTOR_CURRENT_LIMIT = 20; // amps
-    }
-
-    public static final class OIConstants {
-        public static final int K_DRIVER_CONTROLLER_PORT = 0;
     }
 
     public static final class AutoConstants {

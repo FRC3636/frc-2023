@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -19,10 +20,10 @@ public class MAXSwerveModule {
     private final CANSparkMax turningSparkMax;
 
     private final RelativeEncoder drivingEncoder;
-    private final AbsoluteEncoder turningEncoder;
+    public final AbsoluteEncoder turningEncoder; //Fixme
 
     private final SparkMaxPIDController drivingPIDController;
-    private final SparkMaxPIDController turningPIDController;
+    private SparkMaxPIDController turningPIDController;
 
     private double chassisAngularOffset = 0;
     private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
@@ -34,18 +35,18 @@ public class MAXSwerveModule {
      * Encoder.
      */
     public MAXSwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
-        CANSparkMax m_drivingSparkMax = new CANSparkMax(drivingCANId, MotorType.kBrushless);
+        CANSparkMax drivingSparkMax = new CANSparkMax(drivingCANId, MotorType.kBrushless);
         turningSparkMax = new CANSparkMax(turningCANId, MotorType.kBrushless);
 
         // Factory reset, so we get the SPARKS MAX to a known state before configuring
         // them. This is useful in case a SPARK MAX is swapped out.
-        m_drivingSparkMax.restoreFactoryDefaults();
+        drivingSparkMax.restoreFactoryDefaults();
         turningSparkMax.restoreFactoryDefaults();
 
         // Setup encoders and PID controllers for the driving and turning SPARKS MAX.
-        drivingEncoder = m_drivingSparkMax.getEncoder();
+        drivingEncoder = drivingSparkMax.getEncoder();
         turningEncoder = turningSparkMax.getAbsoluteEncoder(Type.kDutyCycle);
-        drivingPIDController = m_drivingSparkMax.getPIDController();
+        drivingPIDController = drivingSparkMax.getPIDController();
         turningPIDController = turningSparkMax.getPIDController();
         drivingPIDController.setFeedbackDevice(drivingEncoder);
         turningPIDController.setFeedbackDevice(turningEncoder);
@@ -92,14 +93,14 @@ public class MAXSwerveModule {
         turningPIDController.setOutputRange(ModuleConstants.TURNING_MIN_OUTPUT,
                 ModuleConstants.TURNING_MAX_OUTPUT);
 
-        m_drivingSparkMax.setIdleMode(ModuleConstants.DRIVING_MOTOR_IDLE_MODE);
+        drivingSparkMax.setIdleMode(ModuleConstants.DRIVING_MOTOR_IDLE_MODE);
         turningSparkMax.setIdleMode(ModuleConstants.TURNING_MOTOR_IDLE_MODE);
-        m_drivingSparkMax.setSmartCurrentLimit(ModuleConstants.DRIVING_MOTOR_CURRENT_LIMIT);
+        drivingSparkMax.setSmartCurrentLimit(ModuleConstants.DRIVING_MOTOR_CURRENT_LIMIT);
         turningSparkMax.setSmartCurrentLimit(ModuleConstants.TURNING_MOTOR_CURRENT_LIMIT);
 
         // Save the SPARK MAX configurations. If a SPARK MAX browns out during
         // operation, it will maintain the above configurations.
-        m_drivingSparkMax.burnFlash();
+        drivingSparkMax.burnFlash();
         turningSparkMax.burnFlash();
 
         this.chassisAngularOffset = chassisAngularOffset;
@@ -107,11 +108,6 @@ public class MAXSwerveModule {
         drivingEncoder.setPosition(0);
     }
 
-    /**
-     * Returns the current state of the module.
-     *
-     * @return The current state of the module.
-     */
     public SwerveModuleState getState() {
         // Apply chassis angular offset to the encoder position to get the position
         // relative to the chassis.
@@ -132,11 +128,7 @@ public class MAXSwerveModule {
                 new Rotation2d(turningEncoder.getPosition() - chassisAngularOffset));
     }
 
-    /**
-     * Sets the desired state for the module.
-     *
-     * @param desiredState Desired state with speed and angle.
-     */
+
     public void setDesiredState(SwerveModuleState desiredState) {
         // Apply chassis angular offset to the desired state.
         SwerveModuleState correctedDesiredState = new SwerveModuleState();
@@ -160,4 +152,12 @@ public class MAXSwerveModule {
     public void resetEncoders() {
         drivingEncoder.setPosition(0);
     }
+
+    //FIXME Temporary tuning method REMOVE
+    public void setTurningPID(PIDController controller) {
+        turningPIDController.setP(controller.getP());
+        turningPIDController.setI(controller.getI());
+        turningPIDController.setD(controller.getD());
+    }
+
 }
