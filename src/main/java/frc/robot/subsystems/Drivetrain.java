@@ -47,7 +47,7 @@ public class Drivetrain implements Subsystem {
         double dl = leftEncoder.getDistance();
         double dr = rightEncoder.getDistance();
         odometry.update(navX.getRotation2d(), dl, dr);
-        RobotContainer.field.setRobotPose(odometry.getPoseMeters());
+//        RobotContainer.field.setRobotPose(odometry.getPoseMeters());
     }
 
 
