@@ -40,10 +40,10 @@ public final class Constants {
                 new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2));
 
         // Angular offsets of the modules relative to the chassis in radians
-        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -Math.PI / 2;
-        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0;
-        public static final double REAR_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI;
-        public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
+        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -Math.PI / 2 + 1.759;
+        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0 + 1.054;
+        public static final double REAR_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI + 1.214;
+        public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2 + 0.827;
 
         // SPARK MAX CAN IDs
         public static final int FRONT_LEFT_DRIVING_CAN_ID = 11;
@@ -56,7 +56,7 @@ public final class Constants {
         public static final int FRONT_RIGHT_TURNING_CAN_ID = 14;
         public static final int REAR_RIGHT_TURNING_CAN_ID = 16;
 
-        public static final boolean GYRO_REVERSED = false;
+        public static final boolean GYRO_REVERSED = true;
     }
 
     public static final class ModuleConstants {

@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -39,6 +40,8 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureButtonBindings();
+
+        autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
 
         drivetrain.setDefaultCommand(
                 // The left stick controls translation of the robot.
