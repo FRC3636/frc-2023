@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Camera;
@@ -25,7 +27,7 @@ public class RobotContainer {
 
     // Controllers
     public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_RIGHT_PORT);
-    public static final Joystick joystickRight = new Joystick(1);
+    public static final Joystick joystickRight = new Joystick(Constants.Controls.JOYSTICK_LEFT_PORT);
 
     // Dashboard
     private static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
@@ -42,6 +44,7 @@ public class RobotContainer {
         configureButtonBindings();
 
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
+        driveSettings.add("Reset Gyro", new InstantCommand(drivetrain::zeroHeading));
 
         drivetrain.setDefaultCommand(
                 // The left stick controls translation of the robot.
