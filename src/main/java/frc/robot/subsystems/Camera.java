@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import org.photonvision.PhotonCamera;
@@ -15,22 +15,34 @@ public class Camera extends SubsystemBase {
 
     PhotonCamera camera;
 
+
+
     public Camera() {
         camera = new PhotonCamera("arducam");
         camera.setDriverMode(false);
         camera.setPipelineIndex(0);
+
+        ;
     }
 
     @Override
     public void periodic() {
+        if(getRobotPose() != null) {
+            RobotContainer.field.getObject("Camera").setPose(getRobotPose());
+        }
+    }
+
+    public Pose2d getRobotPose() {
         PhotonPipelineResult result = camera.getLatestResult();
 
-        if (!result.hasTargets()) return;
+        if (!result.hasTargets()) return new Pose2d();
 
         PhotonTrackedTarget target = result.getBestTarget();
 
-        Pose3d robotPos = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), FieldConstants.aprilTags.get(target.getFiducialId()), new Transform3d());
+        Pose2d cameraPos = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), FieldConstants.aprilTags.get(target.getFiducialId()), new Transform3d()).toPose2d();
 
-        RobotContainer.field.setRobotPose(robotPos.toPose2d());
+        Constants.Robot.CAMERA_OFFSET.getTranslation().rotateBy(cameraPos.getRotation());
+
+        return new Pose2d(cameraPos.getTranslation().minus(Constants.Robot.CAMERA_OFFSET.getTranslation().rotateBy(cameraPos.getRotation())), cameraPos.getRotation());
     }
 }

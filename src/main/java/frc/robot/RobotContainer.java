@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.DriveCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Drivetrain;
 
@@ -40,7 +42,6 @@ public class RobotContainer {
   private static NetworkTableEntry driveSchemeEntry;
 
   public static Field2d field = new Field2d();
-  public static Field2d testField = new Field2d();
 
 
   static {
@@ -52,7 +53,6 @@ public class RobotContainer {
 
   public RobotContainer() {
     autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
-    autoTab.add("Test Field", testField).withWidget(BuiltInWidgets.kField).withSize(5, 3);
 
     configureBindings();
   }
@@ -65,7 +65,32 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-    drivetrain.setDefaultCommand(new DriveCommand(drivetrain));
+    drivetrain.setDefaultCommand(new RunCommand(() -> {
+      DriveConfig config = DriveConfig.getCurrent();
+
+      final double forward = -RobotContainer.joystickLeft.getY();
+      final double turn = RobotContainer.joystickRight.getX();
+      final double speedSensitivity = config.getSpeedSensitivity();
+      final double turnSensitivity = config.getTurnSensitivity();
+
+      switch (config.getDriveScheme()) {
+        case Arcade:
+          drivetrain.arcadeDrive(forward / speedSensitivity, turn / turnSensitivity);
+          break;
+        case ArcadeSingle:
+          drivetrain.arcadeDrive(forward / speedSensitivity, RobotContainer.joystickLeft.getX() / turnSensitivity);
+          break;
+        case Tank:
+          drivetrain.tankDrive(forward / speedSensitivity, -RobotContainer.joystickRight.getY() / speedSensitivity);
+          break;
+      }
+    }, drivetrain));
+
+    new JoystickButton(joystickLeft, 1).onTrue(new InstantCommand(() -> {
+      if(camera.getRobotPose() != null) {
+        drivetrain.resetOdometryTo(camera.getRobotPose());
+      }
+    }));
   }
 
   public Command getAutonomousCommand() {

@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -36,8 +37,7 @@ public class Drivetrain implements Subsystem {
 
         double distancePerPulse =
                 Constants.Drivetrain.WHEEL_CIRCUMFERENCE
-                        / Constants.Drivetrain.PULSES_PER_REVOLUTION
-                        / 4; // magic number that by all means shouldn't be here but is
+                        / (Constants.Drivetrain.PULSES_PER_REVOLUTION / 4f); // magic number that by all means shouldn't be here but is
 
         leftEncoder.setDistancePerPulse(distancePerPulse);
         rightEncoder.setDistancePerPulse(distancePerPulse);
@@ -47,7 +47,9 @@ public class Drivetrain implements Subsystem {
         double dl = leftEncoder.getDistance();
         double dr = rightEncoder.getDistance();
         odometry.update(navX.getRotation2d(), dl, dr);
-//        RobotContainer.field.setRobotPose(odometry.getPoseMeters());
+        RobotContainer.field.setRobotPose(getPose());
+        SmartDashboard.putNumber("left Encoder", leftEncoder.getDistance());
+        SmartDashboard.putNumber("right Encoder", rightEncoder.getDistance());
     }
 
 

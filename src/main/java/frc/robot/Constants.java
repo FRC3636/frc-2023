@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -36,7 +34,7 @@ public final class Constants {
 
     public static final int PULSES_PER_REVOLUTION = 4096;
 
-    public static final double WHEEL_DIAMETER = 6 * 0.0254; // in meters
+    public static final double WHEEL_DIAMETER = Units.inchesToMeters(6);
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
     // amy
@@ -48,6 +46,6 @@ public final class Constants {
   }
 
   public static class Robot {
-    public static final Translation3d CAMERA_OFFSET = new Translation3d(0, Units.inchesToMeters(14), 0);
+    public static final Pose2d CAMERA_OFFSET = new Pose2d(Units.inchesToMeters(14), 0.0, new Rotation2d());
   }
 }
