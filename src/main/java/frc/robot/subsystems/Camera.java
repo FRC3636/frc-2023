@@ -21,8 +21,6 @@ public class Camera extends SubsystemBase {
         camera = new PhotonCamera("arducam");
         camera.setDriverMode(false);
         camera.setPipelineIndex(0);
-
-        ;
     }
 
     @Override
