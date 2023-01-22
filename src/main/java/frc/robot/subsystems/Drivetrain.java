@@ -23,15 +23,17 @@ public class Drivetrain implements Subsystem {
     private final Encoder leftEncoder = new Encoder(
             Constants.Drivetrain.ENCODER_LEFT_PORT_A,
             Constants.Drivetrain.ENCODER_LEFT_PORT_B,
-            false
+            true
     );
     private final Encoder rightEncoder = new Encoder(
             Constants.Drivetrain.ENCODER_RIGHT_PORT_A,
             Constants.Drivetrain.ENCODER_RIGHT_PORT_B,
-            true
+            false
     );
-    public Drivetrain () {
-        motorRight.setInverted(true);
+
+    public Drivetrain() {
+        motorRight.setInverted(false);
+        motorLeft.setInverted(true);
 
         drivetrain = new DifferentialDrive(motorLeft, motorRight);
 
@@ -42,12 +44,15 @@ public class Drivetrain implements Subsystem {
         leftEncoder.setDistancePerPulse(distancePerPulse);
         rightEncoder.setDistancePerPulse(distancePerPulse);
     }
+
     @Override
     public void periodic() {
         double dl = leftEncoder.getDistance();
         double dr = rightEncoder.getDistance();
         odometry.update(navX.getRotation2d(), dl, dr);
+
         RobotContainer.field.setRobotPose(getPose());
+
         SmartDashboard.putNumber("left Encoder", leftEncoder.getDistance());
         SmartDashboard.putNumber("right Encoder", rightEncoder.getDistance());
     }
