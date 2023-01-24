@@ -19,9 +19,12 @@ import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Drivetrain;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
@@ -43,7 +46,6 @@ public class RobotContainer {
 
   public static Field2d field = new Field2d();
 
-
   static {
     drivePresetsChooser.addOption("Default", DriveConfig.DEFAULT_PRESET_NAME);
     drivePresetsChooser.addOption("Person 2", "person_2");
@@ -62,7 +64,6 @@ public class RobotContainer {
       return;
     driveSchemeEntry.setString(driveScheme.toString());
   }
-
 
   private void configureBindings() {
     drivetrain.setDefaultCommand(new RunCommand(() -> {
@@ -87,7 +88,7 @@ public class RobotContainer {
     }, drivetrain));
 
     new JoystickButton(joystickLeft, 1).onTrue(new InstantCommand(() -> {
-      if(camera.getRobotPose() != null) {
+      if (camera.getRobotPose() != null) {
         drivetrain.resetOdometryTo(camera.getRobotPose());
       }
     }));

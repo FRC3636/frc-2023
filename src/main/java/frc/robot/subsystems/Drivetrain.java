@@ -16,32 +16,33 @@ public class Drivetrain implements Subsystem {
     private final Spark motorLeft = new Spark(Constants.Drivetrain.MOTOR_LEFT);
     private final Spark motorRight = new Spark(Constants.Drivetrain.MOTOR_RIGHT);
 
-    private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d(), 0, 0, new Pose2d());
+    private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d(), 0, 0,
+            new Pose2d());
     private final DifferentialDrive drivetrain;
     private final AHRS navX = new AHRS();
 
     private final Encoder leftEncoder = new Encoder(
             Constants.Drivetrain.ENCODER_LEFT_PORT_A,
             Constants.Drivetrain.ENCODER_LEFT_PORT_B,
-            false
-    );
+            false);
     private final Encoder rightEncoder = new Encoder(
             Constants.Drivetrain.ENCODER_RIGHT_PORT_A,
             Constants.Drivetrain.ENCODER_RIGHT_PORT_B,
-            true
-    );
-    public Drivetrain () {
+            true);
+
+    public Drivetrain() {
         motorRight.setInverted(true);
 
         drivetrain = new DifferentialDrive(motorLeft, motorRight);
 
-        double distancePerPulse =
-                Constants.Drivetrain.WHEEL_CIRCUMFERENCE
-                        / (Constants.Drivetrain.PULSES_PER_REVOLUTION / 4f); // magic number that by all means shouldn't be here but is
+        double distancePerPulse = Constants.Drivetrain.WHEEL_CIRCUMFERENCE
+                / (Constants.Drivetrain.PULSES_PER_REVOLUTION / 4f); // magic number that by all means shouldn't be here
+                                                                     // but is
 
         leftEncoder.setDistancePerPulse(distancePerPulse);
         rightEncoder.setDistancePerPulse(distancePerPulse);
     }
+
     @Override
     public void periodic() {
         double dl = leftEncoder.getDistance();
@@ -51,7 +52,6 @@ public class Drivetrain implements Subsystem {
         SmartDashboard.putNumber("left Encoder", leftEncoder.getDistance());
         SmartDashboard.putNumber("right Encoder", rightEncoder.getDistance());
     }
-
 
     public Pose2d getPose() {
         return odometry.getPoseMeters();
