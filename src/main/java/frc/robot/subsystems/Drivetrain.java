@@ -24,12 +24,12 @@ public class Drivetrain implements Subsystem {
     private final Encoder leftEncoder = new Encoder(
             Constants.Drivetrain.ENCODER_LEFT_PORT_A,
             Constants.Drivetrain.ENCODER_LEFT_PORT_B,
-            true
+            false
     );
     private final Encoder rightEncoder = new Encoder(
             Constants.Drivetrain.ENCODER_RIGHT_PORT_A,
             Constants.Drivetrain.ENCODER_RIGHT_PORT_B,
-            false
+            true
     );
 
     public Drivetrain() {
@@ -54,8 +54,15 @@ public class Drivetrain implements Subsystem {
 
         RobotContainer.field.setRobotPose(getPose());
 
+        Pose2d pose = RobotContainer.camera.getRobotPose();
+        if(pose != null) {
+            resetOdometryTo(pose);
+        }
+
         SmartDashboard.putNumber("left Encoder", leftEncoder.getDistance());
         SmartDashboard.putNumber("right Encoder", rightEncoder.getDistance());
+
+        SmartDashboard.putNumber("Robot X", getPose().getX());
     }
 
     public Pose2d getPose() {
