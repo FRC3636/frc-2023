@@ -1,35 +1,58 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
+import org.photonvision.PhotonVersion;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-public class Camera implements Subsystem {
+public class Camera extends SubsystemBase {
 
-    private final PhotonCamera camera;
+    PhotonCamera camera;
 
     public Camera() {
-        camera = new PhotonCamera("test-camera");
+        camera = new PhotonCamera("arducam");
         camera.setDriverMode(false);
         camera.setPipelineIndex(0);
     }
 
     @Override
     public void periodic() {
-        PhotonPipelineResult result = camera.getLatestResult();
-        if (!result.hasTargets()) {
-            return;
+        Pose2d pose = getRobotPose();
+        if (pose != null) {
+            RobotContainer.field.getObject("Camera").setPose(pose);
+            SmartDashboard.putNumber("camera x", pose.getX());
         }
 
-        System.out.println("updating");
+
+    }
+
+    public Pose2d getRobotPose() {
+        PhotonPipelineResult result = camera.getLatestResult();
+
+        if (!result.hasTargets())
+            return null;
 
         PhotonTrackedTarget target = result.getBestTarget();
+        if(target.getPoseAmbiguity() > 0.2) {
+            return null;
+        }
 
-        Pose3d robotPos = Constants.Field.aprilTags.get(target.getFiducialId()).transformBy(target.getBestCameraToTarget());
+        Pose2d cameraPos = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(),
+                Constants.FieldConstants.aprilTags.get(target.getFiducialId()), new Transform3d()).toPose2d();
 
-//        RobotContainer.testField.setRobotPose(robotPos.toPose2d());
+        Constants.Robot.CAMERA_OFFSET.getTranslation().rotateBy(cameraPos.getRotation());
+
+        return new Pose2d(
+                cameraPos.getTranslation()
+                        .minus(Constants.Robot.CAMERA_OFFSET.getTranslation().rotateBy(cameraPos.getRotation())),
+                cameraPos.getRotation());
     }
 }

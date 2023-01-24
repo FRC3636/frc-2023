@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -130,10 +132,10 @@ public final class Constants {
     }
 
     public static class Robot {
-        public static final Translation3d CAMERA_OFFSET = new Translation3d(0, Units.inchesToMeters(14), 0);
+        public static final Pose2d CAMERA_OFFSET = new Pose2d(Units.inchesToMeters(14), 0.0, new Rotation2d());
     }
 
-    public static class Field {
+    public static class FieldConstants {
         public static final Map<Integer, Pose3d> aprilTags =
                 Map.of(
                         1,
