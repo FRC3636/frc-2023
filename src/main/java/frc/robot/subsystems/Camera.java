@@ -1,10 +1,9 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.FieldConstants;
 import frc.robot.RobotContainer;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
@@ -37,7 +36,7 @@ public class Camera extends SubsystemBase {
         PhotonTrackedTarget target = result.getBestTarget();
 
         Pose2d cameraPos = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(),
-                FieldConstants.aprilTags.get(target.getFiducialId()), new Transform3d()).toPose2d();
+                Constants.FieldConstants.aprilTags.get(target.getFiducialId()), new Transform3d()).toPose2d();
 
         Constants.Robot.CAMERA_OFFSET.getTranslation().rotateBy(cameraPos.getRotation());
 
