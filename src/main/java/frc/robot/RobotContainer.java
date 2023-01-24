@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -42,18 +43,21 @@ public class RobotContainer {
   public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
 
   public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
-  private static NetworkTableEntry driveSchemeEntry;
+  private static GenericEntry driveSchemeEntry;
 
   public static Field2d field = new Field2d();
 
   static {
     drivePresetsChooser.addOption("Default", DriveConfig.DEFAULT_PRESET_NAME);
-    drivePresetsChooser.addOption("Person 2", "person_2");
+    drivePresetsChooser.addOption("Jude", "jude");
     drivePresetsChooser.addOption("Tank Drive", "tank_drive");
     drivePresetsChooser.addOption("Arcade Single", "arcade_single");
   }
 
   public RobotContainer() {
+    driveSettings.add("Drive Presents", drivePresetsChooser)
+        .withWidget(BuiltInWidgets.kComboBoxChooser);
+    driveSchemeEntry = driveSettings.add("Drive Scheme", "None").withWidget(BuiltInWidgets.kTextView).getEntry();
     autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
 
     configureBindings();

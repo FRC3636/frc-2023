@@ -11,7 +11,7 @@ public class DriveConfig {
         PRESETS.put(DEFAULT_PRESET_NAME, new DriveConfig(1, 1, DriveScheme.Arcade));
         PRESETS.put("tank_drive", new DriveConfig(1, 1, DriveScheme.Tank));
         PRESETS.put("arcade_single", new DriveConfig(1, 1, DriveScheme.ArcadeSingle));
-        PRESETS.put("person_2", new DriveConfig(0.5, 0.5, DriveScheme.Arcade));
+        PRESETS.put("jude", new DriveConfig(1, 1, DriveScheme.Arcade));
     }
 
     /**
