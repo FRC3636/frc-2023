@@ -14,7 +14,6 @@ public class Camera extends SubsystemBase {
 
     PhotonCamera camera;
 
-
     public Camera() {
         camera = new PhotonCamera("arducam");
         camera.setDriverMode(false);
@@ -31,14 +30,19 @@ public class Camera extends SubsystemBase {
     public Pose2d getRobotPose() {
         PhotonPipelineResult result = camera.getLatestResult();
 
-        if (!result.hasTargets()) return new Pose2d();
+        if (!result.hasTargets())
+            return new Pose2d();
 
         PhotonTrackedTarget target = result.getBestTarget();
 
-        Pose2d cameraPos = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(), Constants.FieldConstants.aprilTags.get(target.getFiducialId()), new Transform3d()).toPose2d();
+        Pose2d cameraPos = PhotonUtils.estimateFieldToRobotAprilTag(target.getBestCameraToTarget(),
+                Constants.FieldConstants.aprilTags.get(target.getFiducialId()), new Transform3d()).toPose2d();
 
         Constants.Robot.CAMERA_OFFSET.getTranslation().rotateBy(cameraPos.getRotation());
 
-        return new Pose2d(cameraPos.getTranslation().minus(Constants.Robot.CAMERA_OFFSET.getTranslation().rotateBy(cameraPos.getRotation())), cameraPos.getRotation());
+        return new Pose2d(
+                cameraPos.getTranslation()
+                        .minus(Constants.Robot.CAMERA_OFFSET.getTranslation().rotateBy(cameraPos.getRotation())),
+                cameraPos.getRotation());
     }
 }
