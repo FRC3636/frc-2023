@@ -23,12 +23,12 @@ public class Drivetrain implements Subsystem {
     private final Encoder leftEncoder = new Encoder(
             Constants.Drivetrain.ENCODER_LEFT_PORT_A,
             Constants.Drivetrain.ENCODER_LEFT_PORT_B,
-            true
+            false
     );
     private final Encoder rightEncoder = new Encoder(
             Constants.Drivetrain.ENCODER_RIGHT_PORT_A,
             Constants.Drivetrain.ENCODER_RIGHT_PORT_B,
-            false
+            true
     );
 
     public Drivetrain() {
