@@ -54,8 +54,15 @@ public class Drivetrain implements Subsystem {
 
         RobotContainer.field.setRobotPose(getPose());
 
+        Pose2d pose = RobotContainer.camera.getRobotPose();
+        if(pose != null) {
+            resetOdometryTo(pose);
+        }
+
         SmartDashboard.putNumber("left Encoder", leftEncoder.getDistance());
         SmartDashboard.putNumber("right Encoder", rightEncoder.getDistance());
+
+        SmartDashboard.putNumber("Robot X", getPose().getX());
     }
 
     public Pose2d getPose() {

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -30,8 +31,8 @@ import frc.robot.subsystems.Drivetrain;
 public class RobotContainer {
 
   // Subsystems
-  private final Drivetrain drivetrain = new Drivetrain();
-  private final Camera camera = new Camera();
+  public static final Drivetrain drivetrain = new Drivetrain();
+  public static final Camera camera = new Camera();
 
   // Controllers
   public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_RIGHT_PORT);
