@@ -28,6 +28,7 @@ public final class Constants {
     public static class Controls {
         public static final int JOYSTICK_RIGHT_PORT = 0;
         public static final int JOYSTICK_LEFT_PORT = 1;
+        public static final int CONTROLLER_PORT = 2;
     }
 
     public static class Drivetrain {

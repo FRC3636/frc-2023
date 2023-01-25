@@ -38,10 +38,6 @@ public class Drivetrain implements Subsystem {
         leftMotor2.setInverted(false);
 
         drivetrain = new DifferentialDrive(leftMotor1, rightMotor1);
-
-        // double distancePerPulse = Constants.Drivetrain.WHEEL_CIRCUMFERENCE
-        //         / (Constants.Drivetrain.PULSES_PER_REVOLUTION / 4f); // magic number that by all means shouldn't be here
-        //                                                              // but is
     }
 
     @Override
