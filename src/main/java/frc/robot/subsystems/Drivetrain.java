@@ -59,6 +59,8 @@ public class Drivetrain extends SubsystemBase {
         RobotContainer.swerve.addNumber("Back Left", rearLeft.turningEncoder::getPosition);
         RobotContainer.swerve.addNumber("Back Right", rearRight.turningEncoder::getPosition);
 
+        RobotContainer.swerve.addNumber("Gyro", gyro::getAngle);
+
     }
 
 
