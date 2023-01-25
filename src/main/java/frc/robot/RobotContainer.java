@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -101,7 +102,7 @@ public class RobotContainer {
 //    }));
 
     arm.setDefaultCommand(new RunCommand(() -> {
-      arm.driveShoulder(controller.getLeftY());
+      arm.driveShoulder(MathUtil.applyDeadband(-controller.getRightY(), 0.06));
     }, arm));
   }
 
