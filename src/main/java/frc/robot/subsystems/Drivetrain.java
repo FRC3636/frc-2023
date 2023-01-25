@@ -122,7 +122,7 @@ public class Drivetrain extends SubsystemBase {
 
         var swerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(
                 fieldRelative
-                        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(gyro.getAngle() * (DriveConstants.GYRO_REVERSED? -1.0 : 1.0)))
+                        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees((gyro.getAngle() + gyro.getRate() * DriveConstants.GYRO_READ_DELAY) * (DriveConstants.GYRO_REVERSED? -1.0 : 1.0)))
                         : new ChassisSpeeds(xSpeed, ySpeed, rot));
         setModuleStates(swerveModuleStates);
     }
