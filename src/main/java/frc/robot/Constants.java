@@ -31,20 +31,22 @@ public final class Constants {
     }
 
     public static class Drivetrain {
-        public static final int MOTOR_RIGHT = 0;
-        public static final int MOTOR_LEFT = 1;
+        public static final int MOTOR_RIGHT_1 = 1;
+        public static final int MOTOR_RIGHT_2 = 2;
+        public static final int MOTOR_LEFT_1 = 3;
+        public static final int MOTOR_LEFT_2 = 4;
 
-        public static final int ENCODER_RIGHT_PORT_A = 0;
-        public static final int ENCODER_RIGHT_PORT_B = 1;
-        public static final int ENCODER_LEFT_PORT_A = 2;
-        public static final int ENCODER_LEFT_PORT_B = 3;
+        
+        public static final double WHEEL_DIAMETER = Units.inchesToMeters(6);
+        public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
+        public static final double SENSOR_UNITS_PER_REV = 2048;
+        public static final double GEAR_RATIO = 10.71;
+        public static final double SENSOR_UNITS_PER_METER =
+                (SENSOR_UNITS_PER_REV * GEAR_RATIO) / WHEEL_CIRCUMFERENCE;
 
         public static final double TRACK_WIDTH = 0.54; // in meters
 
         public static final int PULSES_PER_REVOLUTION = 4096;
-
-        public static final double WHEEL_DIAMETER = Units.inchesToMeters(6);
-        public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 
         // amy
         public static final double FEED_FORWARD_KS = -70.693;
