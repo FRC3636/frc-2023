@@ -57,6 +57,11 @@ public final class Constants {
         public static final double DRIVE_VELOCITY_KP = 1.8538;
     }
 
+    public static class Arm {
+        public static final int SHOULDER_MOTOR = 5;
+        public static final double STOP_DELTA = 5;
+    }
+
     public static class Robot {
         public static final Pose2d CAMERA_OFFSET = new Pose2d(Units.inchesToMeters(14), 0.0, new Rotation2d());
     }
