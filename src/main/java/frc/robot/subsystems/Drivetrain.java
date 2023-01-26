@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -61,12 +62,12 @@ public class Drivetrain extends SubsystemBase {
      * Creates a new DriveSubsystem.
      */
     public Drivetrain() {
-        RobotContainer.swerve.addNumber("Front Left", frontLeft.turningEncoder::getPosition);
-        RobotContainer.swerve.addNumber("Front Right", frontRight.turningEncoder::getPosition);
-        RobotContainer.swerve.addNumber("Back Left", rearLeft.turningEncoder::getPosition);
-        RobotContainer.swerve.addNumber("Back Right", rearRight.turningEncoder::getPosition);
+        RobotContainer.swerve.addNumber("Front Left", frontLeft.turningEncoder::getPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerve.addNumber("Front Right", frontRight.turningEncoder::getPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerve.addNumber("Back Left", rearLeft.turningEncoder::getPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerve.addNumber("Back Right", rearRight.turningEncoder::getPosition).withWidget(BuiltInWidgets.kGraph);
 
-        RobotContainer.swerve.addNumber("Gyro", gyro::getAngle);
+        RobotContainer.swerve.addNumber("Gyro", gyro::getAngle).withWidget(BuiltInWidgets.kGraph);
 
     }
 
