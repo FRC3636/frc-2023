@@ -16,6 +16,10 @@ public class Arm extends SubsystemBase {
         shoulder.setSmartCurrentLimit(40);
     }
 
+    public void driveShoulder(double speed) {
+        shoulder.set(speed);
+    }
+
     @Override
     public void periodic() {
         super.periodic();
