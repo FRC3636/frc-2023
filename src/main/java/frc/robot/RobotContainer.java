@@ -33,7 +33,7 @@ import frc.robot.subsystems.Drivetrain;
 public class RobotContainer {
 
   // Subsystems
-//  public static final Drivetrain drivetrain = new Drivetrain();
+  public static final Drivetrain drivetrain = new Drivetrain();
   public static final Camera camera = new Camera();
   public static final Arm arm = new Arm();
 
@@ -74,32 +74,32 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-//    drivetrain.setDefaultCommand(new RunCommand(() -> {
-//      DriveConfig config = DriveConfig.getCurrent();
-//
-//      final double forward = -RobotContainer.joystickLeft.getY();
-//      final double turn = RobotContainer.joystickRight.getX();
-//      final double speedSensitivity = config.getSpeedSensitivity();
-//      final double turnSensitivity = config.getTurnSensitivity();
-//
-//      switch (config.getDriveScheme()) {
-//        case Arcade:
-//          drivetrain.arcadeDrive(forward / speedSensitivity, turn / turnSensitivity);
-//          break;
-//        case ArcadeSingle:
-//          drivetrain.arcadeDrive(forward / speedSensitivity, RobotContainer.joystickLeft.getX() / turnSensitivity);
-//          break;
-//        case Tank:
-//          drivetrain.tankDrive(forward / speedSensitivity, -RobotContainer.joystickRight.getY() / speedSensitivity);
-//          break;
-//      }
-//    }, drivetrain));
-//
-//    new JoystickButton(joystickLeft, 1).onTrue(new InstantCommand(() -> {
-//      if (camera.getRobotPose() != null) {
-//        drivetrain.resetOdometryTo(camera.getRobotPose());
-//      }
-//    }));
+   drivetrain.setDefaultCommand(new RunCommand(() -> {
+     DriveConfig config = DriveConfig.getCurrent();
+
+     final double forward = -RobotContainer.joystickLeft.getY();
+     final double turn = RobotContainer.joystickRight.getX();
+     final double speedSensitivity = config.getSpeedSensitivity();
+     final double turnSensitivity = config.getTurnSensitivity();
+
+     switch (config.getDriveScheme()) {
+       case Arcade:
+         drivetrain.arcadeDrive(forward / speedSensitivity, turn / turnSensitivity);
+         break;
+       case ArcadeSingle:
+         drivetrain.arcadeDrive(forward / speedSensitivity, RobotContainer.joystickLeft.getX() / turnSensitivity);
+         break;
+       case Tank:
+         drivetrain.tankDrive(forward / speedSensitivity, -RobotContainer.joystickRight.getY() / speedSensitivity);
+         break;
+     }
+   }, drivetrain));
+
+   new JoystickButton(joystickLeft, 1).onTrue(new InstantCommand(() -> {
+     if (camera.getRobotPose() != null) {
+       drivetrain.resetOdometryTo(camera.getRobotPose());
+     }
+   }));
 
     arm.setDefaultCommand(new RunCommand(() -> {
       arm.driveShoulder(MathUtil.applyDeadband(-controller.getRightY(), 0.06));
