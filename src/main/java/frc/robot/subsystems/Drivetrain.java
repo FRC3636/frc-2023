@@ -4,11 +4,18 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -93,7 +100,7 @@ public class Drivetrain extends SubsystemBase {
      *
      * @param pose The pose to which to set the odometry.
      */
-    public void resetOdometry(Pose2d pose) {
+    public void resetPose(Pose2d pose) {
         odometry.resetPosition(
                 Rotation2d.fromDegrees(gyro.getAngle()),
                 new SwerveModulePosition[]{
@@ -183,4 +190,5 @@ public class Drivetrain extends SubsystemBase {
     public double getTurnRate() {
         return gyro.getRate();
     }
+
 }
