@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
 
-    CANSparkMax shoulder = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax shoulder = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     public Arm( ) {
         shoulder.setIdleMode(CANSparkMax.IdleMode.kBrake);
