@@ -42,18 +42,10 @@ public class Drivetrain implements Subsystem {
 
     @Override
     public void periodic() {
-        odometry.update(
-                Rotation2d.fromDegrees(-navX.getRotation2d().getDegrees()),
-                leftMotor1.getSelectedSensorPosition()
-                        / Constants.Drivetrain.SENSOR_UNITS_PER_METER,
-                rightMotor1.getSelectedSensorPosition()
-                        / Constants.Drivetrain.SENSOR_UNITS_PER_METER);
-
-        RobotContainer.field.setRobotPose(getPose());
-
+ 
         Pose2d pose = RobotContainer.camera.getRobotPose();
         if(pose != null) {
-            resetOdometryTo(pose);
+            // resetOdometryTo(pose);
         }
 
         SmartDashboard.putNumber("Robot X", getPose().getX());
