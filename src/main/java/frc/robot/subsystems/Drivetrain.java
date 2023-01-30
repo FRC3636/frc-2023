@@ -53,10 +53,10 @@ public class Drivetrain extends SubsystemBase {
      * Creates a new DriveSubsystem.
      */
     public Drivetrain() {
-        RobotContainer.swerve.addNumber("Front Left", frontLeft.turningEncoder::getPosition).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.swerve.addNumber("Front Right", frontRight.turningEncoder::getPosition).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.swerve.addNumber("Back Left", rearLeft.turningEncoder::getPosition).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.swerve.addNumber("Back Right", rearRight.turningEncoder::getPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerve.addNumber("Front Left", frontLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerve.addNumber("Front Right", frontRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerve.addNumber("Back Left", rearLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerve.addNumber("Back Right", rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
 
         RobotContainer.swerve.addNumber("Gyro", gyro::getAngle).withWidget(BuiltInWidgets.kGraph);
 

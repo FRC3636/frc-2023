@@ -146,6 +146,10 @@ public class MAXSwerveModule {
         this.desiredState = desiredState;
     }
 
+    public double getSwerveEncoderPosition() {
+        return turningEncoder.getPosition();
+    }
+
     /**
      * Zeroes all the SwerveModule encoders.
      */
