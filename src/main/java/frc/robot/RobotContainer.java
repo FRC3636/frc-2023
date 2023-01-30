@@ -78,7 +78,7 @@ public class RobotContainer {
      DriveConfig config = DriveConfig.getCurrent();
 
      final double forward = -RobotContainer.joystickLeft.getY();
-     final double turn = RobotContainer.joystickRight.getX();
+     final double turn = 0;//fixme
      final double speedSensitivity = config.getSpeedSensitivity();
      final double turnSensitivity = config.getTurnSensitivity();
 
@@ -102,7 +102,7 @@ public class RobotContainer {
    }));
 
     arm.setDefaultCommand(new RunCommand(() -> {
-      arm.driveShoulder(MathUtil.applyDeadband(-controller.getRightY(), 0.06));
+      arm.driveShoulder(MathUtil.applyDeadband(-controller.getLeftY() / 2.0, 0.06));
     }, arm));
   }
 

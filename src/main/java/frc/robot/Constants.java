@@ -58,8 +58,19 @@ public final class Constants {
     }
 
     public static class Arm {
-        public static final int SHOULDER_MOTOR = 5;
-        public static final double STOP_DELTA = 5;
+        public static final int SHOULDER_ID = 5;
+        public static final int CLAW_ID = 6;
+        public static final int ROLLERS_ID = 7;
+
+        public static final double SHOULDER_GEAR_RATIO = 1.0 / 192.0;
+
+        public static final int POTENTIOMETER_PORT = 0;
+        public static final double POTENTIOMETER_RANGE = 1; //TODO Measure
+        public static final double POTENTIOMETER_OFFSET = 0; //TODO Measure
+
+        public static final double ARM_HIGH_ANGLE = 90;
+        public static final double ARM_MID_ANGLE = 70;
+        public static final double ARM_LOW_ANGLE = 20;
     }
 
     public static class Robot {
