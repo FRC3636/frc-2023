@@ -62,8 +62,6 @@ public class RobotContainer {
   public RobotContainer() {
     driveSettings.add("Drive Presents", drivePresetsChooser)
         .withWidget(BuiltInWidgets.kComboBoxChooser);
-
-
     driveSchemeEntry = driveSettings.add("Drive Scheme", "None").withWidget(BuiltInWidgets.kTextView).getEntry();
     autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
 
@@ -83,7 +81,9 @@ public class RobotContainer {
      final double forward = -RobotContainer.joystickLeft.getY();
      final double turn = 0;//fixme
      final double speedSensitivity = config.getSpeedSensitivity();
-     final double turnSensitivity = config.getTurnSensitivity();
+     final double turnSensitivity =  config.getTurnSensitivity();
+
+     
 
      switch (config.getDriveScheme()) {
        case Arcade:
