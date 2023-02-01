@@ -58,7 +58,7 @@ public class RobotContainer {
                         () -> drivetrain.drive(
                                 MathUtil.applyDeadband(-joystickLeft.getY(), 0.06),
                                 MathUtil.applyDeadband(-joystickLeft.getX(), 0.06),
-                                MathUtil.applyDeadband(-joystickRight.getX(), 0.06),
+                                MathUtil.applyDeadband(-joystickRight.getX(), 0.15),
                                 true),
                         drivetrain
                 )
