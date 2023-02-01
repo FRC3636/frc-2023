@@ -46,6 +46,7 @@ public class RobotContainer {
   private static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
   public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
 
+
   public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
   private static GenericEntry driveSchemeEntry;
 
@@ -61,6 +62,8 @@ public class RobotContainer {
   public RobotContainer() {
     driveSettings.add("Drive Presents", drivePresetsChooser)
         .withWidget(BuiltInWidgets.kComboBoxChooser);
+
+
     driveSchemeEntry = driveSettings.add("Drive Scheme", "None").withWidget(BuiltInWidgets.kTextView).getEntry();
     autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
 
@@ -99,6 +102,10 @@ public class RobotContainer {
      if (camera.getRobotPose() != null) {
        drivetrain.resetOdometryTo(camera.getRobotPose());
      }
+   }));
+
+   new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {
+      arm.setClawPosition(Arm.ClawPosition.Cube);
    }));
 
     arm.setDefaultCommand(new RunCommand(() -> {

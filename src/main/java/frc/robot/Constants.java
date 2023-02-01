@@ -61,7 +61,18 @@ public final class Constants {
         public static final int SHOULDER_ID = 5;
         public static final int CLAW_ID = 6;
         public static final int ROLLERS_ID = 7;
+        public static final int CLAW_LIMITSWITCH = 0;
+        public static final double CLAW_CLAMP_THRESHOLD = 3.0;
 
+
+        //TODO find claw angle pos
+        public static final double CLAW_CONE_ANGLE = Units.degreesToRadians((25.6+54.4)/2);
+        public static final double CLAW_CUBE_ANGLE = Units.degreesToRadians(25.6);
+        public static final double CLAW_CLOSED_ANGLE = Units.degreesToRadians(54.4);
+        
+        public static final double CLAW_SPEED = 0.25;
+
+        public static final double CLAW_GEAR_RATIO = 19.0 / (36.0 * 125.0);
         public static final double SHOULDER_GEAR_RATIO = 1.0 / 192.0;
 
         public static final int POTENTIOMETER_PORT = 0;
