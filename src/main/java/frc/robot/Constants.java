@@ -59,8 +59,9 @@ public final class Constants {
 
     public static class Arm {
         public static final int SHOULDER_ID = 5;
-        public static final int CLAW_ID = 6;
-        public static final int ROLLERS_ID = 7;
+        public static final int SHOULDER_TWO_ID = 6;
+        public static final int CLAW_ID = 7;
+        public static final int ROLLERS_ID = 8;
         public static final int CLAW_LIMITSWITCH = 0;
 
 
