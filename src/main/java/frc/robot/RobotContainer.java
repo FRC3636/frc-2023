@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -85,7 +86,7 @@ public class RobotContainer {
 
      
 
-     switch (config.getDriveScheme()) {
+    switch (config.getDriveScheme()) {
        case Arcade:
          drivetrain.arcadeDrive(forward / speedSensitivity, turn / turnSensitivity);
          break;
@@ -104,11 +105,38 @@ public class RobotContainer {
      }
    }));
 
-   new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {
-      arm.setClawPosition(Arm.ClawPosition.Cube);
+   new JoystickButton(controller, XboxController.Button.kRightBumper.value).onTrue(new InstantCommand(() -> {
+    arm.setClawPosition(Arm.ClawPosition.Cone);
+    arm.runRollers(Constants.Arm.ROLLER_IN);
    }));
 
-    arm.setDefaultCommand(new RunCommand(() -> {
+   new JoystickButton(controller, XboxController.Button.kRightBumper.value).onFalse(new InstantCommand(() -> {
+     arm.runRollers(Constants.Arm.ROLLER_OFF);
+   }));
+
+   new JoystickButton(controller, XboxController.Button.kRightStick.value).onTrue(new InstantCommand(() -> {
+      arm.setClawPosition(Arm.ClawPosition.Cube);
+      arm.runRollers(Constants.Arm.ROLLER_IN);
+   }));
+
+
+   
+
+   new JoystickButton(controller, XboxController.Button.kRightStick.value).onFalse(new InstantCommand(() -> {
+      arm.runRollers(Constants.Arm.ROLLER_OFF);
+   }));
+
+   new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(new InstantCommand(() -> {
+      arm.setClawPosition(Arm.ClawPosition.Cube);
+      arm.runRollers(Constants.Arm.ROLLER_OUT);
+   }));
+
+   new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onFalse(new InstantCommand(() -> {
+      arm.runRollers(Constants.Arm.ROLLER_OFF);
+    }));
+
+   
+  arm.setDefaultCommand(new RunCommand(() -> {
       arm.driveShoulder(MathUtil.applyDeadband(-controller.getLeftY() / 2.0, 0.06));
     }, arm));
   }

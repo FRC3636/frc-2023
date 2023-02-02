@@ -62,7 +62,15 @@ public final class Constants {
         public static final int CLAW_ID = 6;
         public static final int ROLLERS_ID = 7;
         public static final int CLAW_LIMITSWITCH = 0;
-        public static final double CLAW_CLAMP_THRESHOLD = 3.0;
+
+
+
+        public static final int ROLLER_OUT = 1;
+        public static final int ROLLER_IN = -1;
+        public static final int ROLLER_OFF = 0;
+        public static final double ROLLER_SPEED = 0.25;
+
+        public static final double CLAW_CLAMP_THRESHOLD = Units.degreesToRadians(3.0);
 
 
         //TODO find claw angle pos

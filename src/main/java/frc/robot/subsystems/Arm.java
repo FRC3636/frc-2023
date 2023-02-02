@@ -26,7 +26,6 @@ public class Arm extends SubsystemBase {
     private ClawPosition clawPosition = ClawPosition.Open;
 
     public Arm() {
-
         shoulder.setIdleMode(CANSparkMax.IdleMode.kBrake);
         shoulder.getEncoder().setPositionConversionFactor(Constants.Arm.SHOULDER_GEAR_RATIO);
         shoulder.setSmartCurrentLimit(40);
@@ -45,10 +44,11 @@ public class Arm extends SubsystemBase {
         switch (clawPosition) {
             case Open:
                 if (clawLimitSwitch.get()) {
+                    claw.set(0);
+                }else {
+                    
                     claw.getEncoder().setPosition(0);
                     claw.set(Constants.Arm.CLAW_SPEED);
-                }else {
-                    claw.set(0);
                 }
                 break;    
             default:
@@ -70,7 +70,9 @@ public class Arm extends SubsystemBase {
         rollers.set(speed);
     }
 
-
+    public void runRollers(int direction){
+        rollers.set(Constants.Arm.ROLLER_SPEED*direction);
+    }
 
     enum ShoulderPosition {
         High(Constants.Arm.ARM_HIGH_ANGLE),
