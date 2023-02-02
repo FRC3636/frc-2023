@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.util.Units;
@@ -22,7 +21,6 @@ public class Arm extends SubsystemBase {
             Constants.Arm.POTENTIOMETER_PORT,
             Constants.Arm.POTENTIOMETER_RANGE,
             Constants.Arm.POTENTIOMETER_OFFSET);
-
     private ClawPosition clawPosition = ClawPosition.Open;
 
     public Arm() {
@@ -34,30 +32,32 @@ public class Arm extends SubsystemBase {
     public void driveShoulder(double speed) {
         shoulder.set(speed);
     }
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Claw Limit Switch", clawLimitSwitch.get());
         SmartDashboard.putNumber("Shoulder", shoulder.getEncoder().getPosition());
         SmartDashboard.putNumber("Potentiometer", potentiometer.get());
-        double targetAngleDifference = Units.rotationsToRadians(claw.getEncoder().getPosition()) - clawPosition.position;
+        double targetAngleDifference = Units.rotationsToRadians(claw.getEncoder().getPosition())
+                - clawPosition.position;
 
         switch (clawPosition) {
             case Open:
                 if (clawLimitSwitch.get()) {
                     claw.set(0);
-                }else {
-                    
+                } else {
                     claw.getEncoder().setPosition(0);
                     claw.set(Constants.Arm.CLAW_SPEED);
                 }
-                break;    
+                break;
             default:
                 if (Math.abs(targetAngleDifference) > Constants.Arm.CLAW_CLAMP_THRESHOLD) {
                     claw.set((targetAngleDifference > 0) ? Constants.Arm.CLAW_SPEED : -Constants.Arm.CLAW_SPEED);
                 } else {
                     claw.set(0);
+
                 }
-                break;   
+                break;
         }
 
     }
@@ -70,8 +70,8 @@ public class Arm extends SubsystemBase {
         rollers.set(speed);
     }
 
-    public void runRollers(int direction){
-        rollers.set(Constants.Arm.ROLLER_SPEED*direction);
+    public void runRollers(int direction) {
+        rollers.set(Constants.Arm.ROLLER_SPEED * direction);
     }
 
     enum ShoulderPosition {
@@ -95,7 +95,7 @@ public class Arm extends SubsystemBase {
 
         private final double position;
 
-        ClawPosition(double position){
+        ClawPosition(double position) {
             this.position = position;
         }
     }
