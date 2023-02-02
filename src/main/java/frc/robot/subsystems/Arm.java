@@ -1,53 +1,63 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.*;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
-    private final CANSparkMax shoulder = new CANSparkMax(Constants.Arm.SHOULDER_ID,
+    private final CANSparkMax shoulder1 = new CANSparkMax(Constants.Arm.SHOULDER_1_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax shoulder2 = new CANSparkMax(Constants.Arm.SHOULDER_2_ID,
+            CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final AbsoluteEncoder shoulderEncoder = shoulder1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+
+    private final CANSparkMax wrist = new CANSparkMax(Constants.Arm.WRIST_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final CANSparkMax claw = new CANSparkMax(Constants.Arm.CLAW_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final CANSparkMax rollers = new CANSparkMax(Constants.Arm.ROLLERS_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final DigitalInput clawLimitSwitch = new DigitalInput(Constants.Arm.CLAW_LIMITSWITCH);
+    private final DigitalInput clawLimitSwitch = new DigitalInput(Constants.Arm.CLAW_LIMIT_SWITCH);
 
-    private final AnalogPotentiometer potentiometer = new AnalogPotentiometer(
-            Constants.Arm.POTENTIOMETER_PORT,
-            Constants.Arm.POTENTIOMETER_RANGE,
-            Constants.Arm.POTENTIOMETER_OFFSET);
-    private ClawPosition clawPosition = ClawPosition.Open;
+    private ClawPosition clawPosition = ClawPosition.Closed;
+
 
     public Arm() {
-        shoulder.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        shoulder.getEncoder().setPositionConversionFactor(Constants.Arm.SHOULDER_GEAR_RATIO);
-        shoulder.setSmartCurrentLimit(40);
+        shoulder1.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        shoulder2.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        shoulder1.setSmartCurrentLimit(40);
+        shoulder2.setSmartCurrentLimit(40);
+
+        shoulderEncoder.setPositionConversionFactor(Units.degreesToRotations(Constants.Arm.SHOULDER_GEAR_RATIO));
+
+        shoulder2.follow(shoulder1, true);
     }
 
     public void driveShoulder(double speed) {
-        shoulder.set(speed);
+        shoulder1.set(speed);
     }
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Shoulder Angle", shoulderEncoder.getPosition());
         SmartDashboard.putBoolean("Claw Limit Switch", clawLimitSwitch.get());
-        SmartDashboard.putNumber("Shoulder", shoulder.getEncoder().getPosition());
-        SmartDashboard.putNumber("Potentiometer", potentiometer.get());
-        double targetAngleDifference = Units.rotationsToRadians(claw.getEncoder().getPosition())
-                - clawPosition.position;
+
+        double targetAngleDifference = claw.getEncoder().getPosition() - clawPosition.position;
+
+        SmartDashboard.putNumber("set angle", targetAngleDifference);
+
+        SmartDashboard.putBoolean("running", Math.abs(targetAngleDifference) > Constants.Arm.CLAW_CLAMP_THRESHOLD);
 
         switch (clawPosition) {
             case Open:
                 if (clawLimitSwitch.get()) {
                     claw.set(0);
-                } else {
                     claw.getEncoder().setPosition(0);
-                    claw.set(Constants.Arm.CLAW_SPEED);
+                } else {
+                    claw.set(-Constants.Arm.CLAW_SPEED);
                 }
                 break;
             default:
@@ -55,7 +65,6 @@ public class Arm extends SubsystemBase {
                     claw.set((targetAngleDifference > 0) ? Constants.Arm.CLAW_SPEED : -Constants.Arm.CLAW_SPEED);
                 } else {
                     claw.set(0);
-
                 }
                 break;
         }
@@ -66,10 +75,6 @@ public class Arm extends SubsystemBase {
         this.clawPosition = position;
     }
 
-    public void setIntakeSpeed(int speed) {
-        rollers.set(speed);
-    }
-
     public void runRollers(int direction) {
         rollers.set(Constants.Arm.ROLLER_SPEED * direction);
     }
@@ -78,8 +83,7 @@ public class Arm extends SubsystemBase {
         High(Constants.Arm.ARM_HIGH_ANGLE),
         Mid(Constants.Arm.ARM_MID_ANGLE),
         Low(Constants.Arm.ARM_LOW_ANGLE),
-        Stored(0);
-
+        Stowed(Constants.Arm.ARM_STOWED_ANGLE);
         private final double position;
 
         ShoulderPosition(double position) {

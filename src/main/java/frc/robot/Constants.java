@@ -12,18 +12,6 @@ import edu.wpi.first.math.util.Units;
 
 import java.util.Map;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide
- * numerical or boolean
- * constants. This class should not be used for any other purpose. All constants
- * should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>
- * It is advised to statically import this class (or one of its inner classes)
- * wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
     public static class Controls {
         public static final int JOYSTICK_RIGHT_PORT = 0;
@@ -58,39 +46,33 @@ public final class Constants {
     }
 
     public static class Arm {
-        public static final int SHOULDER_ID = 5;
-        public static final int SHOULDER_TWO_ID = 6;
-        public static final int CLAW_ID = 7;
-        public static final int ROLLERS_ID = 8;
-        public static final int CLAW_LIMITSWITCH = 0;
+        public static final int SHOULDER_1_ID = 5;
+        public static final int SHOULDER_2_ID = 6;
+        public static final int WRIST_ID = 7;
+        public static final int CLAW_ID = 8;
+        public static final int ROLLERS_ID = 9;
 
-
+        public static final int CLAW_LIMIT_SWITCH = 0;
 
         public static final int ROLLER_OUT = 1;
         public static final int ROLLER_IN = -1;
         public static final int ROLLER_OFF = 0;
         public static final double ROLLER_SPEED = 0.25;
 
-        public static final double CLAW_CLAMP_THRESHOLD = Units.degreesToRadians(3.0);
-
-
         //TODO find claw angle pos
-        public static final double CLAW_CONE_ANGLE = Units.degreesToRadians((25.6+54.4)/2);
-        public static final double CLAW_CUBE_ANGLE = Units.degreesToRadians(25.6);
-        public static final double CLAW_CLOSED_ANGLE = Units.degreesToRadians(54.4);
-        
+        public static final double CLAW_CONE_ANGLE =(25.6+54.4)/2;
+        public static final double CLAW_CUBE_ANGLE = 25.6;
+        public static final double CLAW_CLOSED_ANGLE = 54.4;
         public static final double CLAW_SPEED = 0.25;
-
+        public static final double CLAW_CLAMP_THRESHOLD = 3.0;
         public static final double CLAW_GEAR_RATIO = 19.0 / (36.0 * 125.0);
-        public static final double SHOULDER_GEAR_RATIO = 1.0 / 192.0;
 
-        public static final int POTENTIOMETER_PORT = 0;
-        public static final double POTENTIOMETER_RANGE = 1; //TODO Measure
-        public static final double POTENTIOMETER_OFFSET = 0; //TODO Measure
-
-        public static final double ARM_HIGH_ANGLE = 90;
+        public static final double ARM_STOWED_ANGLE = -8;
+        public static final double ARM_HIGH_ANGLE = ARM_STOWED_ANGLE + 104;
         public static final double ARM_MID_ANGLE = 70;
         public static final double ARM_LOW_ANGLE = 20;
+        public static final double SHOULDER_GEAR_RATIO = 1.0 / 2.0;
+
     }
 
     public static class Robot {
