@@ -35,7 +35,8 @@ public class RobotContainer {
     private static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
     public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     public static final ShuffleboardTab swerve = Shuffleboard.getTab("Swerve");
-
+  
+  
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
     private static NetworkTableEntry driveSchemeEntry;
 
@@ -56,9 +57,10 @@ public class RobotContainer {
                 // Turning is controlled by the X axis of the right stick.
                 new RunCommand(
                         () -> drivetrain.drive(
-                                MathUtil.applyDeadband(-joystickLeft.getY(), 0.06),
-                                MathUtil.applyDeadband(-joystickLeft.getX(), 0.06),
-                                MathUtil.applyDeadband(-joystickRight.getX(), 0.15),
+                                //add 1 to prevent negative sensitivity
+                                MathUtil.applyDeadband(-joystickLeft.getY() * (joystickLeft.getZ()+ 1)/2, 0.15),
+                                MathUtil.applyDeadband(-joystickLeft.getX() * (joystickLeft.getZ()+1)/2, 0.15),
+                                MathUtil.applyDeadband(-joystickRight.getX() * (joystickRight.getZ()+1)/2, 0.15),
                                 true),
                         drivetrain
                 )
