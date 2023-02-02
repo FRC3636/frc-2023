@@ -59,7 +59,8 @@ public class Drivetrain extends SubsystemBase {
         RobotContainer.swerve.addNumber("Back Right", rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
 
         RobotContainer.swerve.addNumber("Gyro", gyro::getAngle).withWidget(BuiltInWidgets.kGraph);
-
+        RobotContainer.driveSettings.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
+        RobotContainer.driveSettings.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
     }
 
 

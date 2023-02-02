@@ -32,7 +32,7 @@ public class RobotContainer {
     public static final Joystick joystickRight = new Joystick(Constants.Controls.JOYSTICK_LEFT_PORT);
 
     // Dashboard
-    private static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
+    public static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
     public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     public static final ShuffleboardTab swerve = Shuffleboard.getTab("Swerve");
   
