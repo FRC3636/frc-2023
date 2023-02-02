@@ -70,6 +70,8 @@ public class RobotContainer {
                 .whileTrue(new RunCommand(
                         drivetrain::setX,
                         drivetrain));
+        new JoystickButton(joystickLeft, 6)
+                .whileTrue(new InstantCommand(drivetrain::zeroHeading));
     }
 
 
