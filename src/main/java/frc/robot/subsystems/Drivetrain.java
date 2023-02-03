@@ -43,10 +43,10 @@ public class Drivetrain implements Subsystem {
     @Override
     public void periodic() {
  
-        Pose2d pose = RobotContainer.camera.getRobotPose();
-        if(pose != null) {
-            // resetOdometryTo(pose);
-        }
+//        Pose2d pose = RobotContainer.camera.getRobotPose();
+//        if(pose != null) {
+//            // resetOdometryTo(pose);
+//        }
 
         SmartDashboard.putNumber("Robot X", getPose().getX());
     }
@@ -81,6 +81,7 @@ public class Drivetrain implements Subsystem {
 
     public void arcadeDrive(double speed, double rotation) {
         drivetrain.arcadeDrive(speed, rotation);
+        System.out.println(rotation);
     }
 
     public void tankDrive(double left, double right) {

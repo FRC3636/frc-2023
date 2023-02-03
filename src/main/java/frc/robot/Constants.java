@@ -14,8 +14,8 @@ import java.util.Map;
 
 public final class Constants {
     public static class Controls {
-        public static final int JOYSTICK_RIGHT_PORT = 0;
-        public static final int JOYSTICK_LEFT_PORT = 1;
+        public static final int JOYSTICK_LEFT_PORT = 0;
+        public static final int JOYSTICK_RIGHT_PORT = 1;
         public static final int CONTROLLER_PORT = 2;
     }
 
@@ -48,34 +48,33 @@ public final class Constants {
     public static class Arm {
         public static final int SHOULDER_1_ID = 5;
         public static final int SHOULDER_2_ID = 6;
+        public static final double SHOULDER_GEAR_RATIO = 1.0 / 2.0;
+        public static final double ARM_STOWED_ANGLE = -8;
+        public static final double ARM_HIGH_ANGLE = ARM_STOWED_ANGLE + 104;
+        public static final double ARM_MID_ANGLE = 70;
+        public static final double ARM_LOW_ANGLE = 20;
+
         public static final int WRIST_ID = 7;
+        public static final int WRIST_LIMIT_SWITCH = 1;
+        public static final double WRIST_GEAR_RATIO = 1.0 / 25.0;
+
         public static final int CLAW_ID = 8;
-        public static final int ROLLERS_ID = 9;
-
         public static final int CLAW_LIMIT_SWITCH = 0;
-
-        public static final int ROLLER_OUT = 1;
-        public static final int ROLLER_IN = -1;
-        public static final int ROLLER_OFF = 0;
-        public static final double ROLLER_SPEED = 0.25;
-
-        //TODO find claw angle pos
         public static final double CLAW_CONE_ANGLE =(25.6+54.4)/2;
         public static final double CLAW_CUBE_ANGLE = 25.6;
         public static final double CLAW_CLOSED_ANGLE = 54.4;
         public static final double CLAW_SPEED = 0.25;
         public static final double CLAW_CLAMP_THRESHOLD = 3.0;
-        public static final double CLAW_GEAR_RATIO = 19.0 / (36.0 * 125.0);
+        public static final double CLAW_GEAR_RATIO = 19.0 / (36.0 * 100.0);
 
-        public static final double ARM_STOWED_ANGLE = -8;
-        public static final double ARM_HIGH_ANGLE = ARM_STOWED_ANGLE + 104;
-        public static final double ARM_MID_ANGLE = 70;
-        public static final double ARM_LOW_ANGLE = 20;
-        public static final double SHOULDER_GEAR_RATIO = 1.0 / 2.0;
-
+        public static final int ROLLERS_ID = 9;
+        public static final int ROLLER_OUT = 1;
+        public static final int ROLLER_IN = -1;
+        public static final int ROLLER_OFF = 0;
+        public static final double ROLLER_SPEED = 0.25;
     }
-
     public static class Robot {
+
         public static final Pose2d CAMERA_OFFSET = new Pose2d(Units.inchesToMeters(14), 0.0, new Rotation2d());
     }
 

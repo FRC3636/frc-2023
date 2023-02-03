@@ -11,13 +11,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
@@ -39,12 +37,12 @@ public class RobotContainer {
 
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
-    public static final Camera camera = new Camera();
+//    public static final Camera camera = new Camera();
     public static final Arm arm = new Arm();
 
     // Controllers
-    public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_RIGHT_PORT);
-    public static final Joystick joystickRight = new Joystick(Constants.Controls.JOYSTICK_LEFT_PORT);
+    public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_LEFT_PORT);
+    public static final Joystick joystickRight = new Joystick(Constants.Controls.JOYSTICK_RIGHT_PORT);
     public static final XboxController controller = new XboxController(Constants.Controls.CONTROLLER_PORT);
 
     // Dashboard
@@ -84,7 +82,7 @@ public class RobotContainer {
             DriveConfig config = DriveConfig.getCurrent();
 
             final double forward = -RobotContainer.joystickLeft.getY();
-            final double turn = 0;//fixme
+            final double turn = -RobotContainer.joystickRight.getX();
             final double speedSensitivity = config.getSpeedSensitivity();
             final double turnSensitivity = config.getTurnSensitivity();
 
@@ -102,26 +100,29 @@ public class RobotContainer {
             }
         }, drivetrain));
 
-        new JoystickButton(joystickLeft, 1).onTrue(new InstantCommand(() -> {
-            if (camera.getRobotPose() != null) {
-                drivetrain.resetOdometryTo(camera.getRobotPose());
-            }
-        }));
+//        new JoystickButton(joystickLeft, 1).onTrue(new InstantCommand(() -> {
+//            if (camera.getRobotPose() != null) {
+//                drivetrain.resetOdometryTo(camera.getRobotPose());
+//            }
+//        }));
 
        new JoystickButton(controller, XboxController.Button.kRightBumper.value).onTrue(new IntakeCommand(arm, ClawPosition.Cube));
 
        new Trigger(() -> controller.getRightTriggerAxis() > 0.05).whileTrue(new IntakeCommand(arm, ClawPosition.Cone));
 
 
-       new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(new RunCommand(() -> {
+       new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(new InstantCommand(() -> {
           arm.setClawPosition(ClawPosition.Open);
           arm.runRollers(Constants.Arm.ROLLER_OUT);
        }));
+
+
 
 //       new JoystickButton(controller. )
 
         arm.setDefaultCommand(new RunCommand(() -> {
             arm.driveShoulder(MathUtil.applyDeadband(controller.getRightY() / 2.0, 0.06));
+            arm.driveWrist(MathUtil.applyDeadband(-controller.getLeftY() / 2.0, 0.06));
         }, arm));
     }
 

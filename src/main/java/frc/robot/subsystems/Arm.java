@@ -17,12 +17,15 @@ public class Arm extends SubsystemBase {
     private final AbsoluteEncoder shoulderEncoder = shoulder1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
     private final CANSparkMax wrist = new CANSparkMax(Constants.Arm.WRIST_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final DigitalInput wristLimitSwitch = new DigitalInput(Constants.Arm.WRIST_LIMIT_SWITCH);
+
     private final CANSparkMax claw = new CANSparkMax(Constants.Arm.CLAW_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final DigitalInput clawLimitSwitch = new DigitalInput(Constants.Arm.CLAW_LIMIT_SWITCH);
+    private ClawPosition clawPosition = ClawPosition.Closed;
+
     private final CANSparkMax rollers = new CANSparkMax(Constants.Arm.ROLLERS_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final DigitalInput clawLimitSwitch = new DigitalInput(Constants.Arm.CLAW_LIMIT_SWITCH);
 
-    private ClawPosition clawPosition = ClawPosition.Closed;
 
 
     public Arm() {
@@ -30,14 +33,23 @@ public class Arm extends SubsystemBase {
         shoulder2.setIdleMode(CANSparkMax.IdleMode.kBrake);
         shoulder1.setSmartCurrentLimit(40);
         shoulder2.setSmartCurrentLimit(40);
-
+        shoulder2.follow(shoulder1, true);
         shoulderEncoder.setPositionConversionFactor(Units.degreesToRotations(Constants.Arm.SHOULDER_GEAR_RATIO));
 
-        shoulder2.follow(shoulder1, true);
+        wrist.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        wrist.getEncoder().setPositionConversionFactor(Units.degreesToRotations(Constants.Arm.SHOULDER_GEAR_RATIO));
+
+        claw.getEncoder().setPositionConversionFactor(Units.degreesToRotations(Constants.Arm.CLAW_GEAR_RATIO));
+        claw.getEncoder().setPosition(clawPosition.position);
+
     }
 
     public void driveShoulder(double speed) {
         shoulder1.set(speed);
+    }
+
+    public void driveWrist(double speed) {
+        wrist.set(speed);
     }
 
     @Override
@@ -47,7 +59,12 @@ public class Arm extends SubsystemBase {
 
         double targetAngleDifference = claw.getEncoder().getPosition() - clawPosition.position;
 
+
         SmartDashboard.putNumber("set angle", targetAngleDifference);
+        SmartDashboard.putNumber("Claw Angle", claw.getEncoder().getPosition());
+
+        SmartDashboard.putBoolean("Wrist Limit Switch", wristLimitSwitch.get());
+        SmartDashboard.putNumber("Wrist Angle", wrist.getEncoder().getPosition());
 
         SmartDashboard.putBoolean("running", Math.abs(targetAngleDifference) > Constants.Arm.CLAW_CLAMP_THRESHOLD);
 
@@ -62,7 +79,7 @@ public class Arm extends SubsystemBase {
                 break;
             default:
                 if (Math.abs(targetAngleDifference) > Constants.Arm.CLAW_CLAMP_THRESHOLD) {
-                    claw.set((targetAngleDifference > 0) ? Constants.Arm.CLAW_SPEED : -Constants.Arm.CLAW_SPEED);
+                    claw.set((targetAngleDifference < 0) ? Constants.Arm.CLAW_SPEED : -Constants.Arm.CLAW_SPEED);
                 } else {
                     claw.set(0);
                 }
