@@ -81,7 +81,6 @@ public class Drivetrain implements Subsystem {
 
     public void arcadeDrive(double speed, double rotation) {
         drivetrain.arcadeDrive(speed, rotation);
-        System.out.println(rotation);
     }
 
     public void tankDrive(double left, double right) {

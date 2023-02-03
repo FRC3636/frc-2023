@@ -21,8 +21,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Camera;
+import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Claw.ClawPosition;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Arm.ClawPosition;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -39,6 +40,7 @@ public class RobotContainer {
     public static final Drivetrain drivetrain = new Drivetrain();
 //    public static final Camera camera = new Camera();
     public static final Arm arm = new Arm();
+    public static final Claw claw = new Claw();
 
     // Controllers
     public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_LEFT_PORT);
@@ -106,16 +108,15 @@ public class RobotContainer {
 //            }
 //        }));
 
-       new JoystickButton(controller, XboxController.Button.kRightBumper.value).onTrue(new IntakeCommand(arm, ClawPosition.Cube));
+       new JoystickButton(controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(claw, ClawPosition.Cube));
 
-       new Trigger(() -> controller.getRightTriggerAxis() > 0.05).whileTrue(new IntakeCommand(arm, ClawPosition.Cone));
+       new Trigger(() -> controller.getRightTriggerAxis() > 0.05).whileTrue(new IntakeCommand(claw, ClawPosition.Cone));
 
 
        new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(new InstantCommand(() -> {
-          arm.setClawPosition(ClawPosition.Open);
-          arm.runRollers(Constants.Arm.ROLLER_OUT);
+          claw.setClawPosition(Claw.ClawPosition.Open);
+//          arm.runRollers(Constants.Arm.ROLLER_OUT);
        }));
-
 
 
 //       new JoystickButton(controller. )

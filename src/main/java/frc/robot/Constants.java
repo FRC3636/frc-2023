@@ -64,7 +64,7 @@ public final class Constants {
         public static final double CLAW_CUBE_ANGLE = 25.6;
         public static final double CLAW_CLOSED_ANGLE = 54.4;
         public static final double CLAW_SPEED = 0.25;
-        public static final double CLAW_CLAMP_THRESHOLD = 3.0;
+        public static final double CLAW_CLAMP_THRESHOLD = 15.0;
         public static final double CLAW_GEAR_RATIO = 19.0 / (36.0 * 100.0);
 
         public static final int ROLLERS_ID = 9;

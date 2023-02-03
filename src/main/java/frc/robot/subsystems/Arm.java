@@ -19,14 +19,6 @@ public class Arm extends SubsystemBase {
     private final CANSparkMax wrist = new CANSparkMax(Constants.Arm.WRIST_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final DigitalInput wristLimitSwitch = new DigitalInput(Constants.Arm.WRIST_LIMIT_SWITCH);
 
-    private final CANSparkMax claw = new CANSparkMax(Constants.Arm.CLAW_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final DigitalInput clawLimitSwitch = new DigitalInput(Constants.Arm.CLAW_LIMIT_SWITCH);
-    private ClawPosition clawPosition = ClawPosition.Closed;
-
-    private final CANSparkMax rollers = new CANSparkMax(Constants.Arm.ROLLERS_ID,
-            CANSparkMaxLowLevel.MotorType.kBrushless);
-
-
 
     public Arm() {
         shoulder1.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -34,14 +26,10 @@ public class Arm extends SubsystemBase {
         shoulder1.setSmartCurrentLimit(40);
         shoulder2.setSmartCurrentLimit(40);
         shoulder2.follow(shoulder1, true);
-        shoulderEncoder.setPositionConversionFactor(Units.degreesToRotations(Constants.Arm.SHOULDER_GEAR_RATIO));
+        shoulderEncoder.setPositionConversionFactor(Units.rotationsToDegrees(Constants.Arm.SHOULDER_GEAR_RATIO));
 
         wrist.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        wrist.getEncoder().setPositionConversionFactor(Units.degreesToRotations(Constants.Arm.SHOULDER_GEAR_RATIO));
-
-        claw.getEncoder().setPositionConversionFactor(Units.degreesToRotations(Constants.Arm.CLAW_GEAR_RATIO));
-        claw.getEncoder().setPosition(clawPosition.position);
-
+        wrist.getEncoder().setPositionConversionFactor(Units.rotationsToDegrees(Constants.Arm.SHOULDER_GEAR_RATIO));
     }
 
     public void driveShoulder(double speed) {
@@ -55,45 +43,9 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Shoulder Angle", shoulderEncoder.getPosition());
-        SmartDashboard.putBoolean("Claw Limit Switch", clawLimitSwitch.get());
-
-        double targetAngleDifference = claw.getEncoder().getPosition() - clawPosition.position;
-
-
-        SmartDashboard.putNumber("set angle", targetAngleDifference);
-        SmartDashboard.putNumber("Claw Angle", claw.getEncoder().getPosition());
 
         SmartDashboard.putBoolean("Wrist Limit Switch", wristLimitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", wrist.getEncoder().getPosition());
-
-        SmartDashboard.putBoolean("running", Math.abs(targetAngleDifference) > Constants.Arm.CLAW_CLAMP_THRESHOLD);
-
-        switch (clawPosition) {
-            case Open:
-                if (clawLimitSwitch.get()) {
-                    claw.set(0);
-                    claw.getEncoder().setPosition(0);
-                } else {
-                    claw.set(-Constants.Arm.CLAW_SPEED);
-                }
-                break;
-            default:
-                if (Math.abs(targetAngleDifference) > Constants.Arm.CLAW_CLAMP_THRESHOLD) {
-                    claw.set((targetAngleDifference < 0) ? Constants.Arm.CLAW_SPEED : -Constants.Arm.CLAW_SPEED);
-                } else {
-                    claw.set(0);
-                }
-                break;
-        }
-
-    }
-
-    public void setClawPosition(ClawPosition position) {
-        this.clawPosition = position;
-    }
-
-    public void runRollers(int direction) {
-        rollers.set(Constants.Arm.ROLLER_SPEED * direction);
     }
 
     enum ShoulderPosition {
@@ -104,19 +56,6 @@ public class Arm extends SubsystemBase {
         private final double position;
 
         ShoulderPosition(double position) {
-            this.position = position;
-        }
-    }
-
-    public enum ClawPosition {
-        Cone(Constants.Arm.CLAW_CONE_ANGLE),
-        Cube(Constants.Arm.CLAW_CUBE_ANGLE),
-        Open(0.0),
-        Closed(Constants.Arm.CLAW_CLOSED_ANGLE);
-
-        private final double position;
-
-        ClawPosition(double position) {
             this.position = position;
         }
     }

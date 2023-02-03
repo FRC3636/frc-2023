@@ -7,41 +7,35 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Arm.ClawPosition;
+import frc.robot.subsystems.Claw.ClawPosition;
+import frc.robot.subsystems.Claw;
 
 
 public class IntakeCommand extends CommandBase {
 
-  private Arm arm;
+  private Claw claw;
   private ClawPosition position;
 
 
   /** Creates a new Claw. */
-  public IntakeCommand(Arm arm,ClawPosition object) {
+  public IntakeCommand(Claw claw, ClawPosition object) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.arm = arm;
+    this.claw = claw;
     position = object;
-    addRequirements(arm);
+    addRequirements(this.claw);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    arm.setClawPosition(position);
-    arm.runRollers(Constants.Arm.ROLLER_IN);
-  
+    claw.setClawPosition(position);
+    claw.runRollers(Constants.Arm.ROLLER_IN);
   }
-  
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arm.runRollers(Constants.Arm.ROLLER_OFF);
+    claw.runRollers(Constants.Arm.ROLLER_OFF);
   }
 
   // Returns true when the command should end.
