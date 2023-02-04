@@ -49,6 +49,10 @@ public final class Constants {
         public static final int SHOULDER_1_ID = 5;
         public static final int SHOULDER_2_ID = 6;
         public static final double SHOULDER_GEAR_RATIO = 1.0 / 2.0;
+        public static final double SHOULDER_KS = 0.0;
+        public static final double SHOULDER_KG = 0.0;
+        public static final double SHOULDER_KV = 0.0;
+        public static final double SHOULDER_KA = 0.0;
         public static final double ARM_STOWED_ANGLE = -9;
         public static final double ARM_HIGH_ANGLE = 96;
         public static final double ARM_MID_ANGLE = 70;

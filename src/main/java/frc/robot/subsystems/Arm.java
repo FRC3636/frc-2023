@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -21,6 +23,9 @@ public class Arm extends SubsystemBase {
     private final CANSparkMax shoulder2 = new CANSparkMax(SHOULDER_2_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final AbsoluteEncoder shoulderEncoder = shoulder1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+    private final ArmFeedforward shoulderFeedforward = new ArmFeedforward(Constants.Arm.SHOULDER_KS, Constants.Arm.SHOULDER_KG,
+            Constants.Arm.SHOULDER_KV, Constants.Arm.SHOULDER_KA);
+    private final ShoulderPosition shoulderTarget = ShoulderPosition.Stowed;
 
     private final PIDController wristPID = new PIDController(0, 0, 0);
 
@@ -55,9 +60,13 @@ public class Arm extends SubsystemBase {
     public void driveWrist(double speed) {
         wrist.set(speed);
     }
+
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Shoulder Angle", shoulderEncoder.getPosition());
+        SmartDashboard.putNumber("Shoulder Set Point", shoulderTarget.position);
+
+        shoulder1.set(shoulderFeedforward.calculate(Units.degreesToRadians(shoulderTarget.position), 0));
 
         SmartDashboard.putBoolean("Wrist Limit Switch", wristLimitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", wrist.getEncoder().getPosition());
