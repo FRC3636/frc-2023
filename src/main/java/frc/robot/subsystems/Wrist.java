@@ -41,7 +41,7 @@ public class Wrist extends SubsystemBase {
             motor.getEncoder().setPosition(Constants.Wrist.WRIST_LIMIT_SWITCH_OFFSET);
         }
 
-        motor.set(pidController.calculate(motor.getEncoder().getPosition(), targetPosition.position));
+        motor.set(pidController.calculate(getAngleToFrame(), targetPosition.position));
     }
 
     public enum Position {
