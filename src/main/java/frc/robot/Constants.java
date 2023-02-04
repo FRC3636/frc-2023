@@ -56,10 +56,10 @@ public final class Constants {
         public static final double SHOULDER_KP = 0.0;
         public static final double SHOULDER_KI = 0.0;
         public static final double SHOULDER_KD = 0.0;
-        public static final double SHOULDER_STOWED_ANGLE = -8;
-        public static final double SHOULDER_HIGH_ANGLE = SHOULDER_STOWED_ANGLE + 104;
-        public static final double SHOULDER_MID_ANGLE = 70;
-        public static final double SHOULDER_LOW_ANGLE = 20;
+        public static final double SHOULDER_STOWED_ANGLE = Units.degreesToRadians(-8);
+        public static final double SHOULDER_HIGH_ANGLE = SHOULDER_STOWED_ANGLE + Units.degreesToRadians(104);
+        public static final double SHOULDER_MID_ANGLE = Units.degreesToRadians(70);
+        public static final double SHOULDER_LOW_ANGLE = Units.degreesToRadians(20);
 
         public static final int WRIST_ID = 7;
         public static final int WRIST_LIMIT_SWITCH = 1;

@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
-import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Shoulder;
+import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Claw.ClawPosition;
@@ -39,7 +40,8 @@ public class RobotContainer {
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
 //    public static final Camera camera = new Camera();
-    public static final Arm arm = new Arm();
+    public static final Shoulder shoulder = new Shoulder();
+    public static final Wrist wrist = new Wrist();
     public static final Claw claw = new Claw();
 
     // Controllers
@@ -121,9 +123,9 @@ public class RobotContainer {
 
 //       new JoystickButton(controller. )
 
-        arm.setDefaultCommand(new RunCommand(() -> {
-            arm.driveWrist(MathUtil.applyDeadband(-controller.getLeftY() / 2.0, 0.06));
-        }, arm));
+        wrist.setDefaultCommand(new RunCommand(() -> {
+            wrist.drive(MathUtil.applyDeadband(-controller.getLeftY() / 2.0, 0.06));
+        }, wrist));
     }
 
     public Command getAutonomousCommand() {
