@@ -122,7 +122,6 @@ public class RobotContainer {
 //       new JoystickButton(controller. )
 
         arm.setDefaultCommand(new RunCommand(() -> {
-            arm.driveShoulder(MathUtil.applyDeadband(controller.getRightY() / 2.0, 0.06));
             arm.driveWrist(MathUtil.applyDeadband(-controller.getLeftY() / 2.0, 0.06));
         }, arm));
     }

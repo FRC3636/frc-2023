@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,7 +20,9 @@ public class Arm extends SubsystemBase {
     private final AbsoluteEncoder shoulderEncoder = shoulder1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
     private final ArmFeedforward shoulderFeedforward = new ArmFeedforward(Constants.Arm.SHOULDER_KS, Constants.Arm.SHOULDER_KG,
             Constants.Arm.SHOULDER_KV, Constants.Arm.SHOULDER_KA);
-    private final ShoulderPosition shoulderTarget = ShoulderPosition.Stowed;
+    private final PIDController shoulderPID = new PIDController(Constants.Arm.SHOULDER_KP, Constants.Arm.SHOULDER_KI,
+            Constants.Arm.SHOULDER_KD);
+    private ShoulderPosition shoulderTarget = ShoulderPosition.Stowed;
 
     private final CANSparkMax wrist = new CANSparkMax(Constants.Arm.WRIST_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final DigitalInput wristLimitSwitch = new DigitalInput(Constants.Arm.WRIST_LIMIT_SWITCH);
@@ -31,14 +34,14 @@ public class Arm extends SubsystemBase {
         shoulder1.setSmartCurrentLimit(40);
         shoulder2.setSmartCurrentLimit(40);
         shoulder2.follow(shoulder1, true);
-        shoulderEncoder.setPositionConversionFactor(Units.rotationsToDegrees(Constants.Arm.SHOULDER_GEAR_RATIO));
+        shoulderEncoder.setPositionConversionFactor(Units.rotationsToDegrees(1) * Constants.Arm.SHOULDER_GEAR_RATIO);
 
         wrist.setIdleMode(CANSparkMax.IdleMode.kBrake);
         wrist.getEncoder().setPositionConversionFactor(Units.rotationsToDegrees(Constants.Arm.SHOULDER_GEAR_RATIO));
     }
 
-    public void driveShoulder(double speed) {
-        shoulder1.set(speed);
+    public void setShoulderPosition(ShoulderPosition pos) {
+        shoulderTarget = pos;
     }
 
     public void driveWrist(double speed) {
@@ -50,7 +53,10 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putNumber("Shoulder Angle", shoulderEncoder.getPosition());
         SmartDashboard.putNumber("Shoulder Set Point", shoulderTarget.position);
 
-        shoulder1.set(shoulderFeedforward.calculate(Units.degreesToRadians(shoulderTarget.position), 0));
+        shoulder1.set(
+            shoulderFeedforward.calculate(Units.degreesToRadians(shoulderTarget.position), 0)
+            + shoulderPID.calculate(Units.degreesToRadians(shoulderEncoder.getPosition()), Units.degreesToRadians(shoulderTarget.position))
+        );
 
         SmartDashboard.putBoolean("Wrist Limit Switch", wristLimitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", wrist.getEncoder().getPosition());

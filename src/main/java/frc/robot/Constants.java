@@ -53,6 +53,9 @@ public final class Constants {
         public static final double SHOULDER_KG = 0.0;
         public static final double SHOULDER_KV = 0.0;
         public static final double SHOULDER_KA = 0.0;
+        public static final double SHOULDER_KP = 0.0;
+        public static final double SHOULDER_KI = 0.0;
+        public static final double SHOULDER_KD = 0.0;
         public static final double SHOULDER_STOWED_ANGLE = -8;
         public static final double SHOULDER_HIGH_ANGLE = SHOULDER_STOWED_ANGLE + 104;
         public static final double SHOULDER_MID_ANGLE = 70;
