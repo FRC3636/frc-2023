@@ -12,16 +12,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shoulder extends SubsystemBase {
-    private final CANSparkMax motor1 = new CANSparkMax(Constants.Arm.SHOULDER_1_ID,
+    private final CANSparkMax motor1 = new CANSparkMax(Constants.Shoulder.SHOULDER_1_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax motor2 = new CANSparkMax(Constants.Arm.SHOULDER_2_ID,
+    private final CANSparkMax motor2 = new CANSparkMax(Constants.Shoulder.SHOULDER_2_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final AbsoluteEncoder encoder = motor1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
-    private final ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Arm.SHOULDER_KS, Constants.Arm.SHOULDER_KG,
-            Constants.Arm.SHOULDER_KV, Constants.Arm.SHOULDER_KA);
-    private final PIDController pidController = new PIDController(Constants.Arm.SHOULDER_KP, Constants.Arm.SHOULDER_KI,
-            Constants.Arm.SHOULDER_KD);
+    private final ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.SHOULDER_KS, Constants.Shoulder.SHOULDER_KG,
+            Constants.Shoulder.SHOULDER_KV, Constants.Shoulder.SHOULDER_KA);
+    private final PIDController pidController = new PIDController(Constants.Shoulder.SHOULDER_KP, Constants.Shoulder.SHOULDER_KI,
+            Constants.Shoulder.SHOULDER_KD);
 
     private Position targetPosition = Position.Stowed;
 
@@ -31,7 +31,7 @@ public class Shoulder extends SubsystemBase {
         motor1.setSmartCurrentLimit(40);
         motor2.setSmartCurrentLimit(40);
         motor2.follow(motor1, true);
-        encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Arm.SHOULDER_GEAR_RATIO);
+        encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
 
     }
 
@@ -55,10 +55,10 @@ public class Shoulder extends SubsystemBase {
     }
 
     enum Position {
-        High(Constants.Arm.SHOULDER_HIGH_ANGLE),
-        Mid(Constants.Arm.SHOULDER_MID_ANGLE),
-        Low(Constants.Arm.SHOULDER_LOW_ANGLE),
-        Stowed(Constants.Arm.SHOULDER_STOWED_ANGLE);
+        High(Constants.Shoulder.SHOULDER_HIGH_ANGLE),
+        Mid(Constants.Shoulder.SHOULDER_MID_ANGLE),
+        Low(Constants.Shoulder.SHOULDER_LOW_ANGLE),
+        Stowed(Constants.Shoulder.SHOULDER_STOWED_ANGLE);
 
         private final double position;
 

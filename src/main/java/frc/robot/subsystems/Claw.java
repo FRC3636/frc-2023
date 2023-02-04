@@ -10,18 +10,18 @@ import frc.robot.Constants;
 
 public class Claw extends SubsystemBase {
 
-    private final CANSparkMax claw = new CANSparkMax(Constants.Arm.CLAW_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final DigitalInput clawLimitSwitch = new DigitalInput(Constants.Arm.CLAW_LIMIT_SWITCH);
+    private final CANSparkMax claw = new CANSparkMax(Constants.Claw.CLAW_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final DigitalInput clawLimitSwitch = new DigitalInput(Constants.Claw.CLAW_LIMIT_SWITCH);
     private ClawPosition clawPosition = ClawPosition.Closed;
 
-    private final CANSparkMax rollers = new CANSparkMax(Constants.Arm.ROLLERS_ID,
+    private final CANSparkMax rollers = new CANSparkMax(Constants.Claw.ROLLERS_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
 
     public Claw() {
         claw.setIdleMode(CANSparkMax.IdleMode.kBrake);
         rollers.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-        claw.getEncoder().setPositionConversionFactor(Units.rotationsToDegrees(Constants.Arm.CLAW_GEAR_RATIO));
+        claw.getEncoder().setPositionConversionFactor(Units.rotationsToDegrees(Constants.Claw.CLAW_GEAR_RATIO));
         claw.getEncoder().setPosition(clawPosition.position);
     }
 
@@ -33,14 +33,14 @@ public class Claw extends SubsystemBase {
 
         SmartDashboard.putNumber("set angle", targetAngleDifference);
         SmartDashboard.putNumber("Claw Angle", claw.getEncoder().getPosition());
-        SmartDashboard.putBoolean("running", Math.abs(targetAngleDifference) > Constants.Arm.CLAW_CLAMP_THRESHOLD);
+        SmartDashboard.putBoolean("running", Math.abs(targetAngleDifference) > Constants.Claw.CLAW_CLAMP_THRESHOLD);
 
         if (clawLimitSwitch.get()) {
             claw.getEncoder().setPosition(0);
         }
 
-        if (Math.abs(targetAngleDifference) > Constants.Arm.CLAW_CLAMP_THRESHOLD) {
-            claw.set((targetAngleDifference < 0) ? Constants.Arm.CLAW_SPEED : -Constants.Arm.CLAW_SPEED);
+        if (Math.abs(targetAngleDifference) > Constants.Claw.CLAW_CLAMP_THRESHOLD) {
+            claw.set((targetAngleDifference < 0) ? Constants.Claw.CLAW_SPEED : -Constants.Claw.CLAW_SPEED);
         } else {
             claw.set(0);
         }
@@ -51,14 +51,14 @@ public class Claw extends SubsystemBase {
     }
 
     public void runRollers(int direction) {
-        rollers.set(Constants.Arm.ROLLER_SPEED * direction);
+        rollers.set(Constants.Claw.ROLLER_SPEED * direction);
     }
 
     public enum ClawPosition {
-        Cone(Constants.Arm.CLAW_CONE_ANGLE),
-        Cube(Constants.Arm.CLAW_CUBE_ANGLE),
+        Cone(Constants.Claw.CLAW_CONE_ANGLE),
+        Cube(Constants.Claw.CLAW_CUBE_ANGLE),
         Open(0.0),
-        Closed(Constants.Arm.CLAW_CLOSED_ANGLE);
+        Closed(Constants.Claw.CLAW_CLOSED_ANGLE);
 
         private final double position;
 

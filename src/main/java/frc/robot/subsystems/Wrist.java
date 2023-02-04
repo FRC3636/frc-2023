@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Wrist extends SubsystemBase {
-    private final CANSparkMax wrist = new CANSparkMax(Constants.Arm.WRIST_ID, CANSparkMax.MotorType.kBrushless);
-    private final DigitalInput wristLimitSwitch = new DigitalInput(Constants.Arm.WRIST_LIMIT_SWITCH);
+    private final CANSparkMax wrist = new CANSparkMax(Constants.Wrist.WRIST_ID, CANSparkMax.MotorType.kBrushless);
+    private final DigitalInput wristLimitSwitch = new DigitalInput(Constants.Wrist.WRIST_LIMIT_SWITCH);
 
     public Wrist() {
         wrist.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        wrist.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Arm.WRIST_GEAR_RATIO);
+        wrist.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.WRIST_GEAR_RATIO);
     }
 
     public void drive(double speed) {

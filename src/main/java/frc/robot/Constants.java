@@ -45,7 +45,7 @@ public final class Constants {
         public static final double DRIVE_VELOCITY_KP = 1.8538;
     }
 
-    public static class Arm {
+    public static class Shoulder {
         public static final int SHOULDER_1_ID = 5;
         public static final int SHOULDER_2_ID = 6;
         public static final double SHOULDER_GEAR_RATIO = 1.0 / 2.0;
@@ -56,15 +56,20 @@ public final class Constants {
         public static final double SHOULDER_KP = 0.0;
         public static final double SHOULDER_KI = 0.0;
         public static final double SHOULDER_KD = 0.0;
-        public static final double SHOULDER_STOWED_ANGLE = Units.degreesToRadians(-8);
-        public static final double SHOULDER_HIGH_ANGLE = SHOULDER_STOWED_ANGLE + Units.degreesToRadians(104);
+        public static final double SHOULDER_STOWED_ANGLE = Units.degreesToRadians(-9);
+        public static final double SHOULDER_HIGH_ANGLE = Units.degreesToRadians(96);
         public static final double SHOULDER_MID_ANGLE = Units.degreesToRadians(70);
         public static final double SHOULDER_LOW_ANGLE = Units.degreesToRadians(20);
+    }
 
+    public static class Wrist {
         public static final int WRIST_ID = 7;
         public static final int WRIST_LIMIT_SWITCH = 1;
         public static final double WRIST_GEAR_RATIO = 1.0 / 25.0;
+        public static final double WRIST_LIMIT_SWITCH_OFFSET = -13;
+    }
 
+    public static class Claw {
         public static final int CLAW_ID = 8;
         public static final int CLAW_LIMIT_SWITCH = 0;
         public static final double CLAW_CONE_ANGLE =(25.6+54.4)/2;
@@ -78,7 +83,7 @@ public final class Constants {
         public static final int ROLLER_OUT = 1;
         public static final int ROLLER_IN = -1;
         public static final int ROLLER_OFF = 0;
-        public static final double ROLLER_SPEED = 0.25;
+        public static final double ROLLER_SPEED = 0.5;
     }
     public static class Robot {
 
