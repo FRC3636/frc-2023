@@ -64,9 +64,15 @@ public final class Constants {
 
     public static class Wrist {
         public static final int WRIST_ID = 7;
-        public static final int WRIST_LIMIT_SWITCH = 1;
+
         public static final double WRIST_GEAR_RATIO = 1.0 / 25.0;
-        public static final double WRIST_LIMIT_SWITCH_OFFSET = -13;
+
+        public static final double WRIST_KP = 0.0;
+        public static final double WRIST_KI = 0.0;
+        public static final double WRIST_KD = 0.0;
+
+        public static final int WRIST_LIMIT_SWITCH = 1;
+        public static final double WRIST_LIMIT_SWITCH_OFFSET = Units.degreesToRadians(-13);
     }
 
     public static class Claw {
