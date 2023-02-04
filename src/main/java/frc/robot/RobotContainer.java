@@ -36,6 +36,11 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class RobotContainer {
 
+// Dashboard
+    private static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
+    public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+    public static final ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
+
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
 //    public static final Camera camera = new Camera();
@@ -47,9 +52,6 @@ public class RobotContainer {
     public static final Joystick joystickRight = new Joystick(Constants.Controls.JOYSTICK_RIGHT_PORT);
     public static final XboxController controller = new XboxController(Constants.Controls.CONTROLLER_PORT);
 
-    // Dashboard
-    private static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
-    public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
 
 
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
@@ -118,12 +120,14 @@ public class RobotContainer {
 //          arm.runRollers(Constants.Arm.ROLLER_OUT);
        }));
 
+//       new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new RunCommand(arm::updateWrist));
+
 
 //       new JoystickButton(controller. )
 
         arm.setDefaultCommand(new RunCommand(() -> {
             arm.driveShoulder(MathUtil.applyDeadband(controller.getRightY() / 2.0, 0.06));
-            arm.driveWrist(MathUtil.applyDeadband(-controller.getLeftY() / 2.0, 0.06));
+            arm.driveWrist(MathUtil.applyDeadband(controller.getLeftY() / 4.0, 0));
         }, arm));
     }
 

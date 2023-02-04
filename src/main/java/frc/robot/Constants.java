@@ -49,15 +49,18 @@ public final class Constants {
         public static final int SHOULDER_1_ID = 5;
         public static final int SHOULDER_2_ID = 6;
         public static final double SHOULDER_GEAR_RATIO = 1.0 / 2.0;
-        public static final double ARM_STOWED_ANGLE = -8;
-        public static final double ARM_HIGH_ANGLE = ARM_STOWED_ANGLE + 104;
+        public static final double ARM_STOWED_ANGLE = -9;
+        public static final double ARM_HIGH_ANGLE = 96;
         public static final double ARM_MID_ANGLE = 70;
         public static final double ARM_LOW_ANGLE = 20;
 
         public static final int WRIST_ID = 7;
         public static final int WRIST_LIMIT_SWITCH = 1;
         public static final double WRIST_GEAR_RATIO = 1.0 / 25.0;
+        public static final double WRIST_LIMIT_SWITCH_OFFSET = -13;
+    }
 
+    public static class Claw {
         public static final int CLAW_ID = 8;
         public static final int CLAW_LIMIT_SWITCH = 0;
         public static final double CLAW_CONE_ANGLE =(25.6+54.4)/2;
@@ -71,7 +74,7 @@ public final class Constants {
         public static final int ROLLER_OUT = 1;
         public static final int ROLLER_IN = -1;
         public static final int ROLLER_OFF = 0;
-        public static final double ROLLER_SPEED = 0.25;
+        public static final double ROLLER_SPEED = 0.5;
     }
     public static class Robot {
 
