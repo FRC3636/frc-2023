@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +17,9 @@ public class Arm extends SubsystemBase {
     private final CANSparkMax shoulder2 = new CANSparkMax(Constants.Arm.SHOULDER_2_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final AbsoluteEncoder shoulderEncoder = shoulder1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+    private final ArmFeedforward shoulderFeedforward = new ArmFeedforward(Constants.Arm.SHOULDER_KS, Constants.Arm.SHOULDER_KG,
+            Constants.Arm.SHOULDER_KV, Constants.Arm.SHOULDER_KA);
+    private final ShoulderPosition shoulderTarget = ShoulderPosition.Stowed;
 
     private final CANSparkMax wrist = new CANSparkMax(Constants.Arm.WRIST_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final DigitalInput wristLimitSwitch = new DigitalInput(Constants.Arm.WRIST_LIMIT_SWITCH);
@@ -43,16 +48,19 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Shoulder Angle", shoulderEncoder.getPosition());
+        SmartDashboard.putNumber("Shoulder Set Point", shoulderTarget.position);
+
+        shoulder1.set(shoulderFeedforward.calculate(Units.degreesToRadians(shoulderTarget.position), 0));
 
         SmartDashboard.putBoolean("Wrist Limit Switch", wristLimitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", wrist.getEncoder().getPosition());
     }
 
     enum ShoulderPosition {
-        High(Constants.Arm.ARM_HIGH_ANGLE),
-        Mid(Constants.Arm.ARM_MID_ANGLE),
-        Low(Constants.Arm.ARM_LOW_ANGLE),
-        Stowed(Constants.Arm.ARM_STOWED_ANGLE);
+        High(Constants.Arm.SHOULDER_HIGH_ANGLE),
+        Mid(Constants.Arm.SHOULDER_MID_ANGLE),
+        Low(Constants.Arm.SHOULDER_LOW_ANGLE),
+        Stowed(Constants.Arm.SHOULDER_STOWED_ANGLE);
         private final double position;
 
         ShoulderPosition(double position) {
