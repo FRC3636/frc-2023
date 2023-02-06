@@ -23,7 +23,7 @@ public class Shoulder extends SubsystemBase {
     private final PIDController pidController = new PIDController(Constants.Shoulder.SHOULDER_KP, Constants.Shoulder.SHOULDER_KI,
             Constants.Shoulder.SHOULDER_KD);
 
-    private Position targetPosition = Position.Stowed;
+    private Position targetPosition = null;
 
     public Shoulder() {
         motor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -32,7 +32,6 @@ public class Shoulder extends SubsystemBase {
         motor2.setSmartCurrentLimit(40);
         motor2.follow(motor1, true);
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
-
     }
 
     public void setTargetPosition(Position pos) {
@@ -48,13 +47,18 @@ public class Shoulder extends SubsystemBase {
         SmartDashboard.putNumber("Shoulder Angle", encoder.getPosition());
         SmartDashboard.putNumber("Shoulder Set Point", targetPosition.position);
 
+        if (targetPosition == null) {
+            motor1.set(0);
+            return;
+        }
+
         motor1.set(
-            feedforwardController.calculate(targetPosition.position, 0)
-            + pidController.calculate(encoder.getPosition(), targetPosition.position)
+            feedforwardController.calculate(targetPosition.position + Math.PI / 2, 0)
+            + pidController.calculate(signedModularDistance(targetPosition.position, encoder.getPosition(), 2 * Math.PI), 0)
         );
     }
 
-    enum Position {
+    public enum Position {
         High(Constants.Shoulder.SHOULDER_HIGH_ANGLE),
         Mid(Constants.Shoulder.SHOULDER_MID_ANGLE),
         Low(Constants.Shoulder.SHOULDER_LOW_ANGLE),
@@ -64,6 +68,26 @@ public class Shoulder extends SubsystemBase {
 
         Position(double position) {
             this.position = position;
+        }
+    }
+
+        static double signedModularDistance(double a, double b, double modulus) {
+        a = (a % modulus + a) % modulus;
+        b = (b % modulus + b) % modulus;
+
+        double posDist, negDist;
+        if (b >= a) {
+            posDist = b - a;
+            negDist = a + (modulus - b);
+        } else {
+            posDist = b + (modulus - a);
+            negDist = a - b;
+        }
+
+        if (posDist > negDist) {
+            return posDist;
+        } else {
+            return -negDist;
         }
     }
 }

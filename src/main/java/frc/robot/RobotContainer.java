@@ -127,9 +127,22 @@ public class RobotContainer {
 
 //       new JoystickButton(controller. )
 
-        wrist.setDefaultCommand(new RunCommand(() -> {
-            wrist.drive(MathUtil.applyDeadband(-controller.getLeftY() / 2.0, 0.06));
-        }, wrist));
+       shoulder.setDefaultCommand(new RunCommand(() -> {
+           shoulder.setTargetPosition(null);
+       }, shoulder));
+
+       new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new RunCommand(() -> {
+           shoulder.setTargetPosition(Shoulder.Position.Stowed);
+       }));
+       new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new RunCommand(() -> {
+           shoulder.setTargetPosition(Shoulder.Position.Low);
+       }));
+       new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new RunCommand(() -> {
+           shoulder.setTargetPosition(Shoulder.Position.Mid);
+       }));
+       new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new RunCommand(() -> {
+           shoulder.setTargetPosition(Shoulder.Position.High);
+       }));
     }
 
     public Command getAutonomousCommand() {
