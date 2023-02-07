@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +18,7 @@ public class Claw extends SubsystemBase {
 
     private final CANSparkMax rollers = new CANSparkMax(Constants.Claw.ROLLERS_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final PIDController clawPID = new PIDController(0.1, 0, 0);
 
     public Claw() {
         claw.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -39,11 +42,7 @@ public class Claw extends SubsystemBase {
             claw.getEncoder().setPosition(0);
         }
 
-        if (Math.abs(targetAngleDifference) > Constants.Claw.CLAW_CLAMP_THRESHOLD) {
-            claw.set((targetAngleDifference < 0) ? Constants.Claw.CLAW_SPEED : -Constants.Claw.CLAW_SPEED);
-        } else {
-            claw.set(0);
-        }
+        claw.set(clawPID.calculate(clawPosition.position, claw.getEncoder().getPosition()));
     }
 
     public void setClawPosition(ClawPosition position) {
