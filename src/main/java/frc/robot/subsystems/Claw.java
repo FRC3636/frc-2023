@@ -48,8 +48,10 @@ public class Claw extends SubsystemBase {
          if(clawPosition == ClawPosition.Open && !clawLimitSwitch.get()){
             claw.set(-Constants.Claw.CLAW_SPEED);
         }else{
+            
             claw.set(clawPID.calculate(claw.getEncoder().getPosition(), clawPosition.position));
         }
+        
 
         if (clawLimitSwitch.get()) {
             claw.getEncoder().setPosition(0);
@@ -60,9 +62,6 @@ public class Claw extends SubsystemBase {
         }
     }
 
-    public void temporaryUpdateClaw() {
-        
-    }
 
     public void tempStopClaw() {
         claw.set(0);

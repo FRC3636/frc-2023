@@ -117,13 +117,15 @@ public class RobotContainer {
         new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
                 .whileTrue(new IntakeCommand(claw, ClawPosition.Cone));
 
-        new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
-                .whileTrue(new RunCommand(claw::temporaryUpdateClaw))
-                .onFalse(new InstantCommand(claw::tempStopClaw));
-
+        new Trigger(() -> controller.getLeftTriggerAxis() > 0.05).onTrue(new InstantCommand(() -> {
+                claw.setClawPosition(ClawPosition.Open);
+        }));
+        
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(new InstantCommand(() -> {
-            claw.setClawPosition(Claw.ClawPosition.Open);
-            // arm.runRollers(Constants.Arm.ROLLER_OUT);
+            claw.setClawPosition(Claw.ClawPosition.Cube);
+            claw.runRollers(Constants.Claw.ROLLER_OUT);
+        })).onFalse(new InstantCommand(() -> {
+            claw.runRollers(Constants.Claw.ROLLER_OFF);
         }));
 
         // new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new
