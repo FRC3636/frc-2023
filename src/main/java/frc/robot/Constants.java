@@ -48,11 +48,11 @@ public final class Constants {
     public static class Shoulder {
         public static final int SHOULDER_1_ID = 5;
         public static final int SHOULDER_2_ID = 6;
-        public static final double SHOULDER_GEAR_RATIO = 1.0 / 2.0;
-        public static final double SHOULDER_KS = 0.0;
-        public static final double SHOULDER_KG = 0.0;
-        public static final double SHOULDER_KV = 0.0;
-        public static final double SHOULDER_KA = 0.0;
+        public static final double SHOULDER_GEAR_RATIO = 15.0 / 36.0;
+        public static final double SHOULDER_KS = 0.2062;
+        public static final double SHOULDER_KG = 0.17306;
+        public static final double SHOULDER_KV = 1.3782;
+        public static final double SHOULDER_KA = 0.0642;
         public static final double SHOULDER_KP = 0.0;
         public static final double SHOULDER_KI = 0.0;
         public static final double SHOULDER_KD = 0.0;
@@ -65,14 +65,19 @@ public final class Constants {
     public static class Wrist {
         public static final int WRIST_ID = 7;
 
-        public static final double WRIST_GEAR_RATIO = 1.0 / 25.0;
+        public static final double WRIST_GEAR_RATIO = 1.0 / 75.0;
 
-        public static final double WRIST_KP = 0.0;
-        public static final double WRIST_KI = 0.0;
-        public static final double WRIST_KD = 0.0;
+        public static final double WRIST_KP = 5.0;
+        public static final double WRIST_KI = 10.0;
+        public static final double WRIST_KD = 0.025;
+
+        public static final double WRIST_KS = 0.075;
+        public static final double WRIST_KG = 0.15;
+        public static final double WRIST_KV = 0.0;
+        public static final double WRIST_KA = 0.0;
 
         public static final int WRIST_LIMIT_SWITCH = 1;
-        public static final double WRIST_LIMIT_SWITCH_OFFSET = Units.degreesToRadians(-13);
+        public static final double WRIST_LIMIT_SWITCH_OFFSET = Units.degreesToRadians(13);
     }
 
     public static class Claw {

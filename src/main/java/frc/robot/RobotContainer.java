@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.Wrist;
-import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Claw.ClawPosition;
 import frc.robot.subsystems.Drivetrain;
@@ -122,14 +120,8 @@ public class RobotContainer {
 //          arm.runRollers(Constants.Arm.ROLLER_OUT);
        }));
 
-//       new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new RunCommand(arm::updateWrist));
-
-
-//       new JoystickButton(controller. )
-
-        wrist.setDefaultCommand(new RunCommand(() -> {
-            wrist.drive(MathUtil.applyDeadband(-controller.getLeftY() / 2.0, 0.06));
-        }, wrist));
+       new JoystickButton(controller, XboxController.Button.kStart.value)
+               .whileTrue(new RunCommand(wrist::temporaryUpdateWrist));
     }
 
     public Command getAutonomousCommand() {

@@ -33,6 +33,7 @@ public class Shoulder extends SubsystemBase {
         motor2.follow(motor1, true);
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
 
+        encoder.setInverted(true);
     }
 
     public void setTargetPosition(Position pos) {
@@ -40,7 +41,7 @@ public class Shoulder extends SubsystemBase {
     }
 
     public double getActualPosition() {
-        return encoder.getPosition();
+        return encoder.getPosition() > 180 - 20 ? encoder.getPosition() - 180 : encoder.getPosition();
     }
 
     @Override
@@ -48,10 +49,12 @@ public class Shoulder extends SubsystemBase {
         SmartDashboard.putNumber("Shoulder Angle", encoder.getPosition());
         SmartDashboard.putNumber("Shoulder Set Point", targetPosition.position);
 
-        motor1.set(
-            feedforwardController.calculate(targetPosition.position, 0)
-            + pidController.calculate(encoder.getPosition(), targetPosition.position)
-        );
+
+        //FIXME
+//        motor1.set(
+//            feedforwardController.calculate(targetPosition.position, 0)
+//            + pidController.calculate(encoder.getPosition(), targetPosition.position)
+//        );
     }
 
     enum Position {
