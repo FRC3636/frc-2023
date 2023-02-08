@@ -37,14 +37,14 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class RobotContainer {
 
-// Dashboard
+    // Dashboard
     private static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
     public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     public static final ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
 
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
-//    public static final Camera camera = new Camera();
+    // public static final Camera camera = new Camera();
     public static final Shoulder shoulder = new Shoulder();
     public static final Wrist wrist = new Wrist();
     public static final Claw claw = new Claw();
@@ -53,8 +53,6 @@ public class RobotContainer {
     public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_LEFT_PORT);
     public static final Joystick joystickRight = new Joystick(Constants.Controls.JOYSTICK_RIGHT_PORT);
     public static final XboxController controller = new XboxController(Constants.Controls.CONTROLLER_PORT);
-
-
 
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
     private static GenericEntry driveSchemeEntry;
@@ -92,57 +90,63 @@ public class RobotContainer {
             final double speedSensitivity = config.getSpeedSensitivity();
             final double turnSensitivity = config.getTurnSensitivity();
 
-
             switch (config.getDriveScheme()) {
                 case Arcade:
                     drivetrain.arcadeDrive(forward / speedSensitivity, turn / turnSensitivity);
                     break;
                 case ArcadeSingle:
-                    drivetrain.arcadeDrive(forward / speedSensitivity, RobotContainer.joystickLeft.getX() / turnSensitivity);
+                    drivetrain.arcadeDrive(forward / speedSensitivity,
+                            RobotContainer.joystickLeft.getX() / turnSensitivity);
                     break;
                 case Tank:
-                    drivetrain.tankDrive(forward / speedSensitivity, -RobotContainer.joystickRight.getY() / speedSensitivity);
+                    drivetrain.tankDrive(forward / speedSensitivity,
+                            -RobotContainer.joystickRight.getY() / speedSensitivity);
                     break;
             }
         }, drivetrain));
 
-//        new JoystickButton(joystickLeft, 1).onTrue(new InstantCommand(() -> {
-//            if (camera.getRobotPose() != null) {
-//                drivetrain.resetOdometryTo(camera.getRobotPose());
-//            }
-//        }));
+        // new JoystickButton(joystickLeft, 1).onTrue(new InstantCommand(() -> {
+        // if (camera.getRobotPose() != null) {
+        // drivetrain.resetOdometryTo(camera.getRobotPose());
+        // }
+        // }));
 
-       new JoystickButton(controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(claw, ClawPosition.Cube));
+        new JoystickButton(controller, XboxController.Button.kRightBumper.value)
+                .whileTrue(new IntakeCommand(claw, ClawPosition.Cube));
 
-       new Trigger(() -> controller.getRightTriggerAxis() > 0.05).whileTrue(new IntakeCommand(claw, ClawPosition.Cone));
+        new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
+                .whileTrue(new IntakeCommand(claw, ClawPosition.Cone));
 
+        new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
+                .whileTrue(new RunCommand(claw::temporaryUpdateClaw))
+                .onFalse(new InstantCommand(claw::tempStopClaw));
 
-       new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(new InstantCommand(() -> {
-          claw.setClawPosition(Claw.ClawPosition.Open);
-//          arm.runRollers(Constants.Arm.ROLLER_OUT);
-       }));
+        new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(new InstantCommand(() -> {
+            claw.setClawPosition(Claw.ClawPosition.Open);
+            // arm.runRollers(Constants.Arm.ROLLER_OUT);
+        }));
 
-//       new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new RunCommand(arm::updateWrist));
+        // new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new
+        // RunCommand(arm::updateWrist));
 
+        // new JoystickButton(controller. )
 
-//       new JoystickButton(controller. )
+        shoulder.setDefaultCommand(new RunCommand(() -> {
+            shoulder.setTargetPosition(null);
+        }, shoulder));
 
-       shoulder.setDefaultCommand(new RunCommand(() -> {
-           shoulder.setTargetPosition(null);
-       }, shoulder));
-
-       new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new RunCommand(() -> {
-           shoulder.setTargetPosition(Shoulder.Position.Stowed);
-       }));
-       new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new RunCommand(() -> {
-           shoulder.setTargetPosition(Shoulder.Position.Low);
-       }));
-       new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new RunCommand(() -> {
-           shoulder.setTargetPosition(Shoulder.Position.Mid);
-       }));
-       new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new RunCommand(() -> {
-           shoulder.setTargetPosition(Shoulder.Position.High);
-       }));
+        new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new RunCommand(() -> {
+            shoulder.setTargetPosition(Shoulder.Position.Stowed);
+        }));
+        new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new RunCommand(() -> {
+            shoulder.setTargetPosition(Shoulder.Position.Low);
+        }));
+        new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new RunCommand(() -> {
+            shoulder.setTargetPosition(Shoulder.Position.Mid);
+        }));
+        new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new RunCommand(() -> {
+            shoulder.setTargetPosition(Shoulder.Position.High);
+        }));
     }
 
     public Command getAutonomousCommand() {

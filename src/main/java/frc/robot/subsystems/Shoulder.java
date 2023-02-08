@@ -45,7 +45,7 @@ public class Shoulder extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Shoulder Angle", encoder.getPosition());
-        SmartDashboard.putNumber("Shoulder Set Point", targetPosition.position);
+        SmartDashboard.putNumber("Shoulder Set Point", targetPosition == null ? Double.NaN : targetPosition.position);
 
         if (targetPosition == null) {
             motor1.set(0);

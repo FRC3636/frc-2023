@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 
 public class Drivetrain implements Subsystem {
     private final WPI_TalonFX leftMotor1, leftMotor2, rightMotor1, rightMotor2;
