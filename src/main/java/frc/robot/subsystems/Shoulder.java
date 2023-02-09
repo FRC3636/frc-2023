@@ -7,9 +7,12 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import org.opencv.core.Mat;
 
 public class Shoulder extends SubsystemBase {
     private final CANSparkMax motor1 = new CANSparkMax(Constants.Shoulder.SHOULDER_1_ID,
@@ -18,7 +21,7 @@ public class Shoulder extends SubsystemBase {
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final AbsoluteEncoder encoder = motor1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
-    private final ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.SHOULDER_KS, Constants.Shoulder.SHOULDER_KG,
+    private ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.SHOULDER_KS, Constants.Shoulder.SHOULDER_KG,
             Constants.Shoulder.SHOULDER_KV, Constants.Shoulder.SHOULDER_KA);
     private final PIDController pidController = new PIDController(Constants.Shoulder.SHOULDER_KP, Constants.Shoulder.SHOULDER_KI,
             Constants.Shoulder.SHOULDER_KD);
@@ -33,6 +36,9 @@ public class Shoulder extends SubsystemBase {
         motor2.follow(motor1, true);
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
 
+        RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
+
+        motor1.setInverted(true);
         encoder.setInverted(true);
     }
 
@@ -40,13 +46,18 @@ public class Shoulder extends SubsystemBase {
         targetPosition = pos;
     }
 
+    public void tempDriveVoltage(double voltage) {
+        motor1.setVoltage(feedforwardController.calculate(getActualPosition() - Math.PI / 2, voltage) + voltage * 4);
+    }
+
     public double getActualPosition() {
-        return encoder.getPosition();
+        return encoder.getPosition() > ((2*Math.PI) * Constants.Shoulder.SHOULDER_GEAR_RATIO - Math.PI / 8) ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.SHOULDER_GEAR_RATIO): encoder.getPosition();
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Shoulder Angle", encoder.getPosition());
+        SmartDashboard.putNumber("Shoulder Angle", getActualPosition());
+        SmartDashboard.putNumber("Shoulder Angle Measured", encoder.getPosition());
         SmartDashboard.putNumber("Shoulder Set Point", targetPosition == null ? Double.NaN : targetPosition.position);
 
         if (targetPosition == null) {
@@ -54,9 +65,9 @@ public class Shoulder extends SubsystemBase {
             return;
         }
 
-        motor1.set(
-            feedforwardController.calculate(targetPosition.position + Math.PI / 2, 0)
-            + pidController.calculate(signedModularDistance(targetPosition.position, encoder.getPosition(), 2 * Math.PI), 0)
+        motor1.setVoltage(
+            feedforwardController.calculate(getActualPosition() - Math.PI / 2, getActualPosition() - targetPosition.position)
+            + pidController.calculate(getActualPosition(), targetPosition.position)
         );
     }
 

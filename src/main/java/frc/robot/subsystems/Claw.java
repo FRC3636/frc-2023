@@ -55,16 +55,10 @@ public class Claw extends SubsystemBase {
 
         if (clawLimitSwitch.get()) {
             claw.getEncoder().setPosition(0);
-            if(clawPosition == ClawPosition.Open){
+            if(claw.getEncoder().getPosition() - clawPosition.position > 0) {
                 claw.set(0);
             }
-            
         }
-    }
-
-
-    public void tempStopClaw() {
-        claw.set(0);
     }
 
     public void setClawPosition(ClawPosition position) {

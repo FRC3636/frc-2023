@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.MeasureFF;
 import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Claw;
@@ -129,22 +131,26 @@ public class RobotContainer {
        new JoystickButton(controller, XboxController.Button.kStart.value)
                .whileTrue(new RunCommand(wrist::temporaryUpdateWrist));
 
+//        new JoystickButton(controller, XboxController.Button.kBack.value)
+//                .whileTrue(new MeasureFF(shoulder));
+
         shoulder.setDefaultCommand(new RunCommand(() -> {
             shoulder.setTargetPosition(null);
+            shoulder.tempDriveVoltage(MathUtil.applyDeadband(controller.getRightY(), 0.06)); //FIXME
         }, shoulder));
 
         new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new RunCommand(() -> {
             shoulder.setTargetPosition(Shoulder.Position.Stowed);
-        }));
+        }, shoulder));
         new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new RunCommand(() -> {
             shoulder.setTargetPosition(Shoulder.Position.Low);
-        }));
+        }, shoulder));
         new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new RunCommand(() -> {
             shoulder.setTargetPosition(Shoulder.Position.Mid);
-        }));
+        }, shoulder));
         new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new RunCommand(() -> {
             shoulder.setTargetPosition(Shoulder.Position.High);
-        }));
+        }, shoulder));
     }
 
     public Command getAutonomousCommand() {
