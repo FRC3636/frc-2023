@@ -37,7 +37,7 @@ public class Claw extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Claw Limit Switch", clawLimitSwitch.get());
+        SmartDashboard.putBoolean("Claw Limit Switch", !clawLimitSwitch.get());
 
         double targetAngleDifference = Units.rotationsToRadians(claw.getEncoder().getPosition()) - clawPosition.position;
 
@@ -48,12 +48,11 @@ public class Claw extends SubsystemBase {
          if(clawPosition == ClawPosition.Open && !clawLimitSwitch.get()){
             claw.set(-Constants.Claw.CLAW_SPEED);
         }else{
-            
             claw.set(clawPID.calculate(claw.getEncoder().getPosition(), clawPosition.position));
         }
         
 
-        if (clawLimitSwitch.get()) {
+        if (!clawLimitSwitch.get()) {
             claw.getEncoder().setPosition(0);
             if(claw.getEncoder().getPosition() - clawPosition.position > 0) {
                 claw.set(0);

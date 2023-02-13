@@ -29,7 +29,6 @@ public class IntakeCommand extends CommandBase {
   @Override
   public void initialize() {
     claw.setClawPosition(position);
-    claw.runRollers(Constants.Claw.ROLLER_IN);
   }
 
   // Called once the command ends or is interrupted.
