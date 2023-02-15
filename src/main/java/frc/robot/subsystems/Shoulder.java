@@ -39,6 +39,7 @@ public class Shoulder extends SubsystemBase {
         motor2.setSmartCurrentLimit(40);
         motor2.follow(motor1, true);
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
+        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
 
         // RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
 

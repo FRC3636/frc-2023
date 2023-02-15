@@ -73,14 +73,14 @@ public final class Constants {
 
         public static final double WRIST_GEAR_RATIO = 1.0 / 75.0;
 
-        public static final double WRIST_KP = 5.0;
-        public static final double WRIST_KI = 10.0;
-        public static final double WRIST_KD = 0.025;
+        public static final double WRIST_KP = 1.5;
+        public static final double WRIST_KI = 0.0;
+        public static final double WRIST_KD = 0.0;
 
-        public static final double WRIST_KS = 0.075;
-        public static final double WRIST_KG = 0.15;
-        public static final double WRIST_KV = 0.0;
-        public static final double WRIST_KA = 0.0;
+        public static final double WRIST_KS = 0.14588;
+        public static final double WRIST_KG = 0.13063;
+        public static final double WRIST_KV = 1.4242;
+        public static final double WRIST_KA = 0.052069;
 
         public static final int WRIST_LIMIT_SWITCH = 1;
         public static final double WRIST_LIMIT_SWITCH_OFFSET = Units.degreesToRadians(13);
