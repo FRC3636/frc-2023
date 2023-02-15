@@ -90,11 +90,12 @@ public final class Constants {
         public static final int CLAW_ID = 8;
         public static final int CLAW_LIMIT_SWITCH = 0;
         public static final double CLAW_CONE_ANGLE = Units.degreesToRadians(70);
-        public static final double CLAW_CUBE_ANGLE = Units.degreesToRadians(25.6);
+        public static final double CLAW_CUBE_ANGLE = Units.degreesToRadians(23.3);
         public static final double CLAW_CLOSED_ANGLE = Units.degreesToRadians(54.4);
-        public static final double CLAW_SPEED = 0.3;
+        public static final double CLAW_SPEED = 0.2;
         public static final double CLAW_CLAMP_THRESHOLD = 15.0;
-        public static final double CLAW_GEAR_RATIO = 19.0 / (36.0 * 100.0);
+        public static final double CLAW_GEAR_RATIO = 19.0 / (40*100);
+        public static final double CLAW_ANGLE_THRESHOLD = Units.degreesToRadians(10);
 
         public static final int ROLLERS_ID = 9;
         public static final int ROLLER_OUT = 1;

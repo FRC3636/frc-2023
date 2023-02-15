@@ -16,12 +16,12 @@ public class Claw extends SubsystemBase {
 
     private final CANSparkMax claw = new CANSparkMax(Constants.Claw.CLAW_ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private final DigitalInput clawLimitSwitch = new DigitalInput(Constants.Claw.CLAW_LIMIT_SWITCH);
-    private ClawPosition clawPosition = ClawPosition.Open;
+    private ClawPosition clawPosition = ClawPosition.Cube;
 
     private final CANSparkMax rollers = new CANSparkMax(Constants.Claw.ROLLERS_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    private final PIDController clawPID = new PIDController(2, 0, 0);
+    private final PIDController clawPID = new PIDController(2, 0.1, 0);
 
     public Claw() {
 
@@ -37,28 +37,34 @@ public class Claw extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Claw Limit Switch", !clawLimitSwitch.get());
+        SmartDashboard.putBoolean("Claw Limit Switch", clawLimitSwitch.get());
 
+        boolean inThreshold = Math.abs(Units.rotationsToRadians(claw.getEncoder().getPosition()) - ClawPosition.Open.position) < Constants.Claw.CLAW_ANGLE_THRESHOLD;
         double targetAngleDifference = Units.rotationsToRadians(claw.getEncoder().getPosition()) - clawPosition.position;
 
         SmartDashboard.putNumber("set angle", targetAngleDifference);
-        SmartDashboard.putNumber("Claw Angle", claw.getEncoder().getPosition());
+        SmartDashboard.putNumber("Claw Angle", Units.rotationsToRadians(claw.getEncoder().getPosition()));
+        SmartDashboard.putBoolean("In Threshold", inThreshold);
         
 
-         if(clawPosition == ClawPosition.Open && !clawLimitSwitch.get()){
-            claw.set(-Constants.Claw.CLAW_SPEED);
-        }else{
-            claw.set(clawPID.calculate(claw.getEncoder().getPosition(), clawPosition.position));
-        }
-        
 
-        if (!clawLimitSwitch.get()) {
-            claw.getEncoder().setPosition(0);
-            if(claw.getEncoder().getPosition() - clawPosition.position > 0) {
-                claw.set(0);
+
+        if(clawPosition == ClawPosition.Open  && !inThreshold){
+            if(clawLimitSwitch.get()){
+                claw.set(-Constants.Claw.CLAW_SPEED);
+            }else{
+                claw.getEncoder().setPosition(0);
             }
+        }else{
+        
+            if(!clawLimitSwitch.get()){
+                claw.getEncoder().setPosition(0);
+            }
+        claw.set(clawPID.calculate(claw.getEncoder().getPosition(), clawPosition.position));
         }
+
     }
+
 
     public void setClawPosition(ClawPosition position) {
         this.clawPosition = position;
