@@ -55,14 +55,14 @@ public class Shoulder extends SubsystemBase {
     }
 
     public double getActualVelocity() {
-        return encoder.getVelocity() * Constants.Shoulder.SHOULDER_GEAR_RATIO;
+        return encoder.getVelocity();
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Shoulder Angle", getActualPosition());
+        SmartDashboard.putNumber("Shoulder Velocity", getActualVelocity());
         SmartDashboard.putNumber("Shoulder Angle Measured", encoder.getPosition());
-
     }
 
     /// Run the shoulder at the given setpoints using the feedforward and feedback controllers.
