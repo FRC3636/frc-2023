@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ShoulderHoldCommand;
+import frc.robot.commands.ShoulderMoveCommand;
 // import frc.robot.commands.MeasureFF;
 import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.Wrist;
@@ -134,23 +136,12 @@ public class RobotContainer {
 //        new JoystickButton(controller, XboxController.Button.kBack.value)
 //                .whileTrue(new MeasureFF(shoulder));
 
-        shoulder.setDefaultCommand(new RunCommand(() -> {
-            shoulder.setTargetPosition(null);
-            shoulder.tempDriveVoltage(MathUtil.applyDeadband(-controller.getRightY(), 0.06)); //FIXME
-        }, shoulder));
+        shoulder.setDefaultCommand(new ShoulderHoldCommand(shoulder));
 
-        new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new RunCommand(() -> {
-            shoulder.setTargetPosition(Shoulder.Position.Stowed);
-        }, shoulder));
-        new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new RunCommand(() -> {
-            shoulder.setTargetPosition(Shoulder.Position.Low);
-        }, shoulder));
-        new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new RunCommand(() -> {
-            shoulder.setTargetPosition(Shoulder.Position.Mid);
-        }, shoulder));
-        new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new RunCommand(() -> {
-            shoulder.setTargetPosition(Shoulder.Position.High);
-        }, shoulder));
+        new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new ShoulderMoveCommand(shoulder, Constants.Shoulder.SHOULDER_STOWED_ANGLE));
+        new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new ShoulderMoveCommand(shoulder, Constants.Shoulder.SHOULDER_LOW_ANGLE));
+        new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new ShoulderMoveCommand(shoulder, Constants.Shoulder.SHOULDER_MID_ANGLE));
+        new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new ShoulderMoveCommand(shoulder, Constants.Shoulder.SHOULDER_HIGH_ANGLE));
     }
 
     public Command getAutonomousCommand() {

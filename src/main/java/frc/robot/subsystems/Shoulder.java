@@ -28,8 +28,6 @@ public class Shoulder extends SubsystemBase {
     private final PIDController pidController = new PIDController(Constants.Shoulder.SHOULDER_KP, Constants.Shoulder.SHOULDER_KI,
             Constants.Shoulder.SHOULDER_KD);
 
-    private Position targetPosition = null;
-
 //    private TrapezoidProfile trapezoidProfile = new TrapezoidProfile();
 
 //    private TrapezoidProfileCommand
@@ -42,55 +40,42 @@ public class Shoulder extends SubsystemBase {
         motor2.follow(motor1, true);
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
 
-        RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
+        // RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
 
         motor1.setInverted(true);
         encoder.setInverted(true);
     }
 
-    public void setTargetPosition(Position pos) {
-        targetPosition = pos;
-    }
-
-    public void tempDriveVoltage(double voltage) {
-
-        motor1.setVoltage(feedforwardController.calculate(getActualPosition() - Math.PI / 2, voltage) + voltage * 4);
-        SmartDashboard.putNumber("Arm Feed Forward", feedforwardController.calculate(getActualPosition() - Math.PI / 2, voltage));
-    }
-
     public double getActualPosition() {
-        return encoder.getPosition() > ((2*Math.PI) * Constants.Shoulder.SHOULDER_GEAR_RATIO - Math.PI / 8) ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.SHOULDER_GEAR_RATIO): encoder.getPosition();
+        return encoder.getPosition() 
+            > ((2*Math.PI) * Constants.Shoulder.SHOULDER_GEAR_RATIO - Math.PI / 8) 
+                ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.SHOULDER_GEAR_RATIO)
+                : encoder.getPosition();
+    }
+
+    public double getActualVelocity() {
+        return encoder.getVelocity() * Constants.Shoulder.SHOULDER_GEAR_RATIO;
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Shoulder Angle", getActualPosition());
         SmartDashboard.putNumber("Shoulder Angle Measured", encoder.getPosition());
-        SmartDashboard.putNumber("Shoulder Set Point", targetPosition == null ? Double.NaN : targetPosition.position);
 
-        if (targetPosition == null) {
-            motor1.set(0);
-            return;
-        }
-
-        motor1.setVoltage(
-            feedforwardController.calculate(getActualPosition() - Math.PI / 2, targetPosition.position - getActualPosition())
-            + pidController.calculate(getActualPosition(), targetPosition.position)
-        );
-        SmartDashboard.putNumber("Arm Feed Forward 2", feedforwardController.calculate(getActualPosition() - Math.PI / 2,  targetPosition.position - getActualPosition()));
     }
 
-    public enum Position {
-        High(Constants.Shoulder.SHOULDER_HIGH_ANGLE),
-        Mid(Constants.Shoulder.SHOULDER_MID_ANGLE),
-        Low(Constants.Shoulder.SHOULDER_LOW_ANGLE),
-        Stowed(Constants.Shoulder.SHOULDER_STOWED_ANGLE);
+    /// Run the shoulder at the given setpoints using the feedforward and feedback controllers.
+    /// @param position The position setpoint. Measured in radians from the vertical.
+    /// @param velocity The velocity setpoint. Measured in radians per second.
+    /// @param acceleration The acceleration setpoint. Measured in radians per second squared.
+    public void runWithSetpoint(double position, double velocity, double acceleration) {
+        velocity += pidController.calculate(signedModularDistance(getActualPosition(), position, Math.PI * 2), 0);
 
-        private final double position;
+        double voltage = feedforwardController.calculate(position - Math.PI / 2, velocity, acceleration);
 
-        Position(double position) {
-            this.position = position;
-        }
+        motor1.setVoltage(voltage);
+
+        SmartDashboard.putNumber("Shoulder Applied Voltage", voltage);
     }
 
     static double signedModularDistance(double a, double b, double modulus) {
