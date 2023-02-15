@@ -136,7 +136,7 @@ public class RobotContainer {
 
         shoulder.setDefaultCommand(new RunCommand(() -> {
             shoulder.setTargetPosition(null);
-            shoulder.tempDriveVoltage(MathUtil.applyDeadband(controller.getRightY(), 0.06)); //FIXME
+            shoulder.tempDriveVoltage(MathUtil.applyDeadband(-controller.getRightY(), 0.06)); //FIXME
         }, shoulder));
 
         new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new RunCommand(() -> {

@@ -6,10 +6,12 @@ import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import org.opencv.core.Mat;
@@ -27,6 +29,10 @@ public class Shoulder extends SubsystemBase {
             Constants.Shoulder.SHOULDER_KD);
 
     private Position targetPosition = null;
+
+//    private TrapezoidProfile trapezoidProfile = new TrapezoidProfile();
+
+//    private TrapezoidProfileCommand
 
     public Shoulder() {
         motor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -47,7 +53,9 @@ public class Shoulder extends SubsystemBase {
     }
 
     public void tempDriveVoltage(double voltage) {
+
         motor1.setVoltage(feedforwardController.calculate(getActualPosition() - Math.PI / 2, voltage) + voltage * 4);
+        SmartDashboard.putNumber("Arm Feed Forward", feedforwardController.calculate(getActualPosition() - Math.PI / 2, voltage));
     }
 
     public double getActualPosition() {
@@ -66,9 +74,10 @@ public class Shoulder extends SubsystemBase {
         }
 
         motor1.setVoltage(
-            feedforwardController.calculate(getActualPosition() - Math.PI / 2, getActualPosition() - targetPosition.position)
+            feedforwardController.calculate(getActualPosition() - Math.PI / 2, targetPosition.position - getActualPosition())
             + pidController.calculate(getActualPosition(), targetPosition.position)
         );
+        SmartDashboard.putNumber("Arm Feed Forward 2", feedforwardController.calculate(getActualPosition() - Math.PI / 2,  targetPosition.position - getActualPosition()));
     }
 
     public enum Position {
