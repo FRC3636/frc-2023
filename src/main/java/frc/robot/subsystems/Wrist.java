@@ -42,9 +42,10 @@ public class Wrist extends SubsystemBase {
     //FIXME Don't switch to period until shoulder encoder doesn't wrap to 180
     public void temporaryUpdateWrist() {
         motor.setVoltage(
-                feedforward.calculate(getAngleToFrame(), getAngleToFrame() - targetPosition.position) +
+                feedforward.calculate(getAngleToFrame(), -RobotContainer.shoulder.getVelocity()) +
                 pidController.calculate(getAngleToFrame(), targetPosition.position)
         );
+        SmartDashboard.putNumber("arm velocity", -RobotContainer.shoulder.getVelocity());
     }
 
     @Override
