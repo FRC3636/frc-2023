@@ -14,8 +14,8 @@ public class PoseEstimation {
     private LimelightBackend limelight;
     private SwerveDrivePoseEstimator poseEstimator;
 
-    private GenericEntry usePhotonVisionEntry = RobotContainer.autoTab.add("Use PhotonVision", true).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-    private GenericEntry useLimelightEntry = RobotContainer.autoTab.add("Use Limelight", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    private GenericEntry usePhotonVisionEntry = RobotContainer.autoTab.add("Use PhotonVision", true).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+    private GenericEntry useLimelightEntry = RobotContainer.autoTab.add("Use Limelight", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
 
     public PoseEstimation() {
         poseEstimator = new SwerveDrivePoseEstimator(DriveConstants.DRIVE_KINEMATICS, RobotContainer.drivetrain.getRotation(), RobotContainer.drivetrain.getModulePositions(), new Pose2d());
