@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -38,17 +37,6 @@ public class Drivetrain extends SubsystemBase {
     // The gyro sensor
     private final AHRS gyro = new AHRS();
 
-    // Odometry class for tracking robot pose
-    SwerveDriveOdometry odometry = new SwerveDriveOdometry(
-            DriveConstants.DRIVE_KINEMATICS,
-            Rotation2d.fromDegrees(gyro.getAngle() * (DriveConstants.GYRO_REVERSED? -1.0 : 1.0)),
-            new SwerveModulePosition[]{
-                    frontLeft.getPosition(),
-                    frontRight.getPosition(),
-                    rearLeft.getPosition(),
-                    rearRight.getPosition()
-            });
-
     /**
      * Creates a new DriveSubsystem.
      */
@@ -67,42 +55,22 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Update the odometry in the periodic block
-        odometry.update(
-                Rotation2d.fromDegrees(gyro.getAngle() * (DriveConstants.GYRO_REVERSED? -1.0 : 1.0)),
-                new SwerveModulePosition[]{
-                        frontLeft.getPosition(),
-                        frontRight.getPosition(),
-                        rearLeft.getPosition(),
-                        rearRight.getPosition()
-                });
-        RobotContainer.field.setRobotPose(getPose());
+        RobotContainer.poseEstimation.updateOdometry(
+            getRotation(),
+            getModulePositions());
     }
 
-    /**
-     * Returns the currently-estimated pose of the robot.
-     *
-     * @return The pose.
-     */
-    public Pose2d getPose() {
-        return odometry.getPoseMeters();
+    public Rotation2d getRotation() {
+        return Rotation2d.fromDegrees(gyro.getAngle() * (DriveConstants.GYRO_REVERSED ? -1.0 : 1.0));
     }
 
-    /**
-     * Resets the odometry to the specified pose.
-     *
-     * @param pose The pose to which to set the odometry.
-     */
-    public void resetPose(Pose2d pose) {
-        odometry.resetPosition(
-                Rotation2d.fromDegrees(gyro.getAngle()),
-                new SwerveModulePosition[]{
-                        frontLeft.getPosition(),
-                        frontRight.getPosition(),
-                        rearLeft.getPosition(),
-                        rearRight.getPosition()
-                },
-                pose);
+    public SwerveModulePosition[] getModulePositions() {
+        return new SwerveModulePosition[] {
+                frontLeft.getPosition(),
+                frontRight.getPosition(),
+                rearLeft.getPosition(),
+                rearRight.getPosition()
+        };
     }
 
     /**

@@ -4,12 +4,15 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
@@ -132,8 +135,16 @@ public final class Constants {
         public static final double FREE_SPEED_RPM = 5676;
     }
 
-    public static class Robot {
-        public static final Pose2d CAMERA_OFFSET = new Pose2d(Units.inchesToMeters(14), 0.0, new Rotation2d());
+    public static class Vision {
+        // FIXME: these numbers are just eyeballed,
+        //        they need to be measured for the final camera mount
+        public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(
+                new Translation3d(0, 0, 0.1),
+                new Rotation3d(0, Units.degreesToRadians(15), 0) 
+        );
+        
+        // FIXME: measure this
+        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.5, 0.5, 0.5);
     }
 
     public static class FieldConstants {

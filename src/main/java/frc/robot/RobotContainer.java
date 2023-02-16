@@ -19,13 +19,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoCommand;
-import frc.robot.subsystems.Camera;
+import frc.robot.vision.PoseEstimation;
 import frc.robot.subsystems.Drivetrain;
 
 public class RobotContainer {
     // Subsystems
-    private final Drivetrain drivetrain = new Drivetrain();
-    private final Camera camera = new Camera();
+    public static final Drivetrain drivetrain = new Drivetrain();
+
+    // Pose Estimation
+    public static final PoseEstimation poseEstimation = new PoseEstimation();
 
     // Controllers
     public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_RIGHT_PORT);
@@ -33,9 +35,9 @@ public class RobotContainer {
 
     // Dashboard
     public static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
-    public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+    public static final ShuffleboardTab auto = Shuffleboard.getTab("Auto");
     public static final ShuffleboardTab swerve = Shuffleboard.getTab("Swerve");
-  
+    public static final ShuffleboardTab vision = Shuffleboard.getTab("Pose Estimation");
   
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
     private static NetworkTableEntry driveSchemeEntry;
@@ -46,7 +48,7 @@ public class RobotContainer {
     public RobotContainer() {
         configureButtonBindings();
 
-        autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
+        auto.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
         driveSettings.add("Reset Gyro", new InstantCommand(drivetrain::zeroHeading));
 
         // FIXME: don't run on FMS
@@ -78,6 +80,6 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        return AutoCommand.makeAutoCommand(drivetrain, "Basic");
+        return AutoCommand.makeAutoCommand(drivetrain, poseEstimation, "Basic");
     }
 }
