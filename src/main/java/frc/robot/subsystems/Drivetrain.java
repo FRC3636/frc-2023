@@ -41,14 +41,12 @@ public class Drivetrain extends SubsystemBase {
      * Creates a new DriveSubsystem.
      */
     public Drivetrain() {
-        RobotContainer.swerve.addNumber("Front Left", frontLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.swerve.addNumber("Front Right", frontRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.swerve.addNumber("Back Left", rearLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.swerve.addNumber("Back Right", rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Front Left", frontLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Front Right", frontRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Back Left", rearLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Back Right", rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
 
-        RobotContainer.swerve.addNumber("Gyro", gyro::getAngle).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.driveSettings.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
-        RobotContainer.driveSettings.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
+        RobotContainer.swerveTab.addNumber("Gyro", gyro::getAngle).withWidget(BuiltInWidgets.kGraph);
     }
 
 

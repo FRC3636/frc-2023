@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 
@@ -12,7 +13,7 @@ public class PoseEstimation {
     private PhotonVisionBackend photonVision;
     private SwerveDrivePoseEstimator poseEstimator;
 
-    private GenericEntry usePhotonVisionEntry = RobotContainer.vision.add("Use PhotonVision", true).getEntry();
+    private GenericEntry usePhotonVisionEntry = RobotContainer.autoTab.add("Use PhotonVision", true).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
     public PoseEstimation() {
         poseEstimator = new SwerveDrivePoseEstimator(DriveConstants.DRIVE_KINEMATICS, RobotContainer.drivetrain.getRotation(), RobotContainer.drivetrain.getModulePositions(), new Pose2d());
@@ -22,6 +23,8 @@ public class PoseEstimation {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        System.out.println("PoseEstimation initialized");
     }
 
     public void periodic() {
@@ -30,6 +33,8 @@ public class PoseEstimation {
                 poseEstimator.addVisionMeasurement(measurement.pose.toPose2d(), measurement.timestamp, measurement.stdDeviation);
             });
         }
+
+        RobotContainer.field.setRobotPose(getPose());
     }
 
     public void updateOdometry(Rotation2d gyro, SwerveModulePosition[] modulePositions) {

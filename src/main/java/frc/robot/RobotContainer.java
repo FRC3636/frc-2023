@@ -23,6 +23,11 @@ import frc.robot.vision.PoseEstimation;
 import frc.robot.subsystems.Drivetrain;
 
 public class RobotContainer {
+    // Dashboard
+    public static final ShuffleboardTab driveSettingsTab = Shuffleboard.getTab("Drive Settings");
+    public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+    public static final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
+
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
 
@@ -32,12 +37,6 @@ public class RobotContainer {
     // Controllers
     public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_RIGHT_PORT);
     public static final Joystick joystickRight = new Joystick(Constants.Controls.JOYSTICK_LEFT_PORT);
-
-    // Dashboard
-    public static final ShuffleboardTab driveSettings = Shuffleboard.getTab("Drive Settings");
-    public static final ShuffleboardTab auto = Shuffleboard.getTab("Auto");
-    public static final ShuffleboardTab swerve = Shuffleboard.getTab("Swerve");
-    public static final ShuffleboardTab vision = Shuffleboard.getTab("Pose Estimation");
   
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
     private static NetworkTableEntry driveSchemeEntry;
@@ -48,8 +47,11 @@ public class RobotContainer {
     public RobotContainer() {
         configureButtonBindings();
 
-        auto.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
-        driveSettings.add("Reset Gyro", new InstantCommand(drivetrain::zeroHeading));
+        autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
+        driveSettingsTab.add("Reset Gyro", new InstantCommand(drivetrain::zeroHeading));
+
+        driveSettingsTab.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
+        driveSettingsTab.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
 
         // FIXME: don't run on FMS
         PathPlannerServer.startServer(5811);
