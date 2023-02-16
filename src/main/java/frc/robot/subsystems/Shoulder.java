@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Wrist.Position;
+
 import org.opencv.core.Mat;
 
 public class Shoulder extends SubsystemBase {
@@ -28,9 +30,7 @@ public class Shoulder extends SubsystemBase {
     private final PIDController pidController = new PIDController(Constants.Shoulder.SHOULDER_KP, Constants.Shoulder.SHOULDER_KI,
             Constants.Shoulder.SHOULDER_KD);
 
-//    private TrapezoidProfile trapezoidProfile = new TrapezoidProfile();
-
-//    private TrapezoidProfileCommand
+    public double targetPosition = Constants.Shoulder.SHOULDER_STOWED_ANGLE;
 
     public Shoulder() {
         motor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -41,10 +41,12 @@ public class Shoulder extends SubsystemBase {
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
         encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
 
-        // RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
+        RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
 
         motor1.setInverted(true);
         encoder.setInverted(true);
+
+        pidController.setTolerance(Units.degreesToRadians(1));
     }
 
     public double getActualPosition() {
@@ -70,9 +72,11 @@ public class Shoulder extends SubsystemBase {
     /// @param velocity The velocity setpoint. Measured in radians per second.
     /// @param acceleration The acceleration setpoint. Measured in radians per second squared.
     public void runWithSetpoint(double position, double velocity, double acceleration) {
-        velocity += pidController.calculate(signedModularDistance(getActualPosition(), position, Math.PI * 2), 0);
-
-        double voltage = feedforwardController.calculate(position - Math.PI / 2, velocity, acceleration);
+        //voltage += pidController.calculate(signedModularDistance(getActualPosition(), position, Math.PI * 2), 0);
+        
+        velocity += pidController.calculate(getActualPosition(), position);
+        SmartDashboard.putNumber("pos - actual pos", position - getActualPosition());
+        double voltage = feedforwardController.calculate(getActualPosition() - Math.PI / 2, velocity, acceleration);
 
         motor1.setVoltage(voltage);
 

@@ -56,16 +56,18 @@ public final class Constants {
         public static final double SHOULDER_KV = 2.0487;
         public static final double SHOULDER_KA = 0.22044;
 
-        public static final double SHOULDER_KP = 0.0;
+        public static final double SHOULDER_KP = 1;
         public static final double SHOULDER_KI = 0.0;
-        public static final double SHOULDER_KD = 0.0;
+        public static final double SHOULDER_KD = 0.03;
 
         public static final double SHOULDER_STOWED_ANGLE = Units.degreesToRadians(-9);
         public static final double SHOULDER_HIGH_ANGLE = Units.degreesToRadians(96);
         public static final double SHOULDER_MID_ANGLE = Units.degreesToRadians(70);
         public static final double SHOULDER_LOW_ANGLE = Units.degreesToRadians(20);
 
-        public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(1.0, 2.0);
+        public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
+
+        public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(4, 6);
     }
 
     public static class Wrist {
