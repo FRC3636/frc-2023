@@ -11,9 +11,11 @@ import frc.robot.Constants.DriveConstants;
 
 public class PoseEstimation {
     private PhotonVisionBackend photonVision;
+    private LimelightBackend limelight;
     private SwerveDrivePoseEstimator poseEstimator;
 
     private GenericEntry usePhotonVisionEntry = RobotContainer.autoTab.add("Use PhotonVision", true).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    private GenericEntry useLimelightEntry = RobotContainer.autoTab.add("Use Limelight", false).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
     public PoseEstimation() {
         poseEstimator = new SwerveDrivePoseEstimator(DriveConstants.DRIVE_KINEMATICS, RobotContainer.drivetrain.getRotation(), RobotContainer.drivetrain.getModulePositions(), new Pose2d());
@@ -24,14 +26,18 @@ public class PoseEstimation {
             e.printStackTrace();
         }
 
+        limelight = new LimelightBackend();
+
         System.out.println("PoseEstimation initialized");
     }
 
     public void periodic() {
         if (usePhotonVisionEntry.getBoolean(false)) {
-            photonVision.getMeasurement().ifPresent((measurement) -> {
-                poseEstimator.addVisionMeasurement(measurement.pose.toPose2d(), measurement.timestamp, measurement.stdDeviation);
-            });
+            photonVision.getMeasurement().ifPresent(this::addVisionMeasurement);
+        }
+
+        if (useLimelightEntry.getBoolean(false)) {
+            limelight.getMeasurement().ifPresent(this::addVisionMeasurement);
         }
 
         RobotContainer.field.setRobotPose(getPose());
@@ -47,5 +53,9 @@ public class PoseEstimation {
 
     public void resetPose(Pose2d pose) {
         poseEstimator.resetPosition(RobotContainer.drivetrain.getRotation(), RobotContainer.drivetrain.getModulePositions(), pose);
+    }
+
+    private void addVisionMeasurement(VisionBackend.Measurement measurement) {
+        poseEstimator.addVisionMeasurement(measurement.pose.toPose2d(), measurement.timestamp, measurement.stdDeviation);
     }
 }

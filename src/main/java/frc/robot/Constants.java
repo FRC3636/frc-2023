@@ -136,15 +136,16 @@ public final class Constants {
     }
 
     public static class Vision {
-        // FIXME: these numbers are just eyeballed,
-        //        they need to be measured for the final camera mount
+        // FIXME: actually measure these constants
+
         public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(
                 new Translation3d(0, 0, 0.1),
                 new Rotation3d(0, Units.degreesToRadians(15), 0) 
         );
         
-        // FIXME: measure this
-        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.5, 0.5, 0.5);
+        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
+
+        public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
     }
 
     public static class FieldConstants {

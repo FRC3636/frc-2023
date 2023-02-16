@@ -29,11 +29,11 @@ public class PhotonVisionBackend extends VisionBackend {
     @Override
     public Optional<Measurement> getMeasurement() {
         return poseEstimator.update().map((result) -> {
-            Measurement measurement = new Measurement();
-            measurement.timestamp = result.timestampSeconds;
-            measurement.pose = result.estimatedPose;
-            measurement.stdDeviation = Constants.Vision.PHOTONVISION_STD_DEV;
-            return measurement;
+            return new Measurement(
+                result.timestampSeconds,
+                result.estimatedPose,
+                Constants.Vision.PHOTONVISION_STD_DEV
+            );
         });
     }
 }
