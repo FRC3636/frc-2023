@@ -42,21 +42,21 @@ public final class Constants {
                 new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2));
 
         // Angular offsets of the modules relative to the chassis in radians
-        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -Math.PI / 2 + 1.22;
-        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0 + 3.843;
-        public static final double REAR_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI + 0.846;
-        public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2 + 5.217; 
+        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -Math.PI / 2;
+        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0;
+        public static final double REAR_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI;
+        public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
 
         // SPARK MAX CAN IDs
         public static final int FRONT_LEFT_DRIVING_CAN_ID = 10;
         public static final int REAR_LEFT_DRIVING_CAN_ID = 12;
-        public static final int FRONT_RIGHT_DRIVING_CAN_ID = 15;
-        public static final int REAR_RIGHT_DRIVING_CAN_ID = 17;
+        public static final int FRONT_RIGHT_DRIVING_CAN_ID = 14;
+        public static final int REAR_RIGHT_DRIVING_CAN_ID = 16;
 
         public static final int FRONT_LEFT_TURNING_CAN_ID = 11;
         public static final int REAR_LEFT_TURNING_CAN_ID = 13;
-        public static final int FRONT_RIGHT_TURNING_CAN_ID = 14;
-        public static final int REAR_RIGHT_TURNING_CAN_ID = 16;
+        public static final int FRONT_RIGHT_TURNING_CAN_ID = 15;
+        public static final int REAR_RIGHT_TURNING_CAN_ID = 17;
 
         public static final boolean GYRO_REVERSED = true;
     }
