@@ -87,6 +87,8 @@ public final class Constants {
 
         public static final int LIMIT_SWITCH = 1;
         public static final double LIMIT_SWITCH_OFFSET = Units.degreesToRadians(75);
+        public static final double CONE_ANGLE = -40;
+        public static final double CUBE_ANGLE = 25;
     }
 
     public static class Rollers {

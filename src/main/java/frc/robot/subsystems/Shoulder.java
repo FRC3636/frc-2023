@@ -11,12 +11,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Wrist.Position;
-
-import org.opencv.core.Mat;
 
 public class Shoulder extends SubsystemBase {
     private final CANSparkMax motor1 = new CANSparkMax(Constants.Shoulder.MOTOR_1_ID,
@@ -29,8 +25,6 @@ public class Shoulder extends SubsystemBase {
             Constants.Shoulder.KV, Constants.Shoulder.KA);
     private final PIDController pidController = new PIDController(Constants.Shoulder.KP, Constants.Shoulder.KI,
             Constants.Shoulder.KD);
-
-    public double targetPosition = Constants.Shoulder.STOWED_ANGLE;
 
     public Shoulder() {
         motor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -51,7 +45,7 @@ public class Shoulder extends SubsystemBase {
 
     public double getActualPosition() {
         return encoder.getPosition() 
-            > ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO - Math.PI / 8) 
+            > ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO - Math.PI / 8)
                 ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO)
                 : encoder.getPosition();
     }
@@ -72,8 +66,6 @@ public class Shoulder extends SubsystemBase {
     /// @param velocity The velocity setpoint. Measured in radians per second.
     /// @param acceleration The acceleration setpoint. Measured in radians per second squared.
     public void runWithSetpoint(double position, double velocity, double acceleration) {
-        //voltage += pidController.calculate(signedModularDistance(getActualPosition(), position, Math.PI * 2), 0);
-        
         velocity += pidController.calculate(getActualPosition(), position);
         SmartDashboard.putNumber("pos - actual pos", position - getActualPosition());
         double voltage = feedforwardController.calculate(getActualPosition() - Math.PI / 2, velocity, acceleration);
@@ -103,21 +95,5 @@ public class Shoulder extends SubsystemBase {
         }
     }
 
-    public enum Position {
-        HighGoalCone(Constants.Shoulder.HIGH_CONE_ANGLE),
-        HighGoalCube(Constants.Shoulder.HIGH_CONE_ANGLE),
-        MidGoalCone(Constants.Shoulder.MID_ANGLE),
-        MidGoalCube(Constants.Shoulder.MID_ANGLE),
-        LowGoalCone(Constants.Shoulder.INTAKE_CONE),
-        LowGoalCube(Constants.Shoulder.STOWED_ANGLE),
-        IntakeCone(Constants.Shoulder.INTAKE_CONE),
-        IntakeCube(Constants.Shoulder.STOWED_ANGLE),
-        Stowed(Constants.Shoulder.STOWED_ANGLE);
 
-        public double value;
-
-        Position(double value) {
-            this.value = value;
-        }
-    }
 }

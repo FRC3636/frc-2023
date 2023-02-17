@@ -4,34 +4,34 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.ArmState;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shoulder;
 
 public class ShoulderMoveCommand extends CommandBase {
     private final Shoulder shoulder;
-    private final double goalPosition;
 
     private final Timer timer = new Timer();
     private TrapezoidProfile profile;
 
-    public ShoulderMoveCommand(Shoulder shoulder, Shoulder.Position goalPosition) {
+    public ShoulderMoveCommand(Shoulder shoulder) {
         this.shoulder = shoulder;
-        this.goalPosition = goalPosition.value;
-
-        SmartDashboard.putNumber("Shoulder Goal Position", goalPosition.value);
 
         addRequirements(shoulder);
     }
 
+    public ShoulderMoveCommand(Shoulder shoulder, ArmState armState) {
+        this(shoulder);
+        ArmState.target = armState;
+    }
+
     @Override
     public void initialize() {
-        SmartDashboard.putNumber("Shoulder Goal Position", goalPosition);
-
-        shoulder.targetPosition = goalPosition;
+        SmartDashboard.putNumber("Shoulder Goal Position", ArmState.target.shoulderAngle);
 
         profile = new TrapezoidProfile(
             Constants.Shoulder.TRAPEZOID_PROFILE_CONSTRAINTS,
-            new TrapezoidProfile.State(goalPosition, 0),
+            new TrapezoidProfile.State(ArmState.target.shoulderAngle, 0),
             new TrapezoidProfile.State(shoulder.getActualPosition(), shoulder.getActualVelocity())
         );
 

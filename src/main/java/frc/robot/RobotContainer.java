@@ -110,23 +110,19 @@ public class RobotContainer {
         // }));
 
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)
-                .whileTrue(new IntakeCommand(rollers, shoulder, wrist, Rollers.RollerDirection.IntakeCube, Shoulder.Position.IntakeCube, Wrist.Position.Cube));
+                .whileTrue(new IntakeCommand(rollers, shoulder, wrist, ArmState.IntakeCube));
 
         new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
-                .whileTrue(new IntakeCommand(rollers, shoulder, wrist, Rollers.RollerDirection.IntakeCone, Shoulder.Position.IntakeCone, Wrist.Position.Cone));
+                .whileTrue(new IntakeCommand(rollers, shoulder, wrist, ArmState.IntakeCone));
 
        new JoystickButton(controller, XboxController.Button.kStart.value)
                .whileTrue(new RunCommand(wrist::temporaryUpdateWrist));
-
-//        new JoystickButton(controller, XboxController.Button.kBack.value)
-//                .whileTrue(new MeasureFF(shoulder));
-
         shoulder.setDefaultCommand(new ShoulderHoldCommand(shoulder));
 
-        new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new ShoulderMoveCommand(shoulder, Shoulder.Position.Stowed));
-        new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new ShoulderMoveCommand(shoulder, Shoulder.Position.IntakeCone));
-        new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new ShoulderMoveCommand(shoulder, Shoulder.Position.MidGoalCone));
-        new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new ShoulderMoveCommand(shoulder, Shoulder.Position.HighGoalCone));
+        new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new ShoulderMoveCommand(shoulder, ArmState.Stowed));
+        new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new ShoulderMoveCommand(shoulder, ArmState.IntakeCone));
+        new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new ShoulderMoveCommand(shoulder, ArmState.MidGoalCone));
+        new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new ShoulderMoveCommand(shoulder, ArmState.HighGoalCone));
     }
 
     public Command getAutonomousCommand() {
