@@ -64,6 +64,8 @@ public final class Constants {
         public static final int REAR_RIGHT_TURNING_CAN_ID = 17;
 
         public static final boolean GYRO_REVERSED = true;
+
+        public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.01);
     }
 
     public static final class ModuleConstants {

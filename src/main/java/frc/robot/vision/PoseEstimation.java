@@ -1,11 +1,13 @@
 package frc.robot.vision;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 
@@ -18,7 +20,14 @@ public class PoseEstimation {
     private GenericEntry useLimelightEntry = RobotContainer.autoTab.add("Use Limelight", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
 
     public PoseEstimation() {
-        poseEstimator = new SwerveDrivePoseEstimator(DriveConstants.DRIVE_KINEMATICS, RobotContainer.drivetrain.getRotation(), RobotContainer.drivetrain.getModulePositions(), new Pose2d());
+        poseEstimator = new SwerveDrivePoseEstimator(
+            DriveConstants.DRIVE_KINEMATICS,
+            RobotContainer.drivetrain.getRotation(),
+            RobotContainer.drivetrain.getModulePositions(),
+            new Pose2d(),
+            Constants.DriveConstants.ODOMETRY_STD_DEV,
+            VecBuilder.fill(0, 0, 0) // will be overwritten for each measurement
+        );
 
         try {
             photonVision = new PhotonVisionBackend();
@@ -27,8 +36,6 @@ public class PoseEstimation {
         }
 
         limelight = new LimelightBackend();
-
-        System.out.println("PoseEstimation initialized");
     }
 
     public void periodic() {
