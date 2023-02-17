@@ -47,24 +47,24 @@ public final class Constants {
     }
 
     public static class Shoulder {
-        public static final int SHOULDER_1_ID = 5;
-        public static final int SHOULDER_2_ID = 6;
-        public static final double SHOULDER_GEAR_RATIO = 15.0 / 36.0;
+        public static final int MOTOR_1_ID = 5;
+        public static final int MOTOR_2_ID = 6;
+        public static final double GEAR_RATIO = 15.0 / 36.0;
 
-        public static final double SHOULDER_KS = 0.23446;
-        public static final double SHOULDER_KG = 0.66001;
-        public static final double SHOULDER_KV = 2.07220;
-        public static final double SHOULDER_KA = 0.19625;
+        public static final double KS = 0.23446;
+        public static final double KG = 0.66001;
+        public static final double KV = 2.07220;
+        public static final double KA = 0.19625;
 
-        public static final double SHOULDER_KP = 1;
-        public static final double SHOULDER_KI = 0.0;
-        public static final double SHOULDER_KD = 0.03;
+        public static final double KP = 1;
+        public static final double KI = 0.0;
+        public static final double KD = 0.03;
 
-        public static final double SHOULDER_STOWED_ANGLE = -0.143279;
+        public static final double STOWED_ANGLE = -0.143279;
         public static final double HIGH_CONE_ANGLE = 1.989745;
         public static final double HIGH_CUBE_ANGLE = 1.989745;
-        public static final double SHOULDER_MID_ANGLE = Units.degreesToRadians(70);
-        public static final double SHOULDER_INTAKE_CONE = 1.002868;
+        public static final double MID_ANGLE = Units.degreesToRadians(70);
+        public static final double INTAKE_CONE = 1.002868;
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
 
@@ -72,32 +72,28 @@ public final class Constants {
     }
 
     public static class Wrist {
-        public static final int WRIST_ID = 7;
+        public static final int ID = 7;
 
-        public static final double WRIST_GEAR_RATIO = 1.0 / 75.0;
+        public static final double GEAR_RATIO = 1.0 / 75.0;
 
-        public static final double WRIST_KP = 1.5;
-        public static final double WRIST_KI = 0.0;
-        public static final double WRIST_KD = 0.0;
+        public static final double KP = 1.5;
+        public static final double KI = 0.0;
+        public static final double KD = 0.0;
 
-        public static final double WRIST_KS = 0.14588;
-        public static final double WRIST_KG = 0.13063;
-        public static final double WRIST_KV = 1.4242;
-        public static final double WRIST_KA = 0.052069;
+        public static final double KS = 0.14588;
+        public static final double KG = 0.13063;
+        public static final double KV = 1.4242;
+        public static final double KA = 0.052069;
 
-        public static final int WRIST_LIMIT_SWITCH = 1;
-        public static final double WRIST_LIMIT_SWITCH_OFFSET = Units.degreesToRadians(75);
+        public static final int LIMIT_SWITCH = 1;
+        public static final double LIMIT_SWITCH_OFFSET = Units.degreesToRadians(75);
     }
 
     public static class Rollers {
-        public static final int ROLLERS_ID = 8;
+        public static final int ID = 8;
         public static final int INTAKE_CONE = -1;
         public static final int INTAKE_CUBE = 1;
-        public static final double ROLLER_SPEED = .75;
-    }
-    public static class Robot {
-
-        public static final Pose2d CAMERA_OFFSET = new Pose2d(Units.inchesToMeters(14), 0.0, new Rotation2d());
+        public static final double SPEED = .75;
     }
 
     public static class FieldConstants {
