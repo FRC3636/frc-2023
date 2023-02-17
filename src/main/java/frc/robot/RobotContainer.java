@@ -35,8 +35,8 @@ public class RobotContainer {
     public static final PoseEstimation poseEstimation = new PoseEstimation();
 
     // Controllers
-    public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_RIGHT_PORT);
-    public static final Joystick joystickRight = new Joystick(Constants.Controls.JOYSTICK_LEFT_PORT);
+    public static final Joystick joystickLeft = new Joystick(Constants.ControlConstants.JOYSTICK_RIGHT_PORT);
+    public static final Joystick joystickRight = new Joystick(Constants.ControlConstants.JOYSTICK_LEFT_PORT);
   
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
     private static NetworkTableEntry driveSchemeEntry;
