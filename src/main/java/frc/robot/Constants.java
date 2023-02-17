@@ -21,7 +21,7 @@ import java.util.Map;
 import static com.revrobotics.CANSparkMax.IdleMode;
 
 public final class Constants {
-    public static class Controls {
+    public static class ControlConstants {
         public static final int JOYSTICK_RIGHT_PORT = 0;
         public static final int JOYSTICK_LEFT_PORT = 1;
     }
@@ -137,7 +137,7 @@ public final class Constants {
         public static final double FREE_SPEED_RPM = 5676;
     }
 
-    public static class Vision {
+    public static class VisionConstants {
         // FIXME: actually measure these constants
 
         public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(

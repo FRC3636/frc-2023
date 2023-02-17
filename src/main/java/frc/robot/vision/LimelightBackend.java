@@ -57,7 +57,7 @@ public class LimelightBackend extends VisionBackend {
         return Optional.of(new Measurement(
             timestamp,
             pose,
-            Constants.Vision.LIMELIGHT_STD_DEV
+            Constants.VisionConstants.LIMELIGHT_STD_DEV
         ));
     }
 }

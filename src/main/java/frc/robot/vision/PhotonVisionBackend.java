@@ -23,7 +23,7 @@ public class PhotonVisionBackend extends VisionBackend {
 
         AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
 
-        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP, camera, Constants.Vision.PHOTONVISION_TRANSFORM);
+        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP, camera, Constants.VisionConstants.PHOTONVISION_TRANSFORM);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class PhotonVisionBackend extends VisionBackend {
             return new Measurement(
                 result.timestampSeconds,
                 result.estimatedPose,
-                Constants.Vision.PHOTONVISION_STD_DEV
+                Constants.VisionConstants.PHOTONVISION_STD_DEV
             );
         });
     }
