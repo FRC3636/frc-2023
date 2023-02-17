@@ -113,7 +113,7 @@ public class RobotContainer {
                 .whileTrue(new IntakeCommand(rollers, shoulder, wrist, Rollers.RollerDirection.IntakeCube, Shoulder.Position.IntakeCube, Wrist.Position.Cube));
 
         new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
-                .onTrue(new IntakeCommand(rollers, shoulder, wrist, Rollers.RollerDirection.IntakeCone, Shoulder.Position.IntakeCone, Wrist.Position.Cone));
+                .whileTrue(new IntakeCommand(rollers, shoulder, wrist, Rollers.RollerDirection.IntakeCone, Shoulder.Position.IntakeCone, Wrist.Position.Cone));
 
        new JoystickButton(controller, XboxController.Button.kStart.value)
                .whileTrue(new RunCommand(wrist::temporaryUpdateWrist));

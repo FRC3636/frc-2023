@@ -64,7 +64,7 @@ public final class Constants {
         public static final double HIGH_CONE_ANGLE = 1.989745;
         public static final double HIGH_CUBE_ANGLE = 1.989745;
         public static final double SHOULDER_MID_ANGLE = Units.degreesToRadians(70);
-        public static final double SHOULDER_INTAKE_CONE = 0.978313;
+        public static final double SHOULDER_INTAKE_CONE = 1.002868;
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
 
@@ -90,10 +90,10 @@ public final class Constants {
     }
 
     public static class Rollers {
-        public static final int ROLLERS_ID = 9;
-        public static final int INTAKE_CONE = 1;
-        public static final int INTAKE_CUBE = -1;
-        public static final double ROLLER_SPEED = 1;
+        public static final int ROLLERS_ID = 8;
+        public static final int INTAKE_CONE = -1;
+        public static final int INTAKE_CUBE = 1;
+        public static final double ROLLER_SPEED = .75;
     }
     public static class Robot {
 
