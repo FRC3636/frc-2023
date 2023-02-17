@@ -38,6 +38,10 @@ public class LimelightBackend extends VisionBackend {
 
         TimestampedDoubleArray update = updates[updates.length - 1];
 
+        if (update.value == new double[6]) {
+            return Optional.empty();
+        }
+
         double x = update.value[0];
         double y = update.value[1];
         double z = update.value[2];
