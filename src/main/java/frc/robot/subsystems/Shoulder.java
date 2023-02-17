@@ -19,18 +19,18 @@ import frc.robot.subsystems.Wrist.Position;
 import org.opencv.core.Mat;
 
 public class Shoulder extends SubsystemBase {
-    private final CANSparkMax motor1 = new CANSparkMax(Constants.Shoulder.SHOULDER_1_ID,
+    private final CANSparkMax motor1 = new CANSparkMax(Constants.Shoulder.MOTOR_1_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
-    private final CANSparkMax motor2 = new CANSparkMax(Constants.Shoulder.SHOULDER_2_ID,
+    private final CANSparkMax motor2 = new CANSparkMax(Constants.Shoulder.MOTOR_2_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final AbsoluteEncoder encoder = motor1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
-    private ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.SHOULDER_KS, Constants.Shoulder.SHOULDER_KG,
-            Constants.Shoulder.SHOULDER_KV, Constants.Shoulder.SHOULDER_KA);
-    private final PIDController pidController = new PIDController(Constants.Shoulder.SHOULDER_KP, Constants.Shoulder.SHOULDER_KI,
-            Constants.Shoulder.SHOULDER_KD);
+    private ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.KS, Constants.Shoulder.KG,
+            Constants.Shoulder.KV, Constants.Shoulder.KA);
+    private final PIDController pidController = new PIDController(Constants.Shoulder.KP, Constants.Shoulder.KI,
+            Constants.Shoulder.KD);
 
-    public double targetPosition = Constants.Shoulder.SHOULDER_STOWED_ANGLE;
+    public double targetPosition = Constants.Shoulder.STOWED_ANGLE;
 
     public Shoulder() {
         motor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -38,8 +38,8 @@ public class Shoulder extends SubsystemBase {
         motor1.setSmartCurrentLimit(40);
         motor2.setSmartCurrentLimit(40);
         motor2.follow(motor1, true);
-        encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
-        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.SHOULDER_GEAR_RATIO);
+        encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO);
+        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO);
 
         RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
 
@@ -51,8 +51,8 @@ public class Shoulder extends SubsystemBase {
 
     public double getActualPosition() {
         return encoder.getPosition() 
-            > ((2*Math.PI) * Constants.Shoulder.SHOULDER_GEAR_RATIO - Math.PI / 8) 
-                ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.SHOULDER_GEAR_RATIO)
+            > ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO - Math.PI / 8) 
+                ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO)
                 : encoder.getPosition();
     }
 
@@ -106,13 +106,13 @@ public class Shoulder extends SubsystemBase {
     public enum Position {
         HighGoalCone(Constants.Shoulder.HIGH_CONE_ANGLE),
         HighGoalCube(Constants.Shoulder.HIGH_CONE_ANGLE),
-        MidGoalCone(Constants.Shoulder.SHOULDER_MID_ANGLE),
-        MidGoalCube(Constants.Shoulder.SHOULDER_MID_ANGLE),
-        LowGoalCone(Constants.Shoulder.SHOULDER_INTAKE_CONE),
-        LowGoalCube(Constants.Shoulder.SHOULDER_STOWED_ANGLE),
-        IntakeCone(Constants.Shoulder.SHOULDER_INTAKE_CONE),
-        IntakeCube(Constants.Shoulder.SHOULDER_STOWED_ANGLE),
-        Stowed(Constants.Shoulder.SHOULDER_STOWED_ANGLE);
+        MidGoalCone(Constants.Shoulder.MID_ANGLE),
+        MidGoalCube(Constants.Shoulder.MID_ANGLE),
+        LowGoalCone(Constants.Shoulder.INTAKE_CONE),
+        LowGoalCube(Constants.Shoulder.STOWED_ANGLE),
+        IntakeCone(Constants.Shoulder.INTAKE_CONE),
+        IntakeCube(Constants.Shoulder.STOWED_ANGLE),
+        Stowed(Constants.Shoulder.STOWED_ANGLE);
 
         public double value;
 

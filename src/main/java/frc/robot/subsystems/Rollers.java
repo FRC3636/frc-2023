@@ -7,14 +7,14 @@ import frc.robot.Constants;
 
 public class Rollers extends SubsystemBase {
 
-    private final CANSparkMax rollers = new CANSparkMax(Constants.Rollers.ROLLERS_ID,
+    private final CANSparkMax rollers = new CANSparkMax(Constants.Rollers.ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
     public Rollers() {
         rollers.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
 
     public void runRollers(RollerDirection direction) {
-        rollers.set(direction.value * Constants.Rollers.ROLLER_SPEED);
+        rollers.set(direction.value * Constants.Rollers.SPEED);
     }
 
     public void stop() {

@@ -14,17 +14,17 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class Wrist extends SubsystemBase {
-    private final CANSparkMax motor = new CANSparkMax(Constants.Wrist.WRIST_ID, CANSparkMax.MotorType.kBrushless);
-    private final DigitalInput limitSwitch = new DigitalInput(Constants.Wrist.WRIST_LIMIT_SWITCH);
+    private final CANSparkMax motor = new CANSparkMax(Constants.Wrist.ID, CANSparkMax.MotorType.kBrushless);
+    private final DigitalInput limitSwitch = new DigitalInput(Constants.Wrist.LIMIT_SWITCH);
 
-    private PIDController pidController = new PIDController(Constants.Wrist.WRIST_KP, Constants.Wrist.WRIST_KI, Constants.Wrist.WRIST_KD);
-    private ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.WRIST_KS, Constants.Wrist.WRIST_KG, Constants.Wrist.WRIST_KV, Constants.Wrist.WRIST_KA);
+    private PIDController pidController = new PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD);
+    private ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA);
 
     private Position targetPosition = Position.Horizontal;
 
     public Wrist() {
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        motor.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.WRIST_GEAR_RATIO);
+        motor.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO);
         motor.setSmartCurrentLimit(40);
         motor.setInverted(false);
 
@@ -55,7 +55,7 @@ public class Wrist extends SubsystemBase {
         SmartDashboard.putNumber("Wrist Relative", getAngleToFrame());
 
         if (!limitSwitch.get()) {
-            motor.getEncoder().setPosition(Constants.Wrist.WRIST_LIMIT_SWITCH_OFFSET);
+            motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET);
             motor.set(0);
         }
     }
