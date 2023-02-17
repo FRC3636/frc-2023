@@ -27,6 +27,8 @@ public class ShoulderMoveCommand extends CommandBase {
     public void initialize() {
         SmartDashboard.putNumber("Shoulder Goal Position", goalPosition);
 
+        shoulder.targetPosition = goalPosition;
+
         profile = new TrapezoidProfile(
             Constants.Shoulder.TRAPEZOID_PROFILE_CONSTRAINTS,
             new TrapezoidProfile.State(goalPosition, 0),
@@ -40,11 +42,13 @@ public class ShoulderMoveCommand extends CommandBase {
     @Override
     public void execute() {
         TrapezoidProfile.State state = profile.calculate(timer.get());
+        SmartDashboard.putNumber("Shoulder State Goal Position", state.position);
         shoulder.runWithSetpoint(state.position, state.velocity, 0);
     }
 
     @Override
     public boolean isFinished() {
         return profile.isFinished(timer.get());
+        //return Math.abs(shoulder.getActualPosition() - goalPosition) < Constants.Shoulder.FINISH_TOLERANCE;
     }
 }
