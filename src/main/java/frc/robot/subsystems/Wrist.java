@@ -62,7 +62,9 @@ public class Wrist extends SubsystemBase {
 
     public enum Position {
         Horizontal(0),
-        Vertical(-Math.PI / 2);
+        Vertical(-Math.PI / 2),
+        Cone(Units.degreesToRadians(-50)),
+        Cube(Units.degreesToRadians(25));
 
         private final double position;
 

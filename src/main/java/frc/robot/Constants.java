@@ -60,10 +60,11 @@ public final class Constants {
         public static final double SHOULDER_KI = 0.0;
         public static final double SHOULDER_KD = 0.0;
 
-        public static final double SHOULDER_STOWED_ANGLE = Units.degreesToRadians(-9);
-        public static final double SHOULDER_HIGH_ANGLE = Units.degreesToRadians(96);
+        public static final double SHOULDER_STOWED_ANGLE = -0.143279;
+        public static final double HIGH_CONE_ANGLE = 1.989745;
+        public static final double HIGH_CUBE_ANGLE = 1.989745;
         public static final double SHOULDER_MID_ANGLE = Units.degreesToRadians(70);
-        public static final double SHOULDER_LOW_ANGLE = Units.degreesToRadians(20);
+        public static final double SHOULDER_INTAKE_CONE = 0.978313;
 
         public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(1.0, 2.0);
     }
@@ -83,24 +84,14 @@ public final class Constants {
         public static final double WRIST_KA = 0.052069;
 
         public static final int WRIST_LIMIT_SWITCH = 1;
-        public static final double WRIST_LIMIT_SWITCH_OFFSET = Units.degreesToRadians(13);
+        public static final double WRIST_LIMIT_SWITCH_OFFSET = Units.degreesToRadians(75);
     }
 
-    public static class Claw {
-        public static final int CLAW_ID = 8;
-        public static final int CLAW_LIMIT_SWITCH = 0;
-        public static final double CLAW_CONE_ANGLE = Units.degreesToRadians(70);
-        public static final double CLAW_CUBE_ANGLE = Units.degreesToRadians(25.6);
-        public static final double CLAW_CLOSED_ANGLE = Units.degreesToRadians(54.4);
-        public static final double CLAW_SPEED = 0.3;
-        public static final double CLAW_CLAMP_THRESHOLD = 15.0;
-        public static final double CLAW_GEAR_RATIO = 19.0 / (36.0 * 100.0);
-
+    public static class Rollers {
         public static final int ROLLERS_ID = 9;
-        public static final int ROLLER_OUT = 1;
-        public static final int ROLLER_IN = -1;
-        public static final int ROLLER_OFF = 0;
-        public static final double ROLLER_SPEED = 0.5;
+        public static final int INTAKE_CONE = 1;
+        public static final int INTAKE_CUBE = -1;
+        public static final double ROLLER_SPEED = 1;
     }
     public static class Robot {
 

@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -24,8 +23,8 @@ import frc.robot.commands.ShoulderMoveCommand;
 // import frc.robot.commands.MeasureFF;
 import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.Wrist;
-import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.Claw.ClawPosition;
+import frc.robot.subsystems.Rollers;
+import frc.robot.subsystems.Rollers.ClawPosition;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -49,7 +48,7 @@ public class RobotContainer {
     // public static final Camera camera = new Camera();
     public static final Shoulder shoulder = new Shoulder();
     public static final Wrist wrist = new Wrist();
-    public static final Claw claw = new Claw();
+    public static final Rollers rollers = new Rollers();
 
     // Controllers
     public static final Joystick joystickLeft = new Joystick(Constants.Controls.JOYSTICK_LEFT_PORT);
@@ -114,21 +113,10 @@ public class RobotContainer {
         // }));
 
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)
-                .whileTrue(new IntakeCommand(claw, ClawPosition.Cube));
+                .whileTrue(new IntakeCommand(rollers, shoulder, wrist, Rollers.RollerDirection.IntakeCube, Shoulder.Position.IntakeCube, Wrist.Position.Cube));
 
         new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
-                .whileTrue(new IntakeCommand(claw, ClawPosition.Cone));
-
-        new Trigger(() -> controller.getLeftTriggerAxis() > 0.05).onTrue(new InstantCommand(() -> {
-                claw.setClawPosition(ClawPosition.Open);
-        }));
-
-        new JoystickButton(controller, XboxController.Button.kLeftBumper.value).onTrue(new InstantCommand(() -> {
-            claw.setClawPosition(Claw.ClawPosition.Cube);
-            claw.runRollers(Constants.Claw.ROLLER_OUT);
-        })).onFalse(new InstantCommand(() -> {
-            claw.runRollers(Constants.Claw.ROLLER_OFF);
-        }));
+                .onTrue(new IntakeCommand(rollers, shoulder, wrist, Rollers.RollerDirection.IntakeCone, Shoulder.Position.IntakeCone, Wrist.Position.Cone));
 
        new JoystickButton(controller, XboxController.Button.kStart.value)
                .whileTrue(new RunCommand(wrist::temporaryUpdateWrist));
@@ -138,10 +126,10 @@ public class RobotContainer {
 
         shoulder.setDefaultCommand(new ShoulderHoldCommand(shoulder));
 
-        new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new ShoulderMoveCommand(shoulder, Constants.Shoulder.SHOULDER_STOWED_ANGLE));
-        new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new ShoulderMoveCommand(shoulder, Constants.Shoulder.SHOULDER_LOW_ANGLE));
-        new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new ShoulderMoveCommand(shoulder, Constants.Shoulder.SHOULDER_MID_ANGLE));
-        new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new ShoulderMoveCommand(shoulder, Constants.Shoulder.SHOULDER_HIGH_ANGLE));
+        new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new ShoulderMoveCommand(shoulder, Shoulder.Position.Stowed));
+        new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new ShoulderMoveCommand(shoulder, Shoulder.Position.IntakeCone));
+        new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new ShoulderMoveCommand(shoulder, Shoulder.Position.MidGoalCone));
+        new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new ShoulderMoveCommand(shoulder, Shoulder.Position.HighGoalCone));
     }
 
     public Command getAutonomousCommand() {

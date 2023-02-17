@@ -14,11 +14,11 @@ public class ShoulderMoveCommand extends CommandBase {
     private final Timer timer = new Timer();
     private TrapezoidProfile profile;
 
-    public ShoulderMoveCommand(Shoulder shoulder, double goalPosition) {
+    public ShoulderMoveCommand(Shoulder shoulder, Shoulder.Position goalPosition) {
         this.shoulder = shoulder;
-        this.goalPosition = goalPosition;
+        this.goalPosition = goalPosition.value;
 
-        SmartDashboard.putNumber("Shoulder Goal Position", goalPosition);
+        SmartDashboard.putNumber("Shoulder Goal Position", goalPosition.value);
 
         addRequirements(shoulder);
     }

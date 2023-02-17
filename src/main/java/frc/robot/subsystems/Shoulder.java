@@ -98,4 +98,22 @@ public class Shoulder extends SubsystemBase {
             return -negDist;
         }
     }
+
+    public enum Position {
+        HighGoalCone(Constants.Shoulder.HIGH_CONE_ANGLE),
+        HighGoalCube(Constants.Shoulder.HIGH_CONE_ANGLE),
+        MidGoalCone(Constants.Shoulder.SHOULDER_MID_ANGLE),
+        MidGoalCube(Constants.Shoulder.SHOULDER_MID_ANGLE),
+        LowGoalCone(Constants.Shoulder.SHOULDER_INTAKE_CONE),
+        LowGoalCube(Constants.Shoulder.SHOULDER_STOWED_ANGLE),
+        IntakeCone(Constants.Shoulder.SHOULDER_INTAKE_CONE),
+        IntakeCube(Constants.Shoulder.SHOULDER_STOWED_ANGLE),
+        Stowed(Constants.Shoulder.SHOULDER_STOWED_ANGLE);
+
+        public double value;
+
+        Position(double value) {
+            this.value = value;
+        }
+    }
 }
