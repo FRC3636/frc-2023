@@ -59,7 +59,13 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Rotation2d getRotation() {
-        return Rotation2d.fromDegrees(gyro.getAngle() * (DriveConstants.GYRO_REVERSED ? -1.0 : 1.0));
+        Rotation2d rot = gyro.getRotation2d();
+        
+        if (DriveConstants.GYRO_REVERSED) {
+            rot = rot.unaryMinus();
+        }
+
+        return rot;
     }
 
     public SwerveModulePosition[] getModulePositions() {
