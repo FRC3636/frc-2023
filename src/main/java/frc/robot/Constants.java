@@ -4,9 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -65,6 +63,7 @@ public final class Constants {
         public static final double HIGH_CUBE_ANGLE = 1.989745;
         public static final double MID_ANGLE = Units.degreesToRadians(70);
         public static final double INTAKE_CONE = 1.002868;
+        public static final double MAX_ANGLE = 2.2;
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
 
@@ -76,26 +75,28 @@ public final class Constants {
 
         public static final double GEAR_RATIO = 1.0 / 75.0;
 
-        public static final double KP = 1.5;
+        public static final double KP = 3;
         public static final double KI = 0.0;
-        public static final double KD = 0.0;
+        public static final double KD = 0.1;
 
         public static final double KS = 0.14588;
         public static final double KG = 0.13063;
         public static final double KV = 1.4242;
         public static final double KA = 0.052069;
 
+        public static final double MIN_SHOULDER_ANGLE = 0.709869;
+
         public static final int LIMIT_SWITCH = 1;
         public static final double LIMIT_SWITCH_OFFSET = Units.degreesToRadians(75);
-        public static final double CONE_ANGLE = -40;
-        public static final double CUBE_ANGLE = 25;
+        public static final double CONE_ANGLE = Units.degreesToRadians(-40);
+        public static final double CUBE_ANGLE = Units.degreesToRadians(25);
     }
 
     public static class Rollers {
         public static final int ID = 8;
         public static final int INTAKE_CONE = -1;
         public static final int INTAKE_CUBE = 1;
-        public static final double SPEED = .75;
+        public static final double SPEED = .6;
     }
 
     public static class FieldConstants {

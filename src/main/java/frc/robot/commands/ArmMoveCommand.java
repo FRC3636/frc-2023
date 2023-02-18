@@ -7,22 +7,19 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ArmState;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shoulder;
+import frc.robot.subsystems.Wrist;
 
-public class ShoulderMoveCommand extends CommandBase {
+public class ArmMoveCommand extends CommandBase {
     private final Shoulder shoulder;
+    private final Wrist wrist;
 
     private final Timer timer = new Timer();
     private TrapezoidProfile profile;
 
-    public ShoulderMoveCommand(Shoulder shoulder) {
+    public ArmMoveCommand(Shoulder shoulder, Wrist wrist) {
         this.shoulder = shoulder;
-
-        addRequirements(shoulder);
-    }
-
-    public ShoulderMoveCommand(Shoulder shoulder, ArmState armState) {
-        this(shoulder);
-        ArmState.target = armState;
+        this.wrist = wrist;
+        addRequirements(shoulder, wrist);
     }
 
     @Override
@@ -44,6 +41,7 @@ public class ShoulderMoveCommand extends CommandBase {
         TrapezoidProfile.State state = profile.calculate(timer.get());
         SmartDashboard.putNumber("Shoulder State Goal Position", state.position);
         shoulder.runWithSetpoint(state.position, state.velocity, 0);
+        wrist.runWithVelocity(-state.velocity);
     }
 
     @Override

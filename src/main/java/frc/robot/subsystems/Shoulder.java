@@ -44,10 +44,15 @@ public class Shoulder extends SubsystemBase {
     }
 
     public double getActualPosition() {
-        return encoder.getPosition() 
-            > ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO - Math.PI / 8)
+        return encoder.getPosition()
+            > (Constants.Shoulder.MAX_ANGLE)
                 ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO)
                 : encoder.getPosition();
+    }
+
+    //FIXME
+    public void driveShoulderVoltage(double voltage) {
+        motor1.setVoltage(voltage);
     }
 
     public double getActualVelocity() {
@@ -94,6 +99,4 @@ public class Shoulder extends SubsystemBase {
             return -negDist;
         }
     }
-
-
 }

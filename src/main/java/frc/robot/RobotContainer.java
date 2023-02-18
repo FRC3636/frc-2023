@@ -13,12 +13,13 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShoulderHoldCommand;
-import frc.robot.commands.ShoulderMoveCommand;
+import frc.robot.commands.ArmMoveCommand;
 import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Rollers;
@@ -109,20 +110,27 @@ public class RobotContainer {
         // }
         // }));
 
+        new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
+                .onTrue(new InstantCommand(rollers::outtake))
+                .onFalse(new InstantCommand(rollers::stop));
+
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)
                 .whileTrue(new IntakeCommand(rollers, shoulder, wrist, ArmState.IntakeCube));
 
         new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
                 .whileTrue(new IntakeCommand(rollers, shoulder, wrist, ArmState.IntakeCone));
 
-       new JoystickButton(controller, XboxController.Button.kStart.value)
-               .whileTrue(new RunCommand(wrist::temporaryUpdateWrist));
+        new JoystickButton(controller, XboxController.Button.kStart.value)
+               .whileTrue(new RunCommand(wrist::followShoulder));
+
         shoulder.setDefaultCommand(new ShoulderHoldCommand(shoulder));
 
-        new JoystickButton(controller, XboxController.Button.kX.value).whileTrue(new ShoulderMoveCommand(shoulder, ArmState.Stowed));
-        new JoystickButton(controller, XboxController.Button.kA.value).whileTrue(new ShoulderMoveCommand(shoulder, ArmState.IntakeCone));
-        new JoystickButton(controller, XboxController.Button.kB.value).whileTrue(new ShoulderMoveCommand(shoulder, ArmState.MidGoalCone));
-        new JoystickButton(controller, XboxController.Button.kY.value).whileTrue(new ShoulderMoveCommand(shoulder, ArmState.HighGoalCone));
+        wrist.setDefaultCommand(new RunCommand(wrist::followShoulder, wrist));
+
+        new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.Stowed;})).whileTrue(new ArmMoveCommand(shoulder, wrist));
+        new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.MidGoalCone;})).whileTrue(new ArmMoveCommand(shoulder, wrist));
+        new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.MidGoalCube;})).whileTrue(new ArmMoveCommand(shoulder, wrist));
+        new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.HighGoalCone;})).whileTrue(new ArmMoveCommand(shoulder, wrist));
     }
 
     public Command getAutonomousCommand() {
