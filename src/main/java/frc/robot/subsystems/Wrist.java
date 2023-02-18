@@ -48,7 +48,7 @@ public class Wrist extends SubsystemBase {
     public void runWithSetpoint(double position, double velocity) {
         velocity += pidController.calculate(getAngleToFrame(), position);
 
-        if (!limitSwitch.get()) {
+        if (isLimitSwitchPressed()) {
             motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET);
             if(velocity >= 0) {
                 motor.set(0);
@@ -68,6 +68,10 @@ public class Wrist extends SubsystemBase {
 
     public double getPosition() {
         return this.motor.getEncoder().getPosition();
+    }
+
+    public boolean isLimitSwitchPressed() {
+        return !limitSwitch.get();
     }
 
     @Override

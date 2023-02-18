@@ -16,4 +16,9 @@ public class ZeroWristCommand extends CommandBase {
     public void execute() {
         this.wrist.RunWithVelocity(0.1);
     }
+
+    @Override
+    public boolean isFinished() {
+        return wrist.isLimitSwitchPressed();
+    }
 }
