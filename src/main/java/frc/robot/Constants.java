@@ -60,6 +60,10 @@ public final class Constants {
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 
+
+        public static final double joint2JointLength = 40;
+        public static final double ground2JointLength = 46;
+
         public static final double STOWED_ANGLE = -0.143279;
         public static final double HIGH_CONE_ANGLE = 1.989745;
         public static final double HIGH_CUBE_ANGLE = 1.989745;
@@ -73,6 +77,8 @@ public final class Constants {
 
     public static class Wrist {
         public static final int ID = 7;
+
+        public static final double GEOMETRY_MIN_ANGLE = 17.1038;
 
         public static final double GEAR_RATIO = 1.0 / 75.0;
 
@@ -89,6 +95,9 @@ public final class Constants {
         public static final double LIMIT_SWITCH_OFFSET = Units.degreesToRadians(75);
         public static final double CONE_ANGLE = -40;
         public static final double CUBE_ANGLE = 25;
+        static final double GEOMETRY_ANGLE_OFFSET = 0.2985176246;
+        public static final double joint2CornerLength = 6;
+        public static final double CLEARANCE_HEIGHT = 1;
     }
 
     public static class Rollers {

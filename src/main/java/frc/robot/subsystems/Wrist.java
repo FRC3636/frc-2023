@@ -42,12 +42,22 @@ public class Wrist extends SubsystemBase {
         );
     }
 
+    public double getMinAngle(double armAngle){
+        double armHeight = Constants.Shoulder.ground2JointLength;
+        double armLength = Constants.Shoulder.joint2JointLength;
+        double clearance = Constants.Wrist.CLEARANCE_HEIGHT;
+        double intakeLength = Constants.Wrist.joint2CornerLength;
+        double intakeAngleOffset = Constants.Wrist.GEOMETRY_MIN_ANGLE;
+
+        return Math.asin((-Math.cos(armAngle)*armLength+armHeight-clearance)/intakeLength-intakeAngleOffset);
+    }
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", motor.getEncoder().getPosition());
         SmartDashboard.putNumber("Wrist Set Point", ArmState.target.wristAngle);
         SmartDashboard.putNumber("Wrist Relative", getAngleToFrame());
+        SmartDashboard.putNumber("minSafeAngle", getMinAngle(ArmState.target.shoulderAngle));
 
         if (!limitSwitch.get()) {
             motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET);
