@@ -77,7 +77,7 @@ public class RobotContainer {
                         drivetrain::setX,
                         drivetrain));
         new JoystickButton(joystickLeft, 6)
-                .whileTrue(new InstantCommand(drivetrain::zeroHeading));
+                .onTrue(new InstantCommand(drivetrain::zeroHeading));
     }
 
 

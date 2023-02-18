@@ -32,6 +32,7 @@ public class PoseEstimation {
         try {
             photonVision = new PhotonVisionBackend();
         } catch (Exception e) {
+            System.out.println("Failed to initialize PhotonVision");
             e.printStackTrace();
         }
 
