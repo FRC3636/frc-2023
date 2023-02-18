@@ -41,6 +41,10 @@ public class Wrist extends SubsystemBase {
         runWithSetpoint(getSetPosition(), velocity);
     }
 
+    public void RunWithVelocity(double velocity) {
+        runWithSetpoint(this.motor.getEncoder().getPosition(), velocity);
+    }
+
     public void runWithSetpoint(double position, double velocity) {
         velocity += pidController.calculate(getAngleToFrame(), position);
 
@@ -60,6 +64,10 @@ public class Wrist extends SubsystemBase {
         }
 
         return Math.max(0, ArmState.target.wristAngle);
+    }
+
+    public double getPosition() {
+        return this.motor.getEncoder().getPosition();
     }
 
     @Override
