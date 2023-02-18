@@ -34,18 +34,24 @@ public class Wrist extends SubsystemBase {
     }
 
     public void followShoulder() {
-        runWithVelocity(-RobotContainer.shoulder.getActualVelocity());
+        followShoulderWithVelocity(-RobotContainer.shoulder.getActualVelocity());
     }
 
-    public void runWithVelocity(double velocity) {
+    public void followShoulderWithVelocity(double velocity) {
         runWithSetpoint(getSetPosition(), velocity);
     }
 
     public void runWithSetpoint(double position, double velocity) {
         velocity += pidController.calculate(getAngleToFrame(), position);
-        motor.setVoltage(
-                feedforward.calculate(getAngleToFrame(), velocity)
-        );
+
+        if (!limitSwitch.get()) {
+            motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET);
+            if(velocity >= 0) {
+                motor.set(0);
+            }
+        }
+
+        motor.setVoltage(feedforward.calculate(getAngleToFrame(), velocity));
     }
 
     public double getSetPosition() {

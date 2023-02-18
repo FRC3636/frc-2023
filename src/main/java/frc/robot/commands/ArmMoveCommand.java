@@ -41,7 +41,7 @@ public class ArmMoveCommand extends CommandBase {
         TrapezoidProfile.State state = profile.calculate(timer.get());
         SmartDashboard.putNumber("Shoulder State Goal Position", state.position);
         shoulder.runWithSetpoint(state.position, state.velocity, 0);
-        wrist.runWithVelocity(-state.velocity);
+        wrist.followShoulderWithVelocity(-state.velocity);
     }
 
     @Override
