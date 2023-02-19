@@ -41,18 +41,15 @@ public class Wrist extends SubsystemBase {
         runWithSetpoint(getSetPosition(), velocity);
     }
 
-    public void RunWithVelocity(double velocity) {
+    public void runWithVelocity(double velocity) {
         runWithSetpoint(this.motor.getEncoder().getPosition(), velocity);
     }
 
     public void runWithSetpoint(double position, double velocity) {
         velocity += pidController.calculate(getAngleToFrame(), position);
 
-        if (isLimitSwitchPressed()) {
-            motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET);
-            if(velocity >= 0) {
-                motor.set(0);
-            }
+        if (isLimitSwitchPressed() && velocity >= 0) {
+            motor.set(0);
         }
 
         motor.setVoltage(feedforward.calculate(getAngleToFrame(), velocity));
@@ -60,10 +57,10 @@ public class Wrist extends SubsystemBase {
 
     public double getSetPosition() {
         if(RobotContainer.shoulder.getActualPosition() > Constants.Wrist.MIN_SHOULDER_ANGLE) {
-            return ArmState.target.wristAngle;
+            return ArmState.target.getWristAngle();
         }
 
-        return Math.max(0, ArmState.target.wristAngle);
+        return Math.max(0.2, ArmState.target.getWristAngle());
     }
 
     public double getPosition() {
@@ -78,7 +75,11 @@ public class Wrist extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", motor.getEncoder().getPosition());
-        SmartDashboard.putNumber("Wrist Set Point", ArmState.target.wristAngle);
+        SmartDashboard.putNumber("Wrist Set Point", ArmState.target.getWristAngle());
         SmartDashboard.putNumber("Wrist Relative", getAngleToFrame());
+
+        if(isLimitSwitchPressed()) {
+            motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET);
+        }
     }
 }

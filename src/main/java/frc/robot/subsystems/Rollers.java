@@ -15,11 +15,11 @@ public class Rollers extends SubsystemBase {
     }
 
     public void intake() {
-        rollers.set((ArmState.target.gamePiece == ArmState.GamePiece.Cone ? Constants.Rollers.INTAKE_CONE : Constants.Rollers.INTAKE_CUBE) * Constants.Rollers.SPEED);
+        rollers.set((ArmState.gamePiece == ArmState.GamePiece.Cone ? Constants.Rollers.INTAKE_CONE : Constants.Rollers.INTAKE_CUBE) * Constants.Rollers.SPEED);
     }
 
     public void outtake() {
-        rollers.set((ArmState.target.gamePiece == ArmState.GamePiece.Cone ? Constants.Rollers.INTAKE_CUBE : Constants.Rollers.INTAKE_CONE) * Constants.Rollers.SPEED);
+        rollers.set((ArmState.gamePiece == ArmState.GamePiece.Cone ? Constants.Rollers.INTAKE_CUBE : Constants.Rollers.INTAKE_CONE) * Constants.Rollers.SPEED);
     }
     public void stop() {
         rollers.set(0);

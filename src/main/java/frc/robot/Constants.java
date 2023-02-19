@@ -59,9 +59,10 @@ public final class Constants {
         public static final double KD = 0.03;
 
         public static final double STOWED_ANGLE = -0.143279;
-        public static final double HIGH_CONE_ANGLE = 1.989745;
-        public static final double HIGH_CUBE_ANGLE = 1.989745;
-        public static final double MID_ANGLE = Units.degreesToRadians(70);
+        public static final double HIGH_CONE_ANGLE = 2.00;
+        public static final double HIGH_CUBE_ANGLE = 1.32;
+        public static final double MID_CONE_ANGLE = 1.69;
+        public static final double MID_CUBE_ANGLE = 1.08;
         public static final double INTAKE_CONE = 1.002868;
         public static final double MAX_ANGLE = 2.2;
 
@@ -75,9 +76,9 @@ public final class Constants {
 
         public static final double GEAR_RATIO = 1.0 / 75.0;
 
-        public static final double KP = 3;
-        public static final double KI = 0.0;
-        public static final double KD = 0.1;
+        public static final double KP = 7;
+        public static final double KI = 0.1;
+        public static final double KD = 0.25;
 
         public static final double KS = 0.14588;
         public static final double KG = 0.13063;
@@ -87,9 +88,9 @@ public final class Constants {
         public static final double MIN_SHOULDER_ANGLE = 0.709869;
 
         public static final int LIMIT_SWITCH = 1;
-        public static final double LIMIT_SWITCH_OFFSET = Units.degreesToRadians(75);
-        public static final double CONE_ANGLE = Units.degreesToRadians(-40);
-        public static final double CUBE_ANGLE = Units.degreesToRadians(25);
+        public static final double LIMIT_SWITCH_OFFSET = Units.degreesToRadians(63);
+        public static final double CONE_ANGLE = Units.degreesToRadians(-50);
+        public static final double CUBE_ANGLE = Units.degreesToRadians(40);
     }
 
     public static class Rollers {

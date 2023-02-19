@@ -15,12 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShoulderHoldCommand;
-import frc.robot.commands.ZeroWristCommand;
 import frc.robot.commands.ArmMoveCommand;
 import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.Wrist;
@@ -106,33 +104,30 @@ public class RobotContainer {
             }
         }, drivetrain));
 
-        // new JoystickButton(joystickLeft, 1).onTrue(new InstantCommand(() -> {
-        // if (camera.getRobotPose() != null) {
-        // drivetrain.resetOdometryTo(camera.getRobotPose());
-        // }
-        // }));
+        shoulder.setDefaultCommand(new ShoulderHoldCommand(shoulder));
+        wrist.setDefaultCommand(new RunCommand(wrist::followShoulder, wrist));
 
+        // Intaking and Outtaking
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
+                .onTrue(new InstantCommand(rollers::intake))
+                .onFalse(new InstantCommand(rollers::stop));
+
+        new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
                 .onTrue(new InstantCommand(rollers::outtake))
                 .onFalse(new InstantCommand(rollers::stop));
 
+        // State Changes
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)
-                .whileTrue(new IntakeCommand(rollers, shoulder, wrist, ArmState.IntakeCube));
-
+                .whileTrue(new InstantCommand(() -> ArmState.gamePiece = ArmState.GamePiece.Cube))
+                .onTrue(new ArmMoveCommand(shoulder, wrist));
         new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
-                .whileTrue(new IntakeCommand(rollers, shoulder, wrist, ArmState.IntakeCone));
+                .whileTrue(new InstantCommand(() -> ArmState.gamePiece = ArmState.GamePiece.Cone))
+                .onTrue(new ArmMoveCommand(shoulder, wrist));
 
-        new JoystickButton(controller, XboxController.Button.kStart.value)
-               .whileTrue(new RunCommand(wrist::followShoulder));
-
-        shoulder.setDefaultCommand(new ShoulderHoldCommand(shoulder));
-
-        wrist.setDefaultCommand(new RunCommand(wrist::followShoulder, wrist));
-
-        new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.Stowed;})).whileTrue(new ArmMoveCommand(shoulder, wrist));
-        new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.MidGoalCone;})).whileTrue(new ArmMoveCommand(shoulder, wrist));
-        new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.MidGoalCube;})).whileTrue(new ArmMoveCommand(shoulder, wrist));
-        new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.HighGoalCone;})).whileTrue(new ArmMoveCommand(shoulder, wrist));
+        new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.Stowed;})).onTrue(new ArmMoveCommand(shoulder, wrist));
+        new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.Low;})).onTrue(new ArmMoveCommand(shoulder, wrist));
+        new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.Mid;})).onTrue(new ArmMoveCommand(shoulder, wrist));
+        new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.High;})).onTrue(new ArmMoveCommand(shoulder, wrist));
     }
 
     public Command getAutonomousCommand() {

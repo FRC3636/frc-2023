@@ -1,28 +1,34 @@
 package frc.robot;
 
 public enum ArmState {
-
-    HighGoalCone(Constants.Shoulder.HIGH_CONE_ANGLE, GamePiece.Cone),
-    HighGoalCube(Constants.Shoulder.HIGH_CUBE_ANGLE, GamePiece.Cube),
-    MidGoalCone(Constants.Shoulder.MID_ANGLE, GamePiece.Cone),
-    MidGoalCube(Constants.Shoulder.MID_ANGLE, GamePiece.Cube),
-    LowGoalCone(Constants.Shoulder.INTAKE_CONE, GamePiece.Cone),
-    LowGoalCube(Constants.Shoulder.STOWED_ANGLE, GamePiece.Cube),
-    IntakeCone(Constants.Shoulder.INTAKE_CONE, GamePiece.Cone),
-    IntakeCube(Constants.Shoulder.STOWED_ANGLE, GamePiece.Cube),
-    Stowed(Constants.Shoulder.STOWED_ANGLE, GamePiece.Cube);
+    High(Constants.Shoulder.HIGH_CONE_ANGLE, Constants.Shoulder.HIGH_CUBE_ANGLE),
+    Mid(Constants.Shoulder.MID_CONE_ANGLE, Constants.Shoulder.MID_CUBE_ANGLE),
+    Low(Constants.Shoulder.INTAKE_CONE, Constants.Shoulder.INTAKE_CONE),
+    Stowed(Constants.Shoulder.STOWED_ANGLE);
 
 
-    public final double shoulderAngle;
-    public final double wristAngle;
-    public final GamePiece gamePiece;
-    ArmState(double shoulderAngle, GamePiece gamePiece) {
-        this.shoulderAngle = shoulderAngle;
-        this.wristAngle = (gamePiece == GamePiece.Cone)? Constants.Wrist.CONE_ANGLE : Constants.Wrist.CUBE_ANGLE;
-        this.gamePiece = gamePiece;
+    private final double shoulderCubeAngle;
+    private final double shoulderConeAngle;
+    ArmState(double shoulderConeAngle, double shoulderCubeAngle) {
+        this.shoulderCubeAngle = shoulderCubeAngle;
+        this.shoulderConeAngle = shoulderConeAngle;
+    }
+
+    ArmState(double shoulderAngle) {
+        this.shoulderCubeAngle = shoulderAngle;
+        this.shoulderConeAngle = shoulderAngle;
+    }
+
+    public double getShoulderAngle() {
+        return(gamePiece == GamePiece.Cone) ? shoulderConeAngle : shoulderCubeAngle;
+    }
+
+    public double getWristAngle() {
+        return (gamePiece == GamePiece.Cone)? Constants.Wrist.CONE_ANGLE : Constants.Wrist.CUBE_ANGLE;
     }
 
     public static ArmState target = ArmState.Stowed;
+    public static GamePiece gamePiece = GamePiece.Cube;
     public enum GamePiece {
         Cone,
         Cube

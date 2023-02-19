@@ -14,7 +14,7 @@ public class ZeroWristCommand extends CommandBase {
 
     @Override
     public void execute() {
-        this.wrist.RunWithVelocity(0.1);
+        this.wrist.runWithVelocity(1);
     }
 
     @Override

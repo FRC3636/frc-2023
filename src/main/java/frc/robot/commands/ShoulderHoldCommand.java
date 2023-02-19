@@ -15,6 +15,6 @@ public class ShoulderHoldCommand extends CommandBase {
 
     @Override
     public void execute() {
-        shoulder.runWithSetpoint(ArmState.target.shoulderAngle, 0, 0);
+        shoulder.runWithSetpoint(ArmState.target.getShoulderAngle(), 0, 0);
     }
 }
