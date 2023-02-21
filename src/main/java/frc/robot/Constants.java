@@ -58,13 +58,17 @@ public final class Constants {
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 
+
         public static final double STOWED_ANGLE = -0.143279;
         public static final double HIGH_CONE_ANGLE = 2.00;
         public static final double HIGH_CUBE_ANGLE = 1.32;
         public static final double MID_CONE_ANGLE = 1.69;
-        public static final double MID_CUBE_ANGLE = 1.08;
         public static final double INTAKE_CONE = 1.002868;
         public static final double MAX_ANGLE = 2.2;
+
+        public static final double JOINT_TO_WRIST_DISTANCE = 40;
+
+        public static final double JOINT_HEIGHT = 45.6;
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
 
@@ -91,6 +95,13 @@ public final class Constants {
         public static final double LIMIT_SWITCH_OFFSET = Units.degreesToRadians(63);
         public static final double CONE_ANGLE = Units.degreesToRadians(-50);
         public static final double CUBE_ANGLE = Units.degreesToRadians(40);
+
+        //Min Angle
+        public static final double HORIZONTAL_TO_CORNER_ANGLE = 0.2985176246;
+        public static final double JOINT_TO_CORNER_DISTANCE = 14;
+        public static final double CLEARANCE_HEIGHT = 1;
+
+
     }
 
     public static class Rollers {
