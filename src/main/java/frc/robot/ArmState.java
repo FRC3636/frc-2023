@@ -1,8 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.ArmMoveCommand;
 
 public enum ArmState {
@@ -26,8 +23,8 @@ public enum ArmState {
         this.shoulderCubeAngle = shoulderAngle;
         this.shoulderConeAngle = shoulderAngle;
 
-        this.wristConeAngle = defautlWristAngle(GamePiece.Cone);
-        this.wristCubeAngle = defautlWristAngle(GamePiece.Cube);
+        this.wristConeAngle = defaultWristAngle(GamePiece.Cone);
+        this.wristCubeAngle = defaultWristAngle(GamePiece.Cube);
     }
 
     public double getShoulderAngle() {
@@ -38,7 +35,7 @@ public enum ArmState {
         return(gamePiece == GamePiece.Cone) ? wristConeAngle : wristCubeAngle;
     }
 
-    public double defautlWristAngle(GamePiece gamePiece) {
+    public double defaultWristAngle(GamePiece gamePiece) {
         return (gamePiece == GamePiece.Cone)? Constants.Wrist.CONE_ANGLE : Constants.Wrist.CUBE_ANGLE;
     }
 

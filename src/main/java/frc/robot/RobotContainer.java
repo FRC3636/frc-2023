@@ -19,10 +19,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ShoulderHoldCommand;
-import frc.robot.subsystems.Shoulder;
-import frc.robot.subsystems.Wrist;
-import frc.robot.subsystems.Rollers;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -56,6 +53,9 @@ public class RobotContainer {
     private static GenericEntry driveSchemeEntry;
 
     public static Field2d field = new Field2d();
+
+    // RGB
+    public static final LightsTable lights = new LightsTable();
 
     static {
         drivePresetsChooser.addOption("Default", DriveConfig.DEFAULT_PRESET_NAME);

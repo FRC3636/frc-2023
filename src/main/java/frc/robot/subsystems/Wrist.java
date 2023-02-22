@@ -65,7 +65,7 @@ public class Wrist extends SubsystemBase {
         double intakeAngleOffset = Constants.Wrist.HORIZONTAL_TO_CORNER_ANGLE;
         double clearance = Constants.Wrist.CLEARANCE_HEIGHT;
         double angle = -Math.asin((height-clearance)/intakeLength)+intakeAngleOffset;
-        System.out.println("Math vs Real angle diff(degrees)=" + ((angle-motor.getEncoder().getPosition()))*(360/2/Math.PI));
+//        System.out.println("Math vs Real angle diff(degrees)=" + ((angle-motor.getEncoder().getPosition()))*(360/2/Math.PI));
         return angle;
     }
 
@@ -73,7 +73,7 @@ public class Wrist extends SubsystemBase {
         double armHeight = Constants.Shoulder.JOINT_HEIGHT;
         double armLength = Constants.Shoulder.JOINT_TO_WRIST_DISTANCE;
         double height = armHeight - Math.cos(armAngle) * armLength;
-        System.out.println("Joint To Ground Height(in)-----> " + height);
+//        System.out.println("Joint To Ground Height(in)-----> " + height);
         return height;
     }
     public double getSetPosition() {
@@ -94,7 +94,7 @@ public class Wrist extends SubsystemBase {
         SmartDashboard.putNumber("Wrist Angle", motor.getEncoder().getPosition());
         SmartDashboard.putNumber("Wrist Set Point", ArmState.getTarget().getWristAngle());
         SmartDashboard.putNumber("Wrist Relative", getAngleToFrame());
-        SmartDashboard.putNumber("minSafeAngle", (360/2/Math.PI)*getMinAngle(safeHeight(RobotContainer.shoulder.getActualPosition())));
+        SmartDashboard.putNumber("minSafeAngle", (360.0/2.0/Math.PI)*getMinAngle(safeHeight(RobotContainer.shoulder.getActualPosition())));
 
         if(isLimitSwitchPressed()) {
             motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET);
