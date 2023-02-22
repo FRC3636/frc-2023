@@ -25,12 +25,12 @@ public class ArmMoveCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        SmartDashboard.putNumber("Shoulder Goal Position", ArmState.getTarget().getShoulderAngle());
+        SmartDashboard.putNumber("Shoulder Goal Position", ArmState.getTarget().getShoulderAngle().getDegrees());
 
         profile = new TrapezoidProfile(
             Constants.Shoulder.TRAPEZOID_PROFILE_CONSTRAINTS,
-            new TrapezoidProfile.State(ArmState.getTarget().getShoulderAngle(), 0),
-            new TrapezoidProfile.State(shoulder.getActualPosition(), shoulder.getActualVelocity())
+            new TrapezoidProfile.State(ArmState.getTarget().getShoulderAngle().getRadians(), 0),
+            new TrapezoidProfile.State(shoulder.getActualPosition().getRadians(), shoulder.getActualVelocity())
         );
 
         timer.reset();
