@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -59,6 +60,22 @@ public class Wrist extends SubsystemBase {
         motor.setVoltage(feedforward.calculate(getAngleToFrame(), velocity));
     }
 
+    public double getMinAngle(double height){
+        double intakeLength = Constants.Wrist.JOINT_TO_CORNER_DISTANCE;
+        double intakeAngleOffset = Constants.Wrist.HORIZONTAL_TO_CORNER_ANGLE;
+        double clearance = Constants.Wrist.CLEARANCE_HEIGHT;
+        double angle = -Math.asin((height-clearance)/intakeLength)+intakeAngleOffset;
+        System.out.println("Math vs Real angle diff(degrees)=" + ((angle-motor.getEncoder().getPosition()))*(360/2/Math.PI));
+        return angle;
+    }
+
+    public double safeHeight(double armAngle) {
+        double armHeight = Constants.Shoulder.JOINT_HEIGHT;
+        double armLength = Constants.Shoulder.JOINT_TO_WRIST_DISTANCE;
+        double height = armHeight - Math.cos(armAngle) * armLength;
+        System.out.println("Joint To Ground Height(in)-----> " + height);
+        return height;
+    }
     public double getSetPosition() {
         if(RobotContainer.shoulder.getActualPosition() < Constants.Wrist.MIN_SHOULDER_ANGLE || ArmState.getTarget().getShoulderAngle() < Constants.Wrist.MIN_SHOULDER_ANGLE) {
             return Math.max(0.2, ArmState.getTarget().getWristAngle()) + (RobotContainer.joystickLeft.getZ() / 4);
@@ -77,9 +94,11 @@ public class Wrist extends SubsystemBase {
         SmartDashboard.putNumber("Wrist Angle", motor.getEncoder().getPosition());
         SmartDashboard.putNumber("Wrist Set Point", ArmState.getTarget().getWristAngle());
         SmartDashboard.putNumber("Wrist Relative", getAngleToFrame());
+        SmartDashboard.putNumber("minSafeAngle", (360/2/Math.PI)*getMinAngle(safeHeight(RobotContainer.shoulder.getActualPosition())));
 
         if(isLimitSwitchPressed()) {
             motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET);
+            motor.set(0);
         }
     }
 }
