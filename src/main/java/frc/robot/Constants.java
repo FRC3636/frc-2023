@@ -151,6 +151,54 @@ public final class Constants {
     }
 
     public static class FieldConstants {
+        public static final double fieldLength = Units.inchesToMeters(651.25);
+        public static final double fieldWidth = Units.inchesToMeters(315.5);
+        public static final double tapeWidth = Units.inchesToMeters(2.0);
+        public static final double aprilTagWidth = Units.inchesToMeters(6.0);
+        public static class Grids {
+            // X layout
+            public static final double outerX = Units.inchesToMeters(54.25);
+            public static final double lowX =
+                    outerX - (Units.inchesToMeters(14.25) / 2.0); // Centered when under cube nodes
+            public static final double midX = outerX - Units.inchesToMeters(22.75);
+            public static final double highX = outerX - Units.inchesToMeters(39.75);
+
+            // Y layout
+            public static final int nodeRowCount = 9;
+            public static final double nodeFirstY = Units.inchesToMeters(20.19);
+            public static final double nodeSeparationY = Units.inchesToMeters(22.0);
+
+            // Z layout
+            public static final double cubeEdgeHigh = Units.inchesToMeters(3.0);
+            public static final double highCubeZ = Units.inchesToMeters(35.5) - cubeEdgeHigh;
+            public static final double midCubeZ = Units.inchesToMeters(23.5) - cubeEdgeHigh;
+            public static final double highConeZ = Units.inchesToMeters(46.0);
+            public static final double midConeZ = Units.inchesToMeters(34.0);
+
+            // Translations (all nodes in the same column/row have the same X/Y coordinate)
+            public static final Translation2d[] lowTranslations = new Translation2d[nodeRowCount];
+            public static final Translation3d[] low3dTranslations = new Translation3d[nodeRowCount];
+            public static final Translation2d[] midTranslations = new Translation2d[nodeRowCount];
+            public static final Translation3d[] mid3dTranslations = new Translation3d[nodeRowCount];
+            public static final Translation2d[] highTranslations = new Translation2d[nodeRowCount];
+            public static final Translation3d[] high3dTranslations = new Translation3d[nodeRowCount];
+
+            static {
+                for (int i = 0; i < nodeRowCount; i++) {
+                    boolean isCube = i == 1 || i == 4 || i == 7;
+                    lowTranslations[i] = new Translation2d(lowX, nodeFirstY + nodeSeparationY * i);
+                    low3dTranslations[i] = new Translation3d(lowX, nodeFirstY + nodeSeparationY * i, 0.0);
+                    midTranslations[i] = new Translation2d(midX, nodeFirstY + nodeSeparationY * i);
+                    mid3dTranslations[i] =
+                            new Translation3d(midX, nodeFirstY + nodeSeparationY * i, isCube ? midCubeZ : midConeZ);
+                    high3dTranslations[i] =
+                            new Translation3d(
+                                    highX, nodeFirstY + nodeSeparationY * i, isCube ? highCubeZ : highConeZ);
+                    highTranslations[i] = new Translation2d(highX, nodeFirstY + nodeSeparationY * i);
+                }
+            }
+        }
+
         public static final Map<Integer, Pose3d> aprilTags =
                 Map.of(
                         1,
