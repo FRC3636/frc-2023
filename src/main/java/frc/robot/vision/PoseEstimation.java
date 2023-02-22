@@ -1,11 +1,15 @@
 package frc.robot.vision;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -18,6 +22,10 @@ public class PoseEstimation {
 
     private GenericEntry usePhotonVisionEntry = RobotContainer.autoTab.add("Use PhotonVision", true).withWidget(BuiltInWidgets.kToggleButton).getEntry();
     private GenericEntry useLimelightEntry = RobotContainer.autoTab.add("Use Limelight", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+
+    private TimeInterpolatableBuffer<Pose2d> poseHistory = TimeInterpolatableBuffer.createBuffer(1.5);
+
+    private static final double DIFFERENTIATION_TIME = 0.020;
 
     public PoseEstimation() {
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -40,6 +48,8 @@ public class PoseEstimation {
     }
 
     public void periodic() {
+        poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
+
         if (usePhotonVisionEntry.getBoolean(false)) {
             photonVision.getMeasurement().ifPresent(this::addVisionMeasurement);
         }
@@ -48,15 +58,24 @@ public class PoseEstimation {
             limelight.getMeasurement().ifPresent(this::addVisionMeasurement);
         }
 
-        RobotContainer.field.setRobotPose(getPose());
+        RobotContainer.field.setRobotPose(getEstimatedPose());
     }
 
     public void updateOdometry(Rotation2d gyro, SwerveModulePosition[] modulePositions) {
         poseEstimator.update(gyro, modulePositions);
     }
 
-    public Pose2d getPose() {
+    public Pose2d getEstimatedPose() {
         return poseEstimator.getEstimatedPosition();
+    }
+
+    public Translation2d getEstimatedVelocity() {
+        double now = Timer.getFPGATimestamp();
+
+        Translation2d current = poseHistory.getSample(now).get().getTranslation();
+        Translation2d previous = poseHistory.getSample(now - DIFFERENTIATION_TIME).get().getTranslation();
+
+        return current.minus(previous).div(DIFFERENTIATION_TIME);
     }
 
     public void resetPose(Pose2d pose) {
