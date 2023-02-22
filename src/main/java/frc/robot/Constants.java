@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -58,13 +59,13 @@ public final class Constants {
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 
-        public static final double STOWED_ANGLE = -0.143279;
-        public static final double HIGH_CONE_ANGLE = 2.178937;
-        public static final double HIGH_CUBE_ANGLE = 1.570526;
-        public static final double MID_CONE_ANGLE = 1.867019;
-        public static final double MID_CUBE_ANGLE = 1.282185;
-        public static final double INTAKE_CONE = 1.111091;
-        public static final double MAX_ANGLE = 2.3;
+        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(0.143279);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(.178937);
+        public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(.570526);
+        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(.867019);
+        public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(.282185);
+        public static final Rotation2d INTAKE_CONE = Rotation2d.fromRadians(.111091);
+        public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(.3);
 
         public static final double JOINT_TO_WRIST_DISTANCE = 40;
 
@@ -89,19 +90,19 @@ public final class Constants {
         public static final double KV = 1.4242;
         public static final double KA = 0.052069;
 
-        public static final double STOWED_ANGLE = -0.143279;
-        public static final double HIGH_CONE_ANGLE = -0.457023;
-        public static final double HIGH_CUBE_ANGLE = 0.966711;
-        public static final double MID_CONE_ANGLE = -0.725371;
-        public static final double MID_CUBE_ANGLE = 0.966711;
-        public static final double INTAKE_CONE = -0.679611;
+        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(0);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.457023);
+        public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
+        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.725371);
+        public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
+        public static final Rotation2d INTAKE_CONE = Rotation2d.fromRadians(-0.679611);
 
-        public static final double MIN_SHOULDER_ANGLE = 0.709869;
+        public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
 
         public static final int LIMIT_SWITCH = 1;
-        public static final double LIMIT_SWITCH_OFFSET = Units.degreesToRadians(63);
-        public static final double CONE_ANGLE = Units.degreesToRadians(-40);
-        public static final double CUBE_ANGLE = Units.degreesToRadians(40);
+        public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(63);
+        public static final Rotation2d CONE_ANGLE = Rotation2d.fromDegrees(-40);
+        public static final Rotation2d CUBE_ANGLE = Rotation2d.fromDegrees(40);
 
         //Min Angle
         public static final double HORIZONTAL_TO_CORNER_ANGLE = 0.2985176246;
@@ -113,9 +114,11 @@ public final class Constants {
 
     public static class Rollers {
         public static final int ID = 8;
-        public static final int INTAKE_CONE = -1;
-        public static final int INTAKE_CUBE = 1;
-        public static final double SPEED = .6;
+        public static final double INTAKE_CONE = -.6;
+        public static final double INTAKE_CUBE = 0.5;
+        public static final double OUTTAKE_CONE = 0.5;
+        public static final double OUTTAKE_CUBE = -.6;
+
     }
 
     public static class FieldConstants {

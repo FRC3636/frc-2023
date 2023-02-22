@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -44,11 +45,12 @@ public class Shoulder extends SubsystemBase {
         pidController.setTolerance(Units.degreesToRadians(1));
     }
 
-    public double getActualPosition() {
-        return encoder.getPosition()
-            > (Constants.Shoulder.MAX_ANGLE)
+    public Rotation2d getActualPosition() {
+        return Rotation2d.fromRadians(
+                encoder.getPosition()
+            > (Constants.Shoulder.MAX_ANGLE.getRadians())
                 ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO)
-                : encoder.getPosition();
+                : encoder.getPosition());
     }
 
     //FIXME
@@ -62,7 +64,7 @@ public class Shoulder extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Shoulder Angle", getActualPosition());
+        SmartDashboard.putNumber("Shoulder Angle", getActualPosition().getDegrees());
         SmartDashboard.putNumber("Shoulder Velocity", getActualVelocity());
         SmartDashboard.putNumber("Shoulder Angle Measured", encoder.getPosition());
     }
@@ -71,10 +73,10 @@ public class Shoulder extends SubsystemBase {
     /// @param position The position setpoint. Measured in radians from the vertical.
     /// @param velocity The velocity setpoint. Measured in radians per second.
     /// @param acceleration The acceleration setpoint. Measured in radians per second squared.
-    public void runWithSetpoint(double position, double velocity, double acceleration) {
-        velocity += pidController.calculate(getActualPosition(), Math.max(position + RobotContainer.joystickRight.getZ() / 4, ArmState.Stowed.getShoulderAngle()));
-        SmartDashboard.putNumber("pos - actual pos", position - getActualPosition());
-        double voltage = feedforwardController.calculate(getActualPosition() - Math.PI / 2, velocity, acceleration);
+    public void runWithSetpoint(Rotation2d position, double velocity, double acceleration) {
+        velocity += pidController.calculate(getActualPosition().getRadians(), Math.max(position.getRadians() + RobotContainer.joystickRight.getZ() / 4, ArmState.Stowed.getShoulderAngle().getRadians()));
+        SmartDashboard.putNumber("pos - actual pos", position.getRadians() - getActualPosition().getRadians());
+        double voltage = feedforwardController.calculate(getActualPosition().getRadians() - Math.PI / 2, velocity, acceleration);
 
         motor1.setVoltage(voltage);
 

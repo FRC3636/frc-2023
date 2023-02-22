@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,7 +41,7 @@ public class ArmMoveCommand extends CommandBase {
     public void execute() {
         TrapezoidProfile.State state = profile.calculate(timer.get());
         SmartDashboard.putNumber("Shoulder State Goal Position", state.position);
-        shoulder.runWithSetpoint(state.position, state.velocity, 0);
+        shoulder.runWithSetpoint(Rotation2d.fromRadians(state.position), state.velocity, 0);
         wrist.followShoulderWithVelocity(-state.velocity);
     }
 

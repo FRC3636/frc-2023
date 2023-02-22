@@ -85,6 +85,10 @@ public class Drivetrain implements Subsystem {
         drivetrain.tankDrive(left, right);
     }
 
+    public Rotation2d getPitch() {
+        return Rotation2d.fromRadians(navX.getPitch());
+    }
+
     public void tankDriveWithRawVoltage(double leftV, double rightV) {
         leftMotor1.setVoltage(leftV);
         rightMotor1.setVoltage(rightV);

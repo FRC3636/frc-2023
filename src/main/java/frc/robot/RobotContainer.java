@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ShoulderHoldCommand;
 import frc.robot.subsystems.*;
 
+import javax.swing.*;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -110,11 +112,11 @@ public class RobotContainer {
 
         // Intaking and Outtaking
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)
-                .onTrue(new InstantCommand(rollers::outtake))
+                .onTrue(new InstantCommand(rollers::intake))
                 .onFalse(new InstantCommand(rollers::stop));
 
-        new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
-                .onTrue(new InstantCommand(rollers::intake))
+        new JoystickButton(joystickRight, 1)
+                .onTrue(new InstantCommand(rollers::outtake))
                 .onFalse(new InstantCommand(rollers::stop));
 
         // State Changes
