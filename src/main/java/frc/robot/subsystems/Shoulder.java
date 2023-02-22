@@ -11,6 +11,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ArmState;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
@@ -71,7 +72,7 @@ public class Shoulder extends SubsystemBase {
     /// @param velocity The velocity setpoint. Measured in radians per second.
     /// @param acceleration The acceleration setpoint. Measured in radians per second squared.
     public void runWithSetpoint(double position, double velocity, double acceleration) {
-        velocity += pidController.calculate(getActualPosition(), position);
+        velocity += pidController.calculate(getActualPosition(), Math.max(position + RobotContainer.joystickRight.getZ() / 4, ArmState.Stowed.getShoulderAngle()));
         SmartDashboard.putNumber("pos - actual pos", position - getActualPosition());
         double voltage = feedforwardController.calculate(getActualPosition() - Math.PI / 2, velocity, acceleration);
 

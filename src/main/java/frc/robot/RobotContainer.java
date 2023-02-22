@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -17,9 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShoulderHoldCommand;
-import frc.robot.commands.ArmMoveCommand;
 import frc.robot.subsystems.Shoulder;
 import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Rollers;
@@ -70,6 +69,8 @@ public class RobotContainer {
                 .withWidget(BuiltInWidgets.kComboBoxChooser);
         driveSchemeEntry = driveSettings.add("Drive Scheme", "None").withWidget(BuiltInWidgets.kTextView).getEntry();
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
+        LiveWindow.enableTelemetry(shoulder);
+        LiveWindow.enableTelemetry(wrist);
 
         configureBindings();
     }
@@ -108,26 +109,24 @@ public class RobotContainer {
         wrist.setDefaultCommand(new RunCommand(wrist::followShoulder, wrist));
 
         // Intaking and Outtaking
-        new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
-                .onTrue(new InstantCommand(rollers::intake))
-                .onFalse(new InstantCommand(rollers::stop));
-
-        new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
+        new JoystickButton(controller, XboxController.Button.kRightBumper.value)
                 .onTrue(new InstantCommand(rollers::outtake))
                 .onFalse(new InstantCommand(rollers::stop));
 
-        // State Changes
-        new JoystickButton(controller, XboxController.Button.kRightBumper.value)
-                .whileTrue(new InstantCommand(() -> ArmState.gamePiece = ArmState.GamePiece.Cube))
-                .onTrue(new ArmMoveCommand(shoulder, wrist));
         new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
-                .whileTrue(new InstantCommand(() -> ArmState.gamePiece = ArmState.GamePiece.Cone))
-                .onTrue(new ArmMoveCommand(shoulder, wrist));
+                .onTrue(new InstantCommand(rollers::intake))
+                .onFalse(new InstantCommand(rollers::stop));
 
-        new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.Stowed;})).onTrue(new ArmMoveCommand(shoulder, wrist));
-        new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.Low;})).onTrue(new ArmMoveCommand(shoulder, wrist));
-        new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.Mid;})).onTrue(new ArmMoveCommand(shoulder, wrist));
-        new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {ArmState.target = ArmState.High;})).onTrue(new ArmMoveCommand(shoulder, wrist));
+        // State Changes
+        new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
+                .whileTrue(new InstantCommand(() -> ArmState.setGamePiece(ArmState.GamePiece.Cone)));
+        new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
+                .whileTrue(new InstantCommand(() -> ArmState.setGamePiece(ArmState.GamePiece.Cube)));
+
+        new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {ArmState.setTarget(ArmState.Stowed);}));
+        new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {ArmState.setTarget(ArmState.Low);}));
+        new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {ArmState.setTarget(ArmState.Mid);}));
+        new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {ArmState.setTarget(ArmState.High);}));
     }
 
     public Command getAutonomousCommand() {

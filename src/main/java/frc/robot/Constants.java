@@ -59,12 +59,12 @@ public final class Constants {
         public static final double KD = 0.03;
 
         public static final double STOWED_ANGLE = -0.143279;
-        public static final double HIGH_CONE_ANGLE = 2.00;
-        public static final double HIGH_CUBE_ANGLE = 1.32;
-        public static final double MID_CONE_ANGLE = 1.69;
-        public static final double MID_CUBE_ANGLE = 1.08;
-        public static final double INTAKE_CONE = 1.002868;
-        public static final double MAX_ANGLE = 2.2;
+        public static final double HIGH_CONE_ANGLE = 2.178937;
+        public static final double HIGH_CUBE_ANGLE = 1.570526;
+        public static final double MID_CONE_ANGLE = 1.867019;
+        public static final double MID_CUBE_ANGLE = 1.282185;
+        public static final double INTAKE_CONE = 1.111091;
+        public static final double MAX_ANGLE = 2.3;
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
 
@@ -85,11 +85,18 @@ public final class Constants {
         public static final double KV = 1.4242;
         public static final double KA = 0.052069;
 
+        public static final double STOWED_ANGLE = -0.143279;
+        public static final double HIGH_CONE_ANGLE = -0.457023;
+        public static final double HIGH_CUBE_ANGLE = 0.966711;
+        public static final double MID_CONE_ANGLE = -0.725371;
+        public static final double MID_CUBE_ANGLE = 0.966711;
+        public static final double INTAKE_CONE = -0.679611;
+
         public static final double MIN_SHOULDER_ANGLE = 0.709869;
 
         public static final int LIMIT_SWITCH = 1;
         public static final double LIMIT_SWITCH_OFFSET = Units.degreesToRadians(63);
-        public static final double CONE_ANGLE = Units.degreesToRadians(-50);
+        public static final double CONE_ANGLE = Units.degreesToRadians(-40);
         public static final double CUBE_ANGLE = Units.degreesToRadians(40);
     }
 

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ArmState;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 public class Wrist extends SubsystemBase {
@@ -48,6 +49,9 @@ public class Wrist extends SubsystemBase {
     public void runWithSetpoint(double position, double velocity) {
         velocity += pidController.calculate(getAngleToFrame(), position);
 
+        SmartDashboard.putNumber("Wrist Setpoint", position);
+        SmartDashboard.putNumber("Wrist Set Velocity", velocity);
+
         if (isLimitSwitchPressed() && velocity >= 0) {
             motor.set(0);
         }
@@ -56,15 +60,11 @@ public class Wrist extends SubsystemBase {
     }
 
     public double getSetPosition() {
-        if(RobotContainer.shoulder.getActualPosition() > Constants.Wrist.MIN_SHOULDER_ANGLE) {
-            return ArmState.target.getWristAngle();
+        if(RobotContainer.shoulder.getActualPosition() < Constants.Wrist.MIN_SHOULDER_ANGLE || ArmState.getTarget().getShoulderAngle() < Constants.Wrist.MIN_SHOULDER_ANGLE) {
+            return Math.max(0.2, ArmState.getTarget().getWristAngle()) + (RobotContainer.joystickLeft.getZ() / 4);
         }
 
-        return Math.max(0.2, ArmState.target.getWristAngle());
-    }
-
-    public double getPosition() {
-        return this.motor.getEncoder().getPosition();
+        return ArmState.getTarget().getWristAngle() + (RobotContainer.joystickLeft.getZ() / 4);
     }
 
     public boolean isLimitSwitchPressed() {
@@ -75,7 +75,7 @@ public class Wrist extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", motor.getEncoder().getPosition());
-        SmartDashboard.putNumber("Wrist Set Point", ArmState.target.getWristAngle());
+        SmartDashboard.putNumber("Wrist Set Point", ArmState.getTarget().getWristAngle());
         SmartDashboard.putNumber("Wrist Relative", getAngleToFrame());
 
         if(isLimitSwitchPressed()) {
