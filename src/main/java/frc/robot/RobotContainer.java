@@ -6,7 +6,12 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -19,7 +24,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoCommand;
+import frc.robot.commands.MoveToPoint;
 import frc.robot.vision.PoseEstimation;
+import frc.robot.subsystems.DriveWithJoysticks;
 import frc.robot.subsystems.Drivetrain;
 
 public class RobotContainer {
@@ -34,21 +41,22 @@ public class RobotContainer {
     // Pose Estimation
     public static final PoseEstimation poseEstimation = new PoseEstimation();
 
+
     // Controllers
     public static final Joystick joystickLeft = new Joystick(Constants.ControlConstants.JOYSTICK_RIGHT_PORT);
     public static final Joystick joystickRight = new Joystick(Constants.ControlConstants.JOYSTICK_LEFT_PORT);
   
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
-    private static NetworkTableEntry driveSchemeEntry;
 
     public static Field2d field = new Field2d();
 
+    // Commands
+    private DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft, joystickRight);
 
     public RobotContainer() {
         configureButtonBindings();
 
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
-        driveSettingsTab.add("Reset Gyro", new InstantCommand(drivetrain::zeroHeading));
 
         driveSettingsTab.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
         driveSettingsTab.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
@@ -56,19 +64,8 @@ public class RobotContainer {
         // FIXME: don't run on FMS
         PathPlannerServer.startServer(5811);
 
-        drivetrain.setDefaultCommand(
-                // The left stick controls translation of the robot.
-                // Turning is controlled by the X axis of the right stick.
-                new RunCommand(
-                        () -> drivetrain.drive(
-                                //add 1 to prevent negative sensitivity
-                                MathUtil.applyDeadband(-joystickLeft.getY() * (joystickLeft.getZ()+ 1)/2, 0.15),
-                                MathUtil.applyDeadband(-joystickLeft.getX() * (joystickLeft.getZ()+1)/2, 0.15),
-                                MathUtil.applyDeadband(-joystickRight.getX() * (joystickRight.getZ()+1)/2, 0.15),
-                                true),
-                        drivetrain
-                )
-        );
+
+        drivetrain.setDefaultCommand(driveCommand);
     }
 
     private void configureButtonBindings() {
@@ -77,7 +74,18 @@ public class RobotContainer {
                         drivetrain::setX,
                         drivetrain));
         new JoystickButton(joystickLeft, 6)
-                .onTrue(new InstantCommand(drivetrain::zeroHeading));
+                .onTrue(new InstantCommand(driveCommand::resetFieldOrientation));
+
+        Pose2d aprilTagTarget = Constants.FieldConstants.aprilTags.get(Integer.valueOf(3)).toPose2d();
+        new JoystickButton(joystickLeft, 1)
+                .whileTrue(new MoveToPoint(
+                        drivetrain,
+                        poseEstimation,
+                                aprilTagTarget
+                                .transformBy(new Transform2d(
+                                        new Translation2d(-1.0, aprilTagTarget.getRotation()),
+                                        new Rotation2d()
+                                ))));
     }
 
 

@@ -78,24 +78,12 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
-     * Method to drive the robot using joystick info.
+     * Method to drive the drivetrain using chassis speeds.
      *
-     * @param xSpeed        Speed of the robot in the x direction (forward).
-     * @param ySpeed        Speed of the robot in the y direction (sideways).
-     * @param rot           Angular rate of the robot.
-     * @param fieldRelative Whether the provided x and y speeds are relative to the
-     *                      field.
+     * @param speeds The chassis speeds.
      */
-    public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-        // Adjust input based on max speed
-        xSpeed *= DriveConstants.MAX_SPEED_METERS_PER_SECOND;
-        ySpeed *= DriveConstants.MAX_SPEED_METERS_PER_SECOND;
-        rot *= DriveConstants.MAX_ANGULAR_SPEED;
-
-        var swerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(
-                fieldRelative
-                        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees((gyro.getAngle() + gyro.getRate() * DriveConstants.GYRO_READ_DELAY) * (DriveConstants.GYRO_REVERSED? -1.0 : 1.0)))
-                        : new ChassisSpeeds(xSpeed, ySpeed, rot));
+    public void drive(ChassisSpeeds speeds) {
+        SwerveModuleState[] swerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(speeds);
         setModuleStates(swerveModuleStates);
     }
     /**
