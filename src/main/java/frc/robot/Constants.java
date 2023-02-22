@@ -4,13 +4,15 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
@@ -19,7 +21,7 @@ import java.util.Map;
 import static com.revrobotics.CANSparkMax.IdleMode;
 
 public final class Constants {
-    public static class Controls {
+    public static class ControlConstants {
         public static final int JOYSTICK_RIGHT_PORT = 0;
         public static final int JOYSTICK_LEFT_PORT = 1;
     }
@@ -47,6 +49,9 @@ public final class Constants {
         public static final double REAR_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI;
         public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
 
+        // Delay between reading the gyro and using the value used to aproximate exact angle while spinning (0.02 is one loop)
+        public static final double GYRO_READ_DELAY = 0.02;
+
         // SPARK MAX CAN IDs
         public static final int FRONT_LEFT_DRIVING_CAN_ID = 10;
         public static final int REAR_LEFT_DRIVING_CAN_ID = 12;
@@ -58,7 +63,9 @@ public final class Constants {
         public static final int FRONT_RIGHT_TURNING_CAN_ID = 15;
         public static final int REAR_RIGHT_TURNING_CAN_ID = 17;
 
-        public static final boolean GYRO_REVERSED = true;
+        public static final boolean GYRO_REVERSED = false;
+
+        public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.001);
     }
 
     public static final class ModuleConstants {
@@ -113,13 +120,12 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double MAX_SPEED_METERS_PER_SECOND = 3;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3;
+        public static final double MAX_SPEED_METERS_PER_SECOND = 5;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 5;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI;
 
         public static final double PX_CONTROLLER = 1;
-        public static final double PY_CONTROLLER = 1;
         public static final double P_THETA_CONTROLLER = 1;
 
         // Constraint for the motion profiled robot angle controller
@@ -131,8 +137,17 @@ public final class Constants {
         public static final double FREE_SPEED_RPM = 5676;
     }
 
-    public static class Robot {
-        public static final Pose2d CAMERA_OFFSET = new Pose2d(Units.inchesToMeters(14), 0.0, new Rotation2d());
+    public static class VisionConstants {
+        // FIXME: actually measure these constants
+
+        public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(
+                new Translation3d(0, 0, 0.1),
+                new Rotation3d(0, Units.degreesToRadians(15), 0)
+        );
+
+        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
+
+        public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
     }
 
     public static class FieldConstants {

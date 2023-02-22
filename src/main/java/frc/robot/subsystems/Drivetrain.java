@@ -5,12 +5,10 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.*;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotContainer;
 
@@ -39,91 +37,53 @@ public class Drivetrain extends SubsystemBase {
     // The gyro sensor
     private final AHRS gyro = new AHRS();
 
-    // Odometry class for tracking robot pose
-    SwerveDriveOdometry odometry = new SwerveDriveOdometry(
-            DriveConstants.DRIVE_KINEMATICS,
-            Rotation2d.fromDegrees(gyro.getAngle() * (DriveConstants.GYRO_REVERSED? -1.0 : 1.0)),
-            new SwerveModulePosition[]{
-                    frontLeft.getPosition(),
-                    frontRight.getPosition(),
-                    rearLeft.getPosition(),
-                    rearRight.getPosition()
-            });
-
     /**
      * Creates a new DriveSubsystem.
      */
     public Drivetrain() {
-        RobotContainer.swerve.addNumber("Front Left", frontLeft.turningEncoder::getPosition);
-        RobotContainer.swerve.addNumber("Front Right", frontRight.turningEncoder::getPosition);
-        RobotContainer.swerve.addNumber("Back Left", rearLeft.turningEncoder::getPosition);
-        RobotContainer.swerve.addNumber("Back Right", rearRight.turningEncoder::getPosition);
+        RobotContainer.swerveTab.addNumber("Front Left", frontLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Front Right", frontRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Back Left", rearLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Back Right", rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
 
-        RobotContainer.swerve.addNumber("Gyro", gyro::getAngle);
-
+        RobotContainer.swerveTab.addNumber("Gyro", gyro::getAngle).withWidget(BuiltInWidgets.kGraph);
     }
 
 
 
     @Override
     public void periodic() {
-        // Update the odometry in the periodic block
-        odometry.update(
-                Rotation2d.fromDegrees(gyro.getAngle() * (DriveConstants.GYRO_REVERSED? -1.0 : 1.0)),
-                new SwerveModulePosition[]{
-                        frontLeft.getPosition(),
-                        frontRight.getPosition(),
-                        rearLeft.getPosition(),
-                        rearRight.getPosition()
-                });
-        RobotContainer.field.setRobotPose(getPose());
+        RobotContainer.poseEstimation.updateOdometry(
+            getRotation(),
+            getModulePositions());
+    }
+
+    public Rotation2d getRotation() {
+        Rotation2d rot = gyro.getRotation2d();
+        
+        if (DriveConstants.GYRO_REVERSED) {
+            rot = rot.unaryMinus();
+        }
+
+        return rot;
+    }
+
+    public SwerveModulePosition[] getModulePositions() {
+        return new SwerveModulePosition[] {
+                frontLeft.getPosition(),
+                frontRight.getPosition(),
+                rearLeft.getPosition(),
+                rearRight.getPosition()
+        };
     }
 
     /**
-     * Returns the currently-estimated pose of the robot.
+     * Method to drive the drivetrain using chassis speeds.
      *
-     * @return The pose.
+     * @param speeds The chassis speeds.
      */
-    public Pose2d getPose() {
-        return odometry.getPoseMeters();
-    }
-
-    /**
-     * Resets the odometry to the specified pose.
-     *
-     * @param pose The pose to which to set the odometry.
-     */
-    public void resetOdometry(Pose2d pose) {
-        odometry.resetPosition(
-                Rotation2d.fromDegrees(gyro.getAngle()),
-                new SwerveModulePosition[]{
-                        frontLeft.getPosition(),
-                        frontRight.getPosition(),
-                        rearLeft.getPosition(),
-                        rearRight.getPosition()
-                },
-                pose);
-    }
-
-    /**
-     * Method to drive the robot using joystick info.
-     *
-     * @param xSpeed        Speed of the robot in the x direction (forward).
-     * @param ySpeed        Speed of the robot in the y direction (sideways).
-     * @param rot           Angular rate of the robot.
-     * @param fieldRelative Whether the provided x and y speeds are relative to the
-     *                      field.
-     */
-    public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-        // Adjust input based on max speed
-        xSpeed *= DriveConstants.MAX_SPEED_METERS_PER_SECOND;
-        ySpeed *= DriveConstants.MAX_SPEED_METERS_PER_SECOND;
-        rot *= DriveConstants.MAX_ANGULAR_SPEED;
-
-        var swerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(
-                fieldRelative
-                        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, Rotation2d.fromDegrees(gyro.getAngle() * (DriveConstants.GYRO_REVERSED? -1.0 : 1.0)))
-                        : new ChassisSpeeds(xSpeed, ySpeed, rot));
+    public void drive(ChassisSpeeds speeds) {
+        SwerveModuleState[] swerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(speeds);
         setModuleStates(swerveModuleStates);
     }
     /**
@@ -183,4 +143,5 @@ public class Drivetrain extends SubsystemBase {
     public double getTurnRate() {
         return gyro.getRate();
     }
+
 }
