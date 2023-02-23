@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import frc.robot.Constants.ModuleConstants;
 
 public class MAXSwerveModule {
@@ -23,9 +24,9 @@ public class MAXSwerveModule {
     public final AbsoluteEncoder turningEncoder; //Fixme
 
     private final SparkMaxPIDController drivingPIDController;
-    private SparkMaxPIDController turningPIDController;
+    private final SparkMaxPIDController turningPIDController;
 
-    private double chassisAngularOffset = 0;
+    private final double chassisAngularOffset;
     private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
 
     /**

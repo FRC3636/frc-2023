@@ -6,13 +6,10 @@ package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
 
-import edu.wpi.first.apriltag.AprilTag;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -26,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.MoveToPoint;
 import frc.robot.vision.PoseEstimation;
-import frc.robot.subsystems.DriveWithJoysticks;
+import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.subsystems.Drivetrain;
 
 public class RobotContainer {
