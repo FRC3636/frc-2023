@@ -15,7 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.ModuleConstants;
 
-public class MAXSwerveModule implements SwerveModule{
+public class MAXSwerveModule implements SwerveModule {
     private final CANSparkMax turningSparkMax;
 
     private final RelativeEncoder drivingEncoder;

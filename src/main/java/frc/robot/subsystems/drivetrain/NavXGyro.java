@@ -17,7 +17,7 @@ public class NavXGyro implements Gyro{
     }
 
     @Override
-    public void SetGyroRotation(Rotation2d rotation2d) {
+    public void setGyroRotation(Rotation2d rotation2d) {
         navX.reset();
         navX.setAngleAdjustment(-rotation2d.getDegrees()); // Probably non-functional
     }
