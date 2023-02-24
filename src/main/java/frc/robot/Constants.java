@@ -4,45 +4,71 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 import java.util.Map;
 
+import static com.revrobotics.CANSparkMax.IdleMode;
+
 public final class Constants {
-    public static class Controls {
-        public static final int JOYSTICK_LEFT_PORT = 0;
-        public static final int JOYSTICK_RIGHT_PORT = 1;
+    public static class ControlConstants {
+        public static final int JOYSTICK_RIGHT_PORT = 0;
+        public static final int JOYSTICK_LEFT_PORT = 1;
         public static final int CONTROLLER_PORT = 2;
     }
 
-    public static class Drivetrain {
-        public static final int MOTOR_RIGHT_1 = 1;
-        public static final int MOTOR_RIGHT_2 = 2;
-        public static final int MOTOR_LEFT_1 = 3;
-        public static final int MOTOR_LEFT_2 = 4;
+    public static final class DriveConstants {
+        // Driving Parameters - Note that these are not the maximum capable speeds of
+        // the robot, rather the allowed maximum speeds
+        public static final double MAX_SPEED_METERS_PER_SECOND = 4.8;
+        public static final double MAX_ANGULAR_SPEED = 2 * Math.PI; // radians per second
 
-        
-        public static final double WHEEL_DIAMETER = Units.inchesToMeters(6);
-        public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
-        public static final double SENSOR_UNITS_PER_REV = 2048;
-        public static final double GEAR_RATIO = 10.71;
-        public static final double SENSOR_UNITS_PER_METER =
-                (SENSOR_UNITS_PER_REV * GEAR_RATIO) / WHEEL_CIRCUMFERENCE;
+        // Chassis configuration
+        public static final double TRACK_WIDTH = Units.inchesToMeters(22.5);
+        // Distance between centers of right and left wheels on robot
+        public static final double WHEEL_BASE = Units.inchesToMeters(24.5);
+        // Distance between front and back wheels on robot
+        public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
+                new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
+                new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2),
+                new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2),
+                new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2));
 
-        public static final double TRACK_WIDTH = 0.54; // in meters
+        // Angular offsets of the modules relative to the chassis in radians
+        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -Math.PI / 2;
+        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0;
+        public static final double REAR_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI;
+        public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
 
-        public static final int PULSES_PER_REVOLUTION = 4096;
+        // Delay between reading the gyro and using the value used to aproximate exact angle while spinning (0.02 is one loop)
+        public static final double GYRO_READ_DELAY = 0.02;
 
-        // amy
-        public static final double FEED_FORWARD_KS = -70.693;
-        public static final double FEED_FORWARD_KV = 33.277;
-        public static final double FEED_FORWARD_KA = 310.93;
+        // SPARK MAX CAN IDs
+        public static final int FRONT_LEFT_DRIVING_CAN_ID = 10;
+        public static final int REAR_LEFT_DRIVING_CAN_ID = 12;
+        public static final int FRONT_RIGHT_DRIVING_CAN_ID = 14;
+        public static final int REAR_RIGHT_DRIVING_CAN_ID = 16;
 
-        public static final double DRIVE_VELOCITY_KP = 1.8538;
+        public static final int FRONT_LEFT_TURNING_CAN_ID = 11;
+        public static final int REAR_LEFT_TURNING_CAN_ID = 13;
+        public static final int FRONT_RIGHT_TURNING_CAN_ID = 15;
+        public static final int REAR_RIGHT_TURNING_CAN_ID = 17;
+
+        public static final boolean GYRO_REVERSED = false;
+
+        public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.001);
+    }
+
+    public static class Arm {
+        public static final double HUMERUS_LENGTH = Units.inchesToMeters(40);
+
+        public static final double PIVOT_HEIGHT = Units.inchesToMeters(45.6);
     }
 
     public static class Shoulder {
@@ -66,10 +92,6 @@ public final class Constants {
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(.282185);
         public static final Rotation2d INTAKE_CONE = Rotation2d.fromRadians(.111091);
         public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(.3);
-
-        public static final double JOINT_TO_WRIST_DISTANCE = 40;
-
-        public static final double JOINT_HEIGHT = 45.6;
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
 
@@ -106,7 +128,7 @@ public final class Constants {
 
         //Min Angle
         public static final double HORIZONTAL_TO_CORNER_ANGLE = 0.2985176246;
-        public static final double JOINT_TO_CORNER_DISTANCE = 14;
+        public static final double JOINT_TO_CORNER_DISTANCE = Units.inchesToMeters(14);
         public static final double CLEARANCE_HEIGHT = 1;
 
 
@@ -121,7 +143,137 @@ public final class Constants {
 
     }
 
+    public static final class ModuleConstants {
+        // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
+        // This changes the drive speed of the module (a pinion gear with more teeth will result in a
+        // robot that drives faster).
+        public static final int DRIVING_MOTOR_PINION_TEETH = 13;
+
+        // Invert the turning encoder, since the output shaft rotates in the opposite direction of
+        // the steering motor in the MAXSwerve Module.
+        public static final boolean TURNING_ENCODER_INVERTED = true;
+
+        // Calculations required for driving motor conversion factors and feed forward
+        public static final double DRIVING_MOTOR_FREE_SPEED_RPS = NeoMotorConstants.FREE_SPEED_RPM / 60;
+        public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
+        public static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
+        // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
+        public static final double DRIVING_MOTOR_REDUCTION = (45.0 * 22) / (DRIVING_MOTOR_PINION_TEETH * 15);
+        public static final double DRIVE_WHEEL_FREE_SPEED_RPS = (DRIVING_MOTOR_FREE_SPEED_RPS * WHEEL_CIRCUMFERENCE_METERS)
+                / DRIVING_MOTOR_REDUCTION;
+
+        public static final double DRIVING_ENCODER_POSITION_FACTOR = WHEEL_CIRCUMFERENCE_METERS
+                / DRIVING_MOTOR_REDUCTION; // meters
+        public static final double DRIVING_ENCODER_VELOCITY_FACTOR = (WHEEL_CIRCUMFERENCE_METERS
+                / DRIVING_MOTOR_REDUCTION) / 60.0; // meters per second
+
+        public static final double TURNING_ENCODER_POSITION_FACTOR = (2 * Math.PI); // radians
+        public static final double TURNING_ENCODER_VELOCITY_FACTOR = (2 * Math.PI) / 60.0; // radians per second
+
+        public static final double TURNING_ENCODER_POSITION_PID_MIN_INPUT = 0; // radians
+        public static final double TURNING_ENCODER_POSITION_PID_MAX_INPUT = TURNING_ENCODER_POSITION_FACTOR; // radians
+
+        public static final double DRIVING_P = 0.04;
+        public static final double DRIVING_I = 0;
+        public static final double DRIVING_D = 0;
+        public static final double DRIVING_FF = 1 / DRIVE_WHEEL_FREE_SPEED_RPS;
+        public static final double DRIVING_MIN_OUTPUT = -1;
+        public static final double DRIVING_MAX_OUTPUT = 1;
+
+        public static final double TURNING_P = 1;
+        public static final double TURNING_I = 0;
+        public static final double TURNING_D = 0;
+        public static final double TURNING_FF = 0;
+        public static final double TURNING_MIN_OUTPUT = -1;
+        public static final double TURNING_MAX_OUTPUT = 1;
+
+        public static final IdleMode DRIVING_MOTOR_IDLE_MODE = IdleMode.kBrake;
+        public static final IdleMode TURNING_MOTOR_IDLE_MODE = IdleMode.kBrake;
+
+        public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps
+        public static final int TURNING_MOTOR_CURRENT_LIMIT = 20; // amps
+    }
+
+    public static final class AutoConstants {
+        public static final double MAX_SPEED_METERS_PER_SECOND = 5;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 5;
+        public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI;
+        public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI;
+
+        public static final double PX_CONTROLLER = 1;
+        public static final double P_THETA_CONTROLLER = 1;
+
+        // Constraint for the motion profiled robot angle controller
+        public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
+                MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
+    }
+
+    public static final class NeoMotorConstants {
+        public static final double FREE_SPEED_RPM = 5676;
+    }
+
+    public static class VisionConstants {
+        // FIXME: actually measure these constants
+
+        public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(
+                new Translation3d(0, 0, 0.1),
+                new Rotation3d(0, Units.degreesToRadians(15), 0)
+        );
+
+        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
+
+        public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
+    }
+
     public static class FieldConstants {
+        public static final double fieldLength = Units.inchesToMeters(651.25);
+        public static final double fieldWidth = Units.inchesToMeters(315.5);
+        public static final double tapeWidth = Units.inchesToMeters(2.0);
+        public static final double aprilTagWidth = Units.inchesToMeters(6.0);
+        public static class Grids {
+            // X layout
+            public static final double outerX = Units.inchesToMeters(54.25);
+            public static final double lowX =
+                    outerX - (Units.inchesToMeters(14.25) / 2.0); // Centered when under cube nodes
+            public static final double midX = outerX - Units.inchesToMeters(22.75);
+            public static final double highX = outerX - Units.inchesToMeters(39.75);
+
+            // Y layout
+            public static final int nodeRowCount = 9;
+            public static final double nodeFirstY = Units.inchesToMeters(20.19);
+            public static final double nodeSeparationY = Units.inchesToMeters(22.0);
+
+            // Z layout
+            public static final double cubeEdgeHigh = Units.inchesToMeters(3.0);
+            public static final double highCubeZ = Units.inchesToMeters(35.5) - cubeEdgeHigh;
+            public static final double midCubeZ = Units.inchesToMeters(23.5) - cubeEdgeHigh;
+            public static final double highConeZ = Units.inchesToMeters(46.0);
+            public static final double midConeZ = Units.inchesToMeters(34.0);
+
+            // Translations (all nodes in the same column/row have the same X/Y coordinate)
+            public static final Translation2d[] lowTranslations = new Translation2d[nodeRowCount];
+            public static final Translation3d[] low3dTranslations = new Translation3d[nodeRowCount];
+            public static final Translation2d[] midTranslations = new Translation2d[nodeRowCount];
+            public static final Translation3d[] mid3dTranslations = new Translation3d[nodeRowCount];
+            public static final Translation2d[] highTranslations = new Translation2d[nodeRowCount];
+            public static final Translation3d[] high3dTranslations = new Translation3d[nodeRowCount];
+
+            static {
+                for (int i = 0; i < nodeRowCount; i++) {
+                    boolean isCube = i == 1 || i == 4 || i == 7;
+                    lowTranslations[i] = new Translation2d(lowX, nodeFirstY + nodeSeparationY * i);
+                    low3dTranslations[i] = new Translation3d(lowX, nodeFirstY + nodeSeparationY * i, 0.0);
+                    midTranslations[i] = new Translation2d(midX, nodeFirstY + nodeSeparationY * i);
+                    mid3dTranslations[i] =
+                            new Translation3d(midX, nodeFirstY + nodeSeparationY * i, isCube ? midCubeZ : midConeZ);
+                    high3dTranslations[i] =
+                            new Translation3d(
+                                    highX, nodeFirstY + nodeSeparationY * i, isCube ? highCubeZ : highConeZ);
+                    highTranslations[i] = new Translation2d(highX, nodeFirstY + nodeSeparationY * i);
+                }
+            }
+        }
+
         public static final Map<Integer, Pose3d> aprilTags =
                 Map.of(
                         1,
@@ -171,6 +323,8 @@ public final class Constants {
                                 Units.inchesToMeters(40.45),
                                 Units.inchesToMeters(42.19),
                                 Units.inchesToMeters(18.22),
-                                new Rotation3d()));
+                                new Rotation3d()
+                        )
+                );
     }
 }
