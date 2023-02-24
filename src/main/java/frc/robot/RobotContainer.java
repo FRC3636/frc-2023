@@ -11,6 +11,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -20,35 +22,46 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.MoveToPoint;
+import frc.robot.commands.ArmHoldCommand;
+import frc.robot.subsystems.Rollers;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.vision.PoseEstimation;
 import frc.robot.commands.DriveWithJoysticks;
-import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.subsystems.*;
+import frc.robot.subsystems.drivetrain.*;
 
 public class RobotContainer {
     // Dashboard
     public static final ShuffleboardTab driveSettingsTab = Shuffleboard.getTab("Drive Settings");
     public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     public static final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
+    public static final ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
 
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
-
-    // Pose Estimation
-    public static final PoseEstimation poseEstimation = new PoseEstimation();
-
+    public static final Arm arm = new Arm();
+    public static final Rollers rollers = new Rollers();
 
     // Controllers
     public static final Joystick joystickLeft = new Joystick(Constants.ControlConstants.JOYSTICK_RIGHT_PORT);
     public static final Joystick joystickRight = new Joystick(Constants.ControlConstants.JOYSTICK_LEFT_PORT);
-  
+    public static final XboxController controller = new XboxController(Constants.ControlConstants.CONTROLLER_PORT);
+
+    // Pose Estimation
+    public static final PoseEstimation poseEstimation = new PoseEstimation();
+
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
 
     public static Field2d field = new Field2d();
 
     // Commands
     private DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft, joystickRight);
+
+    // RGB
+    public static final LightsTable lights = new LightsTable();
 
     public RobotContainer() {
         configureButtonBindings();
@@ -57,6 +70,8 @@ public class RobotContainer {
 
         driveSettingsTab.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
         driveSettingsTab.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
+
+        LiveWindow.enableTelemetry(arm);
 
         // FIXME: don't run on FMS
         PathPlannerServer.startServer(5811);
@@ -83,6 +98,27 @@ public class RobotContainer {
                                         new Translation2d(-1.0, aprilTagTarget.getRotation()),
                                         new Rotation2d()
                                 ))));
+      arm.setDefaultCommand(new ArmHoldCommand(arm));
+
+      // Intaking and Outtaking
+      new JoystickButton(controller, XboxController.Button.kRightBumper.value)
+              .onTrue(new InstantCommand(rollers::intake))
+              .onFalse(new InstantCommand(rollers::stop));
+
+      new JoystickButton(joystickRight, 1)
+              .onTrue(new InstantCommand(rollers::outtake))
+              .onFalse(new InstantCommand(rollers::stop));
+
+      // State Changes
+      new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
+              .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cone)));
+      new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
+              .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cube)));
+
+      new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Stowed);}));
+      new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Low);}));
+      new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Mid);}));
+      new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.High);}));
     }
 
 

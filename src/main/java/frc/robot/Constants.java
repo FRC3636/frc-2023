@@ -6,12 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -24,6 +20,7 @@ public final class Constants {
     public static class ControlConstants {
         public static final int JOYSTICK_RIGHT_PORT = 0;
         public static final int JOYSTICK_LEFT_PORT = 1;
+        public static final int CONTROLLER_PORT = 2;
     }
 
     public static final class DriveConstants {
@@ -66,6 +63,84 @@ public final class Constants {
         public static final boolean GYRO_REVERSED = false;
 
         public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.001);
+    }
+
+    public static class Arm {
+        public static final double HUMERUS_LENGTH = Units.inchesToMeters(40);
+
+        public static final double PIVOT_HEIGHT = Units.inchesToMeters(45.6);
+    }
+
+    public static class Shoulder {
+        public static final int MOTOR_1_ID = 5;
+        public static final int MOTOR_2_ID = 6;
+        public static final double GEAR_RATIO = 15.0 / 36.0;
+
+        public static final double KS = 0.23446;
+        public static final double KG = 0.66001;
+        public static final double KV = 2.07220;
+        public static final double KA = 0.19625;
+
+        public static final double KP = 1;
+        public static final double KI = 0.0;
+        public static final double KD = 0.03;
+
+        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(0.143279);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(.178937);
+        public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(.570526);
+        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(.867019);
+        public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(.282185);
+        public static final Rotation2d INTAKE_CONE = Rotation2d.fromRadians(.111091);
+        public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(.3);
+
+        public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
+
+        public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(4, 6);
+    }
+
+    public static class Wrist {
+        public static final int ID = 7;
+
+        public static final double GEAR_RATIO = 1.0 / 75.0;
+
+        public static final double KP = 7;
+        public static final double KI = 0.1;
+        public static final double KD = 0.25;
+
+        public static final double KS = 0.14588;
+        public static final double KG = 0.13063;
+        public static final double KV = 1.4242;
+        public static final double KA = 0.052069;
+
+        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(0);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.457023);
+        public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
+        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.725371);
+        public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
+        public static final Rotation2d INTAKE_CONE = Rotation2d.fromRadians(-0.679611);
+
+        public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
+
+        public static final int LIMIT_SWITCH = 1;
+        public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(63);
+        public static final Rotation2d CONE_ANGLE = Rotation2d.fromDegrees(-40);
+        public static final Rotation2d CUBE_ANGLE = Rotation2d.fromDegrees(40);
+
+        //Min Angle
+        public static final double HORIZONTAL_TO_CORNER_ANGLE = 0.2985176246;
+        public static final double JOINT_TO_CORNER_DISTANCE = Units.inchesToMeters(14);
+        public static final double CLEARANCE_HEIGHT = 1;
+
+
+    }
+
+    public static class Rollers {
+        public static final int ID = 8;
+        public static final double INTAKE_CONE = -.6;
+        public static final double INTAKE_CUBE = 0.5;
+        public static final double OUTTAKE_CONE = 0.5;
+        public static final double OUTTAKE_CUBE = -.6;
+
     }
 
     public static final class ModuleConstants {
