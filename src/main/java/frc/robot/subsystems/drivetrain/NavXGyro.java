@@ -29,7 +29,7 @@ public class NavXGyro implements Gyro{
 
     @Override
     public void reset() {
-
+        navX.reset();
     }
 
     @Override

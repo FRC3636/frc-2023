@@ -19,13 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Drivetrain extends SubsystemBase {
+
     // Create MAXSwerveModules
     private final SwerveModule frontLeft;
-
     private final SwerveModule frontRight;
-
     private final SwerveModule rearLeft;
-
     private final SwerveModule rearRight;
 
     // The gyro sensor
@@ -69,7 +67,6 @@ public class Drivetrain extends SubsystemBase {
         RobotContainer.swerveTab.addNumber("Back Right", rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
 
         RobotContainer.swerveTab.addNumber("Gyro", () -> gyro.getAngle().getDegrees()).withWidget(BuiltInWidgets.kGraph);
-
     }
 
 
