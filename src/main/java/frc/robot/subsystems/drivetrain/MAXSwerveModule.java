@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.drivetrain;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -10,14 +10,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import frc.robot.Constants.ModuleConstants;
 
-public class MAXSwerveModule {
+public class MAXSwerveModule implements SwerveModule{
     private final CANSparkMax turningSparkMax;
 
     private final RelativeEncoder drivingEncoder;
@@ -109,6 +107,7 @@ public class MAXSwerveModule {
         drivingEncoder.setPosition(0);
     }
 
+    @Override
     public SwerveModuleState getState() {
         // Apply chassis angular offset to the encoder position to get the position
         // relative to the chassis.
@@ -121,6 +120,7 @@ public class MAXSwerveModule {
      *
      * @return The current position of the module.
      */
+    @Override
     public SwerveModulePosition getPosition() {
         // Apply chassis angular offset to the encoder position to get the position
         // relative to the chassis.
@@ -129,7 +129,7 @@ public class MAXSwerveModule {
                 new Rotation2d(turningEncoder.getPosition() - chassisAngularOffset));
     }
 
-
+    @Override
     public void setDesiredState(SwerveModuleState desiredState) {
         // Apply chassis angular offset to the desired state.
         SwerveModuleState correctedDesiredState = new SwerveModuleState();
@@ -146,7 +146,7 @@ public class MAXSwerveModule {
 
         this.desiredState = desiredState;
     }
-
+    @Override
     public double getSwerveEncoderPosition() {
         return turningEncoder.getPosition();
     }
@@ -154,15 +154,16 @@ public class MAXSwerveModule {
     /**
      * Zeroes all the SwerveModule encoders.
      */
+    @Override
     public void resetEncoders() {
         drivingEncoder.setPosition(0);
     }
 
-    //FIXME Temporary tuning method REMOVE
-    public void setTurningPID(PIDController controller) {
-        turningPIDController.setP(controller.getP());
-        turningPIDController.setI(controller.getI());
-        turningPIDController.setD(controller.getD());
-    }
+    @Override
+    public void update() {}
 
+    @Override
+    public SwerveModuleState getSetState() {
+        return desiredState;
+    }
 }

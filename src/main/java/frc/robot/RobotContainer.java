@@ -24,7 +24,7 @@ import frc.robot.commands.AutoCommand;
 import frc.robot.commands.MoveToPoint;
 import frc.robot.vision.PoseEstimation;
 import frc.robot.commands.DriveWithJoysticks;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class RobotContainer {
     // Dashboard

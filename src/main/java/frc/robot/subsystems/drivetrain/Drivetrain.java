@@ -2,51 +2,74 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.drivetrain;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Drivetrain extends SubsystemBase {
     // Create MAXSwerveModules
-    private final MAXSwerveModule frontLeft = new MAXSwerveModule(
-            DriveConstants.FRONT_LEFT_DRIVING_CAN_ID,
-            DriveConstants.FRONT_LEFT_TURNING_CAN_ID,
-            DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET);
+    private final SwerveModule frontLeft;
 
-    private final MAXSwerveModule frontRight = new MAXSwerveModule(
-            DriveConstants.FRONT_RIGHT_DRIVING_CAN_ID,
-            DriveConstants.FRONT_RIGHT_TURNING_CAN_ID,
-            DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET);
+    private final SwerveModule frontRight;
 
-    private final MAXSwerveModule rearLeft = new MAXSwerveModule(
-            DriveConstants.REAR_LEFT_DRIVING_CAN_ID,
-            DriveConstants.REAR_LEFT_TURNING_CAN_ID,
-            DriveConstants.REAR_LEFT_CHASSIS_ANGULAR_OFFSET);
+    private final SwerveModule rearLeft;
 
-    private final MAXSwerveModule rearRight = new MAXSwerveModule(
-            DriveConstants.REAR_RIGHT_DRIVING_CAN_ID,
-            DriveConstants.REAR_RIGHT_TURNING_CAN_ID,
-            DriveConstants.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET);
+    private final SwerveModule rearRight;
 
     // The gyro sensor
-    private final AHRS gyro = new AHRS();
+    private final Gyro gyro = (RobotBase.isReal() ? new NavXGyro() : new SIMGyro());
 
     /**
      * Creates a new DriveSubsystem.
      */
     public Drivetrain() {
+        if(RobotBase.isSimulation()) {
+            this.frontLeft = new SIMSwerveModule(DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET);
+            this.frontRight = new SIMSwerveModule(DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET);
+            this.rearLeft = new SIMSwerveModule(DriveConstants.REAR_LEFT_CHASSIS_ANGULAR_OFFSET);
+            this.rearRight = new SIMSwerveModule(DriveConstants.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET);
+        }
+        else {
+            this.frontLeft = new MAXSwerveModule(
+                    DriveConstants.FRONT_LEFT_DRIVING_CAN_ID,
+                    DriveConstants.FRONT_LEFT_TURNING_CAN_ID,
+                    DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET);
+
+            this.frontRight = new MAXSwerveModule(
+                    DriveConstants.FRONT_RIGHT_DRIVING_CAN_ID,
+                    DriveConstants.FRONT_RIGHT_TURNING_CAN_ID,
+                    DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET);
+
+            this.rearLeft = new MAXSwerveModule(
+                    DriveConstants.REAR_LEFT_DRIVING_CAN_ID,
+                    DriveConstants.REAR_LEFT_TURNING_CAN_ID,
+                    DriveConstants.REAR_LEFT_CHASSIS_ANGULAR_OFFSET);
+
+            this.rearRight = new MAXSwerveModule(
+                    DriveConstants.REAR_RIGHT_DRIVING_CAN_ID,
+                    DriveConstants.REAR_RIGHT_TURNING_CAN_ID,
+                    DriveConstants.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET);
+        }
+
         RobotContainer.swerveTab.addNumber("Front Left", frontLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
         RobotContainer.swerveTab.addNumber("Front Right", frontRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
         RobotContainer.swerveTab.addNumber("Back Left", rearLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
         RobotContainer.swerveTab.addNumber("Back Right", rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
 
-        RobotContainer.swerveTab.addNumber("Gyro", gyro::getAngle).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Gyro", () -> gyro.getAngle().getDegrees()).withWidget(BuiltInWidgets.kGraph);
+
     }
 
 
@@ -56,10 +79,39 @@ public class Drivetrain extends SubsystemBase {
         RobotContainer.poseEstimation.updateOdometry(
             getRotation(),
             getModulePositions());
+
+        gyro.update();
+        frontLeft.update();
+        frontRight.update();
+        rearLeft.update();
+        rearRight.update();
+
+        logModuleStates("Swerve State", new SwerveModuleState[] {
+            frontLeft.getState(),
+                    frontRight.getState(),
+                    rearLeft.getState(),
+                    rearRight.getState()
+        });
+
+        logModuleStates("Swerve Set State", new SwerveModuleState[] {
+                frontLeft.getSetState(),
+                frontRight.getSetState(),
+                rearLeft.getSetState(),
+                rearRight.getSetState()
+        });
     }
 
+    private void logModuleStates(String key, SwerveModuleState[] states) {
+        List<Double> dataArray = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            dataArray.add(states[i].angle.getRadians());
+            dataArray.add(states[i].speedMetersPerSecond);
+        }
+       SmartDashboard.putNumberArray(key,
+                dataArray.stream().mapToDouble(Double::doubleValue).toArray());
+    }
     public Rotation2d getRotation() {
-        Rotation2d rot = gyro.getRotation2d();
+        Rotation2d rot = gyro.getAngle();
         
         if (DriveConstants.GYRO_REVERSED) {
             rot = rot.unaryMinus();
@@ -131,8 +183,8 @@ public class Drivetrain extends SubsystemBase {
      *
      * @return the robot's heading in degrees, from -180 to 180
      */
-    public double getHeading() {
-        return Rotation2d.fromDegrees(gyro.getAngle()).getDegrees();
+    public Rotation2d getHeading() {
+        return gyro.getAngle();
     }
 
     /**
@@ -141,7 +193,7 @@ public class Drivetrain extends SubsystemBase {
      * @return The turn rate of the robot, in degrees per second
      */
     public double getTurnRate() {
-        return gyro.getRate();
+        return gyro.getRate().getDegrees();
     }
 
 }

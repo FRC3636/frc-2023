@@ -91,6 +91,9 @@
   ],
   "robotJoysticks": [
     {
+      "guid": "Keyboard2"
+    },
+    {
       "guid": "Keyboard0"
     }
   ]
