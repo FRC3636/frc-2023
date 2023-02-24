@@ -7,7 +7,7 @@ public interface Gyro {
 
     Rotation2d getAngle();
 
-    void SetGyroRotation(Rotation2d rotation);
+    void setGyroRotation(Rotation2d rotation);
 
     void update();
 

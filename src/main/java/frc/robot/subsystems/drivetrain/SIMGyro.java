@@ -2,7 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
-public class SIMGyro implements Gyro{
+public class SIMGyro implements Gyro {
     Rotation2d rotation = new Rotation2d();
     Rotation2d turningRate = new Rotation2d();
 
@@ -17,7 +17,7 @@ public class SIMGyro implements Gyro{
     }
 
     @Override
-    public void SetGyroRotation(Rotation2d rotation) {
+    public void setGyroRotation(Rotation2d rotation) {
         this.rotation = rotation;
     }
 

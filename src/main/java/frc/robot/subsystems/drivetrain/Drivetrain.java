@@ -4,15 +4,16 @@
 
 package frc.robot.subsystems.drivetrain;
 
-import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 import java.util.ArrayList;
@@ -20,13 +21,7 @@ import java.util.List;
 
 public class Drivetrain extends SubsystemBase {
     // Create MAXSwerveModules
-    private final SwerveModule frontLeft;
-
-    private final SwerveModule frontRight;
-
-    private final SwerveModule rearLeft;
-
-    private final SwerveModule rearRight;
+    private final SwerveModules swerveModules;
 
     // The gyro sensor
     private final Gyro gyro = (RobotBase.isReal() ? new NavXGyro() : new SIMGyro());
@@ -36,40 +31,43 @@ public class Drivetrain extends SubsystemBase {
      */
     public Drivetrain() {
         if(RobotBase.isSimulation()) {
-            this.frontLeft = new SIMSwerveModule(DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET);
-            this.frontRight = new SIMSwerveModule(DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET);
-            this.rearLeft = new SIMSwerveModule(DriveConstants.REAR_LEFT_CHASSIS_ANGULAR_OFFSET);
-            this.rearRight = new SIMSwerveModule(DriveConstants.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET);
+            this.swerveModules = new SwerveModules(
+                    new SIMSwerveModule(DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET),
+                    new SIMSwerveModule(DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET),
+                    new SIMSwerveModule(DriveConstants.REAR_LEFT_CHASSIS_ANGULAR_OFFSET),
+                    new SIMSwerveModule(DriveConstants.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET)
+            );
+        } else {
+            this.swerveModules = new SwerveModules(
+                    new MAXSwerveModule(
+                            DriveConstants.FRONT_LEFT_DRIVING_CAN_ID,
+                            DriveConstants.FRONT_LEFT_TURNING_CAN_ID,
+                            DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET
+                    ),
+                    new MAXSwerveModule(
+                            DriveConstants.FRONT_RIGHT_DRIVING_CAN_ID,
+                            DriveConstants.FRONT_RIGHT_TURNING_CAN_ID,
+                            DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET
+                    ),
+                    new MAXSwerveModule(
+                            DriveConstants.REAR_LEFT_DRIVING_CAN_ID,
+                            DriveConstants.REAR_LEFT_TURNING_CAN_ID,
+                            DriveConstants.REAR_LEFT_CHASSIS_ANGULAR_OFFSET
+                    ),
+                    new MAXSwerveModule(
+                            DriveConstants.REAR_RIGHT_DRIVING_CAN_ID,
+                            DriveConstants.REAR_RIGHT_TURNING_CAN_ID,
+                            DriveConstants.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET
+                    )
+            );
         }
-        else {
-            this.frontLeft = new MAXSwerveModule(
-                    DriveConstants.FRONT_LEFT_DRIVING_CAN_ID,
-                    DriveConstants.FRONT_LEFT_TURNING_CAN_ID,
-                    DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET);
 
-            this.frontRight = new MAXSwerveModule(
-                    DriveConstants.FRONT_RIGHT_DRIVING_CAN_ID,
-                    DriveConstants.FRONT_RIGHT_TURNING_CAN_ID,
-                    DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET);
-
-            this.rearLeft = new MAXSwerveModule(
-                    DriveConstants.REAR_LEFT_DRIVING_CAN_ID,
-                    DriveConstants.REAR_LEFT_TURNING_CAN_ID,
-                    DriveConstants.REAR_LEFT_CHASSIS_ANGULAR_OFFSET);
-
-            this.rearRight = new MAXSwerveModule(
-                    DriveConstants.REAR_RIGHT_DRIVING_CAN_ID,
-                    DriveConstants.REAR_RIGHT_TURNING_CAN_ID,
-                    DriveConstants.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET);
-        }
-
-        RobotContainer.swerveTab.addNumber("Front Left", frontLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.swerveTab.addNumber("Front Right", frontRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.swerveTab.addNumber("Back Left", rearLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
-        RobotContainer.swerveTab.addNumber("Back Right", rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Front Left", swerveModules.frontLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Front Right", swerveModules.frontRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Back Left", swerveModules.rearLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Back Right", swerveModules.rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
 
         RobotContainer.swerveTab.addNumber("Gyro", () -> gyro.getAngle().getDegrees()).withWidget(BuiltInWidgets.kGraph);
-
     }
 
 
@@ -78,37 +76,24 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         RobotContainer.poseEstimation.updateOdometry(
             getRotation(),
-            getModulePositions());
+            getModulePositions()
+        );
 
         gyro.update();
-        frontLeft.update();
-        frontRight.update();
-        rearLeft.update();
-        rearRight.update();
+        swerveModules.update();
 
-        logModuleStates("Swerve State", new SwerveModuleState[] {
-            frontLeft.getState(),
-                    frontRight.getState(),
-                    rearLeft.getState(),
-                    rearRight.getState()
-        });
-
-        logModuleStates("Swerve Set State", new SwerveModuleState[] {
-                frontLeft.getSetState(),
-                frontRight.getSetState(),
-                rearLeft.getSetState(),
-                rearRight.getSetState()
-        });
+        logModuleStates("Swerve State");
+        logModuleStates("Swerve Set State");
     }
 
-    private void logModuleStates(String key, SwerveModuleState[] states) {
-        List<Double> dataArray = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            dataArray.add(states[i].angle.getRadians());
-            dataArray.add(states[i].speedMetersPerSecond);
+    private void logModuleStates(String key) {
+        List<Double> dataList = new ArrayList<>();
+        for (SwerveModuleState swerveModuleState : swerveModules.getStates().asArray()) {
+            dataList.add(swerveModuleState.angle.getRadians());
+            dataList.add(swerveModuleState.speedMetersPerSecond);
         }
        SmartDashboard.putNumberArray(key,
-                dataArray.stream().mapToDouble(Double::doubleValue).toArray());
+                dataList.stream().mapToDouble(Double::doubleValue).toArray());
     }
     public Rotation2d getRotation() {
         Rotation2d rot = gyro.getAngle();
@@ -121,12 +106,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public SwerveModulePosition[] getModulePositions() {
-        return new SwerveModulePosition[] {
-                frontLeft.getPosition(),
-                frontRight.getPosition(),
-                rearLeft.getPosition(),
-                rearRight.getPosition()
-        };
+        return swerveModules.getPositions().asArray();
     }
 
     /**
@@ -142,10 +122,18 @@ public class Drivetrain extends SubsystemBase {
      * Sets the wheels into an X formation to prevent movement.
      */
     public void setX() {
-        frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
-        frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
-        rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
-        rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+        swerveModules.setDesiredStates(
+                new SwerveModules.States(
+                        // front left
+                        new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+                        // front right
+                        new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+                        // rear left
+                        new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
+                        // rear right
+                        new SwerveModuleState(0, Rotation2d.fromDegrees(45))
+                ).asArray()
+        );
     }
 
     /**
@@ -155,20 +143,14 @@ public class Drivetrain extends SubsystemBase {
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.MAX_SPEED_METERS_PER_SECOND);
-        frontLeft.setDesiredState(desiredStates[0]);
-        frontRight.setDesiredState(desiredStates[1]);
-        rearLeft.setDesiredState(desiredStates[2]);
-        rearRight.setDesiredState(desiredStates[3]);
+        swerveModules.setDesiredStates(desiredStates);
     }
 
     /**
      * Resets the drive encoders to currently read a position of 0.
      */
     public void resetEncoders() {
-        frontLeft.resetEncoders();
-        rearLeft.resetEncoders();
-        frontRight.resetEncoders();
-        rearRight.resetEncoders();
+        swerveModules.resetEncoders();
     }
 
     /**
