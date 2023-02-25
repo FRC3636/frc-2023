@@ -70,7 +70,7 @@ public class Drivetrain extends SubsystemBase {
         RobotContainer.swerveTab.addNumber("Back Left", swerveModules.rearLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
         RobotContainer.swerveTab.addNumber("Back Right", swerveModules.rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
 
-        RobotContainer.swerveTab.addNumber("Gyro", () -> gyro.getAngle().getDegrees()).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Gyro", () -> gyro.getAngle().getRadians()).withWidget(BuiltInWidgets.kGraph);
     }
 
 
@@ -84,13 +84,19 @@ public class Drivetrain extends SubsystemBase {
         gyro.update();
         swerveModules.update();
 
-        logModuleStates("Swerve State");
-        logModuleStates("Swerve Set State");
+        logModuleStates("Swerve State", swerveModules.getStates().asArray());
+        logModuleStates("Swerve Set State", new SwerveModuleState[]{
+                swerveModules.frontLeft.getSetState(),
+                swerveModules.frontRight.getSetState(),
+                swerveModules.rearLeft.getSetState(),
+                swerveModules.rearRight.getSetState()
+
+        });
     }
 
-    private void logModuleStates(String key) {
+    private void logModuleStates(String key, SwerveModuleState[] swerveModuleStates) {
         List<Double> dataList = new ArrayList<>();
-        for (SwerveModuleState swerveModuleState : swerveModules.getStates().asArray()) {
+        for (SwerveModuleState swerveModuleState : swerveModuleStates) {
             dataList.add(swerveModuleState.angle.getRadians());
             dataList.add(swerveModuleState.speedMetersPerSecond);
         }
