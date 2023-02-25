@@ -1,4 +1,4 @@
-package frc.robot.vision;
+package frc.robot.poseestimation;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
