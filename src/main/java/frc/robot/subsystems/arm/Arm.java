@@ -1,13 +1,12 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmMoveCommand;
 
@@ -16,16 +15,22 @@ public class Arm extends SubsystemBase {
     private final Shoulder shoulder;
     private final Wrist wrist;
 
-    private final Mechanism2d arm = new Mechanism2d(3, 3);
+    private final Mechanism2d arm = new Mechanism2d(3, Constants.Arm.PIVOT_HEIGHT + 0.5);
     private final MechanismRoot2d pivot = arm.getRoot("pivot", 1, Constants.Arm.PIVOT_HEIGHT);
     private final MechanismLigament2d humerus = pivot.append(new MechanismLigament2d("humerus", Constants.Arm.HUMERUS_LENGTH, 0));
-    private final MechanismLigament2d manipulator = humerus.append(new MechanismLigament2d("humerus", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
+    private final MechanismLigament2d manipulator = humerus.append(new MechanismLigament2d("manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
+
+    private final MechanismLigament2d setHumerus = pivot.append(new MechanismLigament2d("set humerus", Constants.Arm.HUMERUS_LENGTH, 0));
+    private final MechanismLigament2d setManipulator = setHumerus.append(new MechanismLigament2d("set manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
 
     public Arm() {
         shoulder = new Shoulder(this);
         wrist = new Wrist(this);
 
         humerus.setLineWeight(20);
+
+        setHumerus.setColor(new Color8Bit(0, 255, 255));
+        setManipulator.setColor(new Color8Bit(0, 100, 255));
 
         RobotContainer.armTab.add("Arm", arm);
     }
@@ -37,6 +42,9 @@ public class Arm extends SubsystemBase {
 
         humerus.setAngle(getShoulderAngle().minus(Rotation2d.fromDegrees(90)));
         manipulator.setAngle(wrist.getAngle().plus(Rotation2d.fromDegrees(90)));
+
+        setHumerus.setAngle(State.getTarget().getShoulderAngle().minus(Rotation2d.fromDegrees(90)));
+        setManipulator.setAngle(State.target.getWristAngle().plus(Rotation2d.fromDegrees(90)).minus(State.getTarget().getShoulderAngle()));
     }
 
     public Rotation2d getShoulderAngle() {
@@ -44,7 +52,7 @@ public class Arm extends SubsystemBase {
     }
 
     public Rotation2d getShoulderVelocity() {
-        return new Rotation2d(shoulder.getActualVelocity());
+        return shoulder.getVelocity();
     }
 
     public void runWithSetpoint(Rotation2d shoulderPosition, Rotation2d velocity) {

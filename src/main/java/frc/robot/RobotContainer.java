@@ -4,12 +4,7 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.server.PathPlannerServer;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -23,15 +18,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AutoCommand;
-import frc.robot.commands.MoveToPoint;
 import frc.robot.commands.ArmHoldCommand;
 import frc.robot.subsystems.Rollers;
 import frc.robot.subsystems.arm.Arm;
-import frc.robot.vision.PoseEstimation;
-import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.drivetrain.*;
 
 public class RobotContainer {
     // Dashboard
@@ -50,57 +41,63 @@ public class RobotContainer {
     public static final Joystick joystickRight = new Joystick(Constants.ControlConstants.JOYSTICK_LEFT_PORT);
     public static final XboxController controller = new XboxController(Constants.ControlConstants.CONTROLLER_PORT);
 
-    // Pose Estimation
-    public static final PoseEstimation poseEstimation = new PoseEstimation();
-
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
+    private static GenericEntry driveSchemeEntry;
 
     public static Field2d field = new Field2d();
-
-    // Commands
-    private DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft, joystickRight);
 
     // RGB
     public static final LightsTable lights = new LightsTable();
 
-    public RobotContainer() {
-        configureButtonBindings();
-
-        autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
-
-        driveSettingsTab.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
-        driveSettingsTab.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
-
-        LiveWindow.enableTelemetry(arm);
-
-        // FIXME: don't run on FMS
-        PathPlannerServer.startServer(5811);
-
-
-        drivetrain.setDefaultCommand(driveCommand);
+    static {
+        drivePresetsChooser.addOption("Default", DriveConfig.DEFAULT_PRESET_NAME);
+        drivePresetsChooser.addOption("Jude", "jude");
+        drivePresetsChooser.addOption("Tank Drive", "tank_drive");
+        drivePresetsChooser.addOption("Arcade Single", "arcade_single");
     }
 
-    private void configureButtonBindings() {
-        new JoystickButton(joystickRight, 1)
-                .whileTrue(new RunCommand(
-                        drivetrain::setX,
-                        drivetrain));
-        new JoystickButton(joystickLeft, 6)
-                .onTrue(new InstantCommand(driveCommand::resetFieldOrientation));
+    public RobotContainer() {
+        driveSettingsTab.add("Drive Presents", drivePresetsChooser)
+                .withWidget(BuiltInWidgets.kComboBoxChooser);
+        driveSchemeEntry = driveSettingsTab.add("Drive Scheme", "None").withWidget(BuiltInWidgets.kTextView).getEntry();
+        autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
+        LiveWindow.enableTelemetry(arm);
 
-        Pose2d aprilTagTarget = Constants.FieldConstants.aprilTags.get(Integer.valueOf(3)).toPose2d();
-        new JoystickButton(joystickLeft, 1)
-                .whileTrue(new MoveToPoint(
-                        drivetrain,
-                        poseEstimation,
-                                aprilTagTarget
-                                .transformBy(new Transform2d(
-                                        new Translation2d(-1.0, aprilTagTarget.getRotation()),
-                                        new Rotation2d()
-                                ))));
-      arm.setDefaultCommand(new ArmHoldCommand(arm));
+        configureBindings();
+    }
 
-      // Intaking and Outtaking
+    public static void updateDriveSchemeWidget(DriveConfig.DriveScheme driveScheme) {
+        if (driveSchemeEntry == null)
+            return;
+        driveSchemeEntry.setString(driveScheme.toString());
+    }
+
+    private void configureBindings() {
+        drivetrain.setDefaultCommand(new RunCommand(() -> {
+            DriveConfig config = DriveConfig.getCurrent();
+
+            final double forward = -RobotContainer.joystickLeft.getY();
+            final double turn = -RobotContainer.joystickRight.getX();
+            final double speedSensitivity = config.getSpeedSensitivity();
+            final double turnSensitivity = config.getTurnSensitivity();
+
+            switch (config.getDriveScheme()) {
+                case Arcade:
+                    drivetrain.arcadeDrive(forward / speedSensitivity, turn / turnSensitivity);
+                    break;
+                case ArcadeSingle:
+                    drivetrain.arcadeDrive(forward / speedSensitivity,
+                            RobotContainer.joystickLeft.getX() / turnSensitivity);
+                    break;
+                case Tank:
+                    drivetrain.tankDrive(forward / speedSensitivity,
+                            -RobotContainer.joystickRight.getY() / speedSensitivity);
+                    break;
+            }
+        }, drivetrain));
+
+            arm.setDefaultCommand(new ArmHoldCommand(arm));
+            // Intaking and Outtaking
       new JoystickButton(controller, XboxController.Button.kRightBumper.value)
               .onTrue(new InstantCommand(rollers::intake))
               .onFalse(new InstantCommand(rollers::stop));
@@ -121,8 +118,7 @@ public class RobotContainer {
       new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.High);}));
     }
 
-
     public Command getAutonomousCommand() {
-        return AutoCommand.makeAutoCommand(drivetrain, poseEstimation, "Basic");
+        return null;
     }
 }

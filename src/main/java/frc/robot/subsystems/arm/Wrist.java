@@ -49,13 +49,15 @@ public class Wrist {
     }
 
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
-        velocity.plus(Rotation2d.fromRadians(pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians())));
+        velocity = velocity.plus(Rotation2d.fromRadians(pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians())));
 
-        SmartDashboard.putNumber("Wrist Setpoint", position.getDegrees());
-        SmartDashboard.putNumber("Wrist Set Velocity", velocity.getDegrees());
+        SmartDashboard.putNumber("Wrist Setpoint", position.getRadians());
+        SmartDashboard.putNumber("Wrist Set Velocity", velocity.getRadians());
+        SmartDashboard.putNumber("WRIST PID", pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
 
         if (isLimitSwitchPressed() && velocity.getRadians() >= 0) {
             motor.set(0);
+            return;
         }
 
         motor.setVoltage(feedforward.calculate(arm.getWristAngle().getRadians(), velocity.getRadians()));
@@ -95,14 +97,13 @@ public class Wrist {
 
     public void periodic() {
         SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
-        SmartDashboard.putNumber("Wrist Angle", motor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(motor.getEncoder().getPosition()));
         SmartDashboard.putNumber("Wrist Set Point", Arm.State.getTarget().getWristAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
         SmartDashboard.putNumber("minSafeAngle", (360.0/2.0/Math.PI)*getMinAngle(safeHeight(arm.getShoulderAngle().getDegrees())));
 
         if(isLimitSwitchPressed()) {
             motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET.getRadians());
-            motor.set(0);
         }
     }
 }
