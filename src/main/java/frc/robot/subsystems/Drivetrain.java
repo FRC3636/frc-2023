@@ -5,7 +5,10 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -50,7 +53,6 @@ public class Drivetrain extends SubsystemBase {
     }
 
 
-
     @Override
     public void periodic() {
         RobotContainer.poseEstimation.updateOdometry(
@@ -59,13 +61,16 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public Rotation2d getRotation() {
-        Rotation2d rot = gyro.getRotation2d();
-        
-        if (DriveConstants.GYRO_REVERSED) {
-            rot = rot.unaryMinus();
-        }
-
-        return rot;
+        return getRotation3d().toRotation2d();
+    }
+    
+    public Rotation3d getRotation3d() {
+        return DriveConstants.GYRO_ROTATION.rotateBy(new Rotation3d(new Quaternion(
+            gyro.getQuaternionW(),
+            gyro.getQuaternionX(),
+            gyro.getQuaternionY(),
+            gyro.getQuaternionZ()
+        ))).rotateBy(DriveConstants.GYRO_ROTATION.unaryMinus());
     }
 
     public SwerveModulePosition[] getModulePositions() {

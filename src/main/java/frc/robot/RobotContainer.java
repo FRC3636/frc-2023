@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.MoveToPoint;
 import frc.robot.vision.PoseEstimation;
@@ -52,6 +53,7 @@ public class RobotContainer {
 
     // Commands
     private DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft, joystickRight);
+    private AutoBalance autoBalanceCommand = new AutoBalance(drivetrain);
 
     public RobotContainer() {
         configureButtonBindings();
@@ -63,7 +65,6 @@ public class RobotContainer {
 
         // FIXME: don't run on FMS
         PathPlannerServer.startServer(5811);
-
 
         drivetrain.setDefaultCommand(driveCommand);
     }
@@ -86,6 +87,9 @@ public class RobotContainer {
                                         new Translation2d(-1.0, aprilTagTarget.getRotation()),
                                         new Rotation2d()
                                 ))));
+        
+        new JoystickButton(joystickLeft, 2)
+            .whileTrue(autoBalanceCommand);
     }
 
 
