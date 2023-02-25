@@ -42,8 +42,8 @@ public class RobotContainer {
 
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
-    public static final Arm arm = new Arm();
-    public static final Rollers rollers = new Rollers();
+    // public static final Arm arm = new Arm();
+    // public static final Rollers rollers = new Rollers();
 
     // Controllers
     public static final Joystick joystickLeft = new Joystick(Constants.ControlConstants.JOYSTICK_RIGHT_PORT);
@@ -71,7 +71,7 @@ public class RobotContainer {
         driveSettingsTab.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
         driveSettingsTab.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
 
-        LiveWindow.enableTelemetry(arm);
+        // LiveWindow.enableTelemetry(arm);
 
         // FIXME: don't run on FMS
         PathPlannerServer.startServer(5811);
@@ -98,27 +98,28 @@ public class RobotContainer {
                                         new Translation2d(-1.0, aprilTagTarget.getRotation()),
                                         new Rotation2d()
                                 ))));
-      arm.setDefaultCommand(new ArmHoldCommand(arm));
 
-      // Intaking and Outtaking
-      new JoystickButton(controller, XboxController.Button.kRightBumper.value)
-              .onTrue(new InstantCommand(rollers::intake))
-              .onFalse(new InstantCommand(rollers::stop));
+    //   arm.setDefaultCommand(new ArmHoldCommand(arm));
 
-      new JoystickButton(joystickRight, 1)
-              .onTrue(new InstantCommand(rollers::outtake))
-              .onFalse(new InstantCommand(rollers::stop));
+    //   // Intaking and Outtaking
+    //   new JoystickButton(controller, XboxController.Button.kRightBumper.value)
+    //           .onTrue(new InstantCommand(rollers::intake))
+    //           .onFalse(new InstantCommand(rollers::stop));
 
-      // State Changes
-      new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
-              .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cone)));
-      new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
-              .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cube)));
+    //   new JoystickButton(joystickRight, 1)
+    //           .onTrue(new InstantCommand(rollers::outtake))
+    //           .onFalse(new InstantCommand(rollers::stop));
 
-      new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Stowed);}));
-      new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Low);}));
-      new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Mid);}));
-      new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.High);}));
+    //   // State Changes
+    //   new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
+    //           .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cone)));
+    //   new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
+    //           .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cube)));
+
+    //   new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Stowed);}));
+    //   new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Low);}));
+    //   new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Mid);}));
+    //   new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.High);}));
     }
 
 
