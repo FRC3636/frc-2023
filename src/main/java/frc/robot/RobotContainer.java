@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmHoldCommand;
-import frc.robot.subsystems.Rollers;
+import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.*;
@@ -34,7 +34,6 @@ public class RobotContainer {
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Arm arm = new Arm();
-    public static final Rollers rollers = new Rollers();
 
     // Controllers
     public static final Joystick joystickLeft = new Joystick(Constants.ControlConstants.JOYSTICK_RIGHT_PORT);
@@ -99,12 +98,12 @@ public class RobotContainer {
             arm.setDefaultCommand(new ArmHoldCommand(arm));
             // Intaking and Outtaking
       new JoystickButton(controller, XboxController.Button.kRightBumper.value)
-              .onTrue(new InstantCommand(rollers::intake))
-              .onFalse(new InstantCommand(rollers::stop));
+              .onTrue(new InstantCommand(() -> {Arm.State.setRollerState(Rollers.State.Intake);}))
+              .onFalse(new InstantCommand(() -> {Arm.State.setRollerState(Rollers.State.Off);}));
 
       new JoystickButton(joystickRight, 1)
-              .onTrue(new InstantCommand(rollers::outtake))
-              .onFalse(new InstantCommand(rollers::stop));
+              .onTrue(new InstantCommand(() -> {Arm.State.setRollerState(Rollers.State.Outtake);}))
+              .onFalse(new InstantCommand(() -> {Arm.State.setRollerState(Rollers.State.Off);}));
 
       // State Changes
       new JoystickButton(controller, XboxController.Button.kLeftBumper.value)

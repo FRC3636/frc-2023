@@ -79,7 +79,7 @@ public final class Constants {
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
 
-        public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(4, 6);
+        public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(8, 8);
     }
 
     public static class Wrist {

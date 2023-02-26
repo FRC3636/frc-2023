@@ -49,11 +49,9 @@ public class Wrist {
     }
 
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
-        velocity = velocity.plus(Rotation2d.fromRadians(pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians())));
+        velocity = Rotation2d.fromRadians(velocity.getRadians() + pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
 
         SmartDashboard.putNumber("Wrist Setpoint", position.getRadians());
-        SmartDashboard.putNumber("Wrist Set Velocity", velocity.getRadians());
-        SmartDashboard.putNumber("WRIST PID", pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
 
         if (isLimitSwitchPressed() && velocity.getRadians() >= 0) {
             motor.set(0);

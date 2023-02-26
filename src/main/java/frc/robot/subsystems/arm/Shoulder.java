@@ -69,15 +69,14 @@ public class Shoulder {
     /// @param velocity The velocity setpoint. Measured in radians per second.
     /// @param acceleration The acceleration setpoint. Measured in radians per second squared.
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity, Rotation2d acceleration) {
-        velocity = velocity.plus(Rotation2d.fromRadians(
+        velocity = Rotation2d.fromRadians(velocity.getRadians() +
                 pidController.calculate(getAngle().getRadians(),
-                        Math.max(
-                                position.getRadians() + RobotContainer.joystickRight.getZ() / 4,
-                                Arm.State.Stowed.getShoulderAngle().getRadians()
-                        )
+//                        Math.max(
+                                position.getRadians() + RobotContainer.joystickRight.getZ() / 4
+//                                Arm.State.Stowed.getShoulderAngle().getRadians()
+//                        )
                 )
-        ));
-
+        );
 
         double voltage = feedforwardController.calculate(
                 getAngle().getRadians() - Math.PI / 2,
@@ -86,8 +85,6 @@ public class Shoulder {
         );
 
         motor1.setVoltage(voltage);
-
-        SmartDashboard.putNumber("Shoulder Applied Voltage", voltage);
     }
 
     static double signedModularDistance(double a, double b, double modulus) {
