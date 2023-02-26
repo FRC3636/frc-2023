@@ -3,5 +3,32 @@
   "rotations": [{ "axis": "x", "degrees": 90 }, { "axis": "z", "degrees": 90 }],
   "position": [0, 0, 0],
   "cameras": [],
-  "components": []
+  "components": [
+  {
+    "zeroedRotations": [
+      {
+        "axis": "x",
+        "degrees": 90
+      },
+      {
+        "axis": "z",
+        "degrees": 90
+      }
+    ],
+    "zeroedPosition": [0, 0.203391, 1.162025]
+  },
+  {
+    "zeroedRotations": [
+      {
+        "axis": "x",
+        "degrees": 90
+      },
+      {
+        "axis": "z",
+        "degrees": 90
+      }
+    ],
+    "zeroedPosition": [0, 0.203391, 0.151103]
+  }
+]
 }

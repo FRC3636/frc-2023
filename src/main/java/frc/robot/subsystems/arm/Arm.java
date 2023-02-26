@@ -3,6 +3,7 @@ package frc.robot.subsystems.arm;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -18,8 +19,8 @@ public class Arm extends SubsystemBase {
     private final Wrist wrist;
     private final Rollers rollers;
 
-    private final Mechanism2d arm = new Mechanism2d(3, Constants.Arm.PIVOT_HEIGHT + 0.5);
-    private final MechanismRoot2d pivot = arm.getRoot("pivot", 1, Constants.Arm.PIVOT_HEIGHT);
+    private final Mechanism2d arm = new Mechanism2d(Units.inchesToMeters(28), Constants.Arm.PIVOT_HEIGHT + 0.5);
+    private final MechanismRoot2d pivot = arm.getRoot("pivot", Units.inchesToMeters(22), Constants.Arm.PIVOT_HEIGHT);
     private final MechanismLigament2d humerus = pivot.append(new MechanismLigament2d("humerus", Constants.Arm.HUMERUS_LENGTH, 0));
     private final MechanismLigament2d manipulator = humerus.append(new MechanismLigament2d("manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
 
@@ -30,8 +31,6 @@ public class Arm extends SubsystemBase {
         shoulder = new Shoulder(this);
         wrist = new Wrist(this);
         rollers = new Rollers();
-
-        humerus.setLineWeight(20);
 
         setHumerus.setColor(new Color8Bit(0, 255, 255));
         setManipulator.setColor(new Color8Bit(0, 100, 255));

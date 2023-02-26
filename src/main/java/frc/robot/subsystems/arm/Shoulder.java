@@ -14,7 +14,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class Shoulder {
-    private final Arm arm;
+    protected final Arm arm;
 
     private final CANSparkMax motor1 = new CANSparkMax(Constants.Shoulder.MOTOR_1_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -22,9 +22,9 @@ public class Shoulder {
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final AbsoluteEncoder encoder = motor1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
-    private ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.KS, Constants.Shoulder.KG,
+    protected ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.KS, Constants.Shoulder.KG,
             Constants.Shoulder.KV, Constants.Shoulder.KA);
-    private final PIDController pidController = new PIDController(Constants.Shoulder.KP, Constants.Shoulder.KI,
+    protected final PIDController pidController = new PIDController(Constants.Shoulder.KP, Constants.Shoulder.KI,
             Constants.Shoulder.KD);
 
     public Shoulder(Arm arm) {

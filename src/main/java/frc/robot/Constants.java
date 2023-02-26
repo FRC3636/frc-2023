@@ -66,9 +66,8 @@ public final class Constants {
     }
 
     public static class Arm {
-        public static final double HUMERUS_LENGTH = Units.inchesToMeters(40);
-
-        public static final double PIVOT_HEIGHT = Units.inchesToMeters(45.6);
+        public static final double HUMERUS_LENGTH = 1.010922;
+        public static final double PIVOT_HEIGHT = 1.162025;
     }
 
     public static class Shoulder {
