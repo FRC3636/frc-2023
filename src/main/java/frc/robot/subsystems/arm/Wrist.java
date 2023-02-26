@@ -41,6 +41,9 @@ public class Wrist {
     }
 
     public void followShoulderWithVelocity(Rotation2d velocity) {
+        if(Arm.State.getTarget() == Arm.State.Stowed && Arm.State.getRollerSpeed() == 0) {
+            velocity = Rotation2d.fromRadians(velocity.getRadians() + 1);
+        }
         runWithSetpoint(getSetPosition(), velocity);
     }
 
