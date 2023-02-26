@@ -54,15 +54,14 @@ public class Shoulder {
                 : encoder.getPosition());
     }
 
-    public double getActualVelocity() {
-        return encoder.getVelocity();
+    public Rotation2d getVelocity() {
+        return Rotation2d.fromRadians(encoder.getVelocity());
     }
 
 
     public void periodic() {
-        SmartDashboard.putNumber("Shoulder Angle", getAngle().getDegrees());
-        SmartDashboard.putNumber("Shoulder Velocity", getActualVelocity());
-        SmartDashboard.putNumber("Shoulder Angle Measured", encoder.getPosition());
+        SmartDashboard.putNumber("Shoulder Angle", getAngle().getRadians());
+        SmartDashboard.putNumber("Shoulder Velocity", getVelocity().getRadians());
     }
 
     /// Run the shoulder at the given setpoints using the feedforward and feedback controllers.
@@ -70,15 +69,14 @@ public class Shoulder {
     /// @param velocity The velocity setpoint. Measured in radians per second.
     /// @param acceleration The acceleration setpoint. Measured in radians per second squared.
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity, Rotation2d acceleration) {
-        velocity.plus(Rotation2d.fromRadians(
+        velocity = Rotation2d.fromRadians(velocity.getRadians() +
                 pidController.calculate(getAngle().getRadians(),
-                        Math.max(
-                                position.getRadians() + RobotContainer.joystickRight.getZ() / 4,
-                                Arm.State.Stowed.getShoulderAngle().getRadians()
-                        )
+//                        Math.max(
+                                position.getRadians() + RobotContainer.joystickRight.getZ() / 4
+//                                Arm.State.Stowed.getShoulderAngle().getRadians()
+//                        )
                 )
-        ));
-
+        );
 
         double voltage = feedforwardController.calculate(
                 getAngle().getRadians() - Math.PI / 2,
@@ -87,8 +85,6 @@ public class Shoulder {
         );
 
         motor1.setVoltage(voltage);
-
-        SmartDashboard.putNumber("Shoulder Applied Voltage", voltage);
     }
 
     static double signedModularDistance(double a, double b, double modulus) {
