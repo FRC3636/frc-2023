@@ -24,13 +24,11 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoCommand;
-import frc.robot.commands.MoveToPoint;
+import frc.robot.commands.AlignToNode;
 import frc.robot.poseestimation.PoseEstimation;
-import frc.robot.commands.ArmHoldCommand;
-import frc.robot.subsystems.Rollers;
-import frc.robot.subsystems.arm.Arm;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.*;
 
 public class RobotContainer {
@@ -87,17 +85,18 @@ public class RobotContainer {
                         drivetrain));
         new JoystickButton(joystickLeft, 6)
                 .onTrue(new InstantCommand(driveCommand::resetFieldOrientation));
+        new JoystickButton(joystickLeft, 7)
+                .onTrue(new InstantCommand(() -> poseEstimation.resetPose(
+                    new Pose2d(
+                        poseEstimation.getEstimatedPose().getTranslation(),
+                        new Rotation2d()
+                    )
+                )));
 
-        Pose2d aprilTagTarget = Constants.FieldConstants.aprilTags.get(Integer.valueOf(3)).toPose2d();
         new JoystickButton(joystickLeft, 1)
-                .whileTrue(new MoveToPoint(
+                .whileTrue(new AlignToNode(
                         drivetrain,
-                        poseEstimation,
-                                aprilTagTarget
-                                .transformBy(new Transform2d(
-                                        new Translation2d(-1.0, aprilTagTarget.getRotation()),
-                                        new Rotation2d()
-                                ))));
+                        poseEstimation));
 
     //   arm.setDefaultCommand(new ArmHoldCommand(arm));
 
@@ -110,16 +109,16 @@ public class RobotContainer {
     //           .onTrue(new InstantCommand(rollers::outtake))
     //           .onFalse(new InstantCommand(rollers::stop));
 
-    //   // State Changes
-    //   new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
-    //           .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cone)));
-    //   new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
-    //           .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cube)));
+      // State Changes
+      new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
+              .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cone)));
+      new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
+              .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cube)));
 
-    //   new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Stowed);}));
-    //   new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Low);}));
-    //   new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Mid);}));
-    //   new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.High);}));
+      new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Stowed);}));
+      new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Low);}));
+      new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Mid);}));
+      new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.High);}));
     }
 
 

@@ -196,9 +196,9 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final double MAX_SPEED_METERS_PER_SECOND = 5;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 5;
-        public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI;
-        public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
+        public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
+        public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
         public static final double PX_CONTROLLER = 1;
         public static final double P_THETA_CONTROLLER = 1;
@@ -206,6 +206,11 @@ public final class Constants {
         // Constraint for the motion profiled robot angle controller
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
                 MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
+        
+        public static final Transform2d NODE_ALIGN_TRANSFORM = new Transform2d(
+                new Translation2d(-1, 0),
+                Rotation2d.fromRadians(Math.PI)
+        );
     }
 
     public static final class NeoMotorConstants {
@@ -216,7 +221,7 @@ public final class Constants {
         // FIXME: actually measure these constants
 
         public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(
-                new Translation3d(0, 0, 0.1),
+                new Translation3d(0.23, -0.14, 0.21),
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 

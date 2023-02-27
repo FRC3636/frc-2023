@@ -100,7 +100,7 @@ public class Arm extends SubsystemBase {
 
         public static void setTarget(State target) {
             State.target = target;
-            new ArmMoveCommand(RobotContainer.arm).schedule();
+            // new ArmMoveCommand(RobotContainer.arm).schedule();
         }
 
         public static GamePiece getGamePiece() {
@@ -109,7 +109,7 @@ public class Arm extends SubsystemBase {
 
         public static void setGamePiece(GamePiece gamePiece) {
             State.gamePiece = gamePiece;
-            new ArmMoveCommand(RobotContainer.arm).schedule();
+            // new ArmMoveCommand(RobotContainer.arm).schedule();
         }
 
         public enum GamePiece {
