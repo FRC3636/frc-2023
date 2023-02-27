@@ -4,12 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -113,10 +112,17 @@ public class RobotContainer {
       new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
               .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cube)));
 
+      new Trigger(() -> controller.getPOV() == 0).onTrue(new InstantCommand(() -> Arm.State.moveShoulderOffset(Rotation2d.fromDegrees(2))));
+      new Trigger(() -> controller.getPOV() == 180).onTrue(new InstantCommand(() -> Arm.State.moveShoulderOffset(Rotation2d.fromDegrees(-2))));
+      new Trigger(() -> controller.getPOV() == 90).onTrue(new InstantCommand(() -> Arm.State.moveWristOffset(Rotation2d.fromDegrees(2))));
+      new Trigger(() -> controller.getPOV() == 270).onTrue(new InstantCommand(() -> Arm.State.moveWristOffset(Rotation2d.fromDegrees(-2))));
+
       new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Stowed);}));
       new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Low);}));
       new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Mid);}));
       new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.High);}));
+      new JoystickButton(controller, XboxController.Button.kStart.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Slide);}));
+      new JoystickButton(controller, XboxController.Button.kBack.value).onTrue(new InstantCommand(() -> {Arm.State.setTarget(Arm.State.Teller);}));
     }
 
 
