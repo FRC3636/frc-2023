@@ -13,13 +13,13 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class Wrist {
-    private final Arm arm;
+    protected final Arm arm;
 
     private final CANSparkMax motor = new CANSparkMax(Constants.Wrist.ID, CANSparkMax.MotorType.kBrushless);
     private final DigitalInput limitSwitch = new DigitalInput(Constants.Wrist.LIMIT_SWITCH);
 
-    private final PIDController pidController = new PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD);
-    private final ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA);
+    protected final PIDController pidController = new PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD);
+    protected final ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA);
 
     public Wrist(Arm arm) {
         this.arm = arm;

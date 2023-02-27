@@ -3,12 +3,22 @@ package frc.robot.subsystems.arm;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 public class SIMShoulder extends Shoulder {
 
-    SingleJointedArmSim shoulderSim = new SingleJointedArmSim(DCMotor.getNEO(2), 0, 0, 0, 0, 0, 5.715, true);
+    SingleJointedArmSim shoulderSim = new SingleJointedArmSim(
+            DCMotor.getNEO(2),
+            115.2,
+            0.663,
+            Constants.Arm.HUMERUS_LENGTH,
+            Constants.Shoulder.STOWED_ANGLE.getRadians() - Math.PI / 2,
+            Constants.Shoulder.HIGH_CONE_ANGLE.getRadians() - Math.PI / 2,
+            5.715,
+            true
+    );
 
     public SIMShoulder(Arm arm) {
         super(arm);
@@ -16,7 +26,7 @@ public class SIMShoulder extends Shoulder {
 
     @Override
     public Rotation2d getAngle() {
-        return Rotation2d.fromRadians(shoulderSim.getAngleRads()).minus(Rotation2d.fromDegrees(90));
+        return Rotation2d.fromRadians(shoulderSim.getAngleRads() + Math.PI / 2);
     }
 
     @Override

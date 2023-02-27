@@ -1,12 +1,15 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -28,14 +31,15 @@ public class Arm extends SubsystemBase {
     private final MechanismLigament2d setManipulator = setHumerus.append(new MechanismLigament2d("set manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
 
     public Arm() {
-        shoulder = new Shoulder(this);
-        wrist = new Wrist(this);
+        shoulder = (RobotBase.isSimulation())? new SIMShoulder(this): new Shoulder(this);
+        wrist = (RobotBase.isSimulation())? new SIMWrist(this): new Wrist(this);
         rollers = new Rollers();
 
         setHumerus.setColor(new Color8Bit(0, 255, 255));
         setManipulator.setColor(new Color8Bit(0, 100, 255));
 
         RobotContainer.armTab.add("Arm", arm);
+        SmartDashboard.putNumberArray("TEST POS", new double[]{0, 0.203391, 1.162025, 0, 0, 90, 0});
     }
 
     @Override
