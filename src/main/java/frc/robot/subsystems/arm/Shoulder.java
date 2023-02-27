@@ -35,6 +35,7 @@ public class Shoulder {
         motor1.setSmartCurrentLimit(40);
         motor2.setSmartCurrentLimit(40);
         motor2.follow(motor1, true);
+        motor1.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) / 151.2);  
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO);
         encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO);
 
@@ -46,10 +47,14 @@ public class Shoulder {
         pidController.setTolerance(Units.degreesToRadians(1));
     }
 
+    public void initialize() {
+        motor1.getEncoder().setPosition(getAngle().getRadians());
+    }
+
     public Rotation2d getAngle() {
         return Rotation2d.fromRadians(
-                encoder.getPosition()
-            > (Constants.Shoulder.MAX_ANGLE.getRadians())
+                (encoder.getPosition()
+            > Constants.Shoulder.MAX_ANGLE.getRadians() && motor1.getEncoder().getPosition() < Constants.Shoulder.TOLERANCE_ANGLE.getRadians())
                 ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO)
                 : encoder.getPosition());
     }
@@ -71,10 +76,10 @@ public class Shoulder {
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity, Rotation2d acceleration) {
         velocity = Rotation2d.fromRadians(velocity.getRadians() +
                 pidController.calculate(getAngle().getRadians(),
-//                        Math.max(
-                                position.getRadians() + RobotContainer.joystickRight.getZ() / 4
-//                                Arm.State.Stowed.getShoulderAngle().getRadians()
-//                        )
+                        Math.max(
+                                position.getRadians(),
+                                Arm.State.Stowed.getShoulderAngle().getRadians()
+                        )
                 )
         );
 

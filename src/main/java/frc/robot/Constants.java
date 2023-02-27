@@ -4,17 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 import java.util.Map;
-
-import static com.revrobotics.CANSparkMax.IdleMode;
 
 public final class Constants {
     public static class ControlConstants {
@@ -53,6 +47,13 @@ public final class Constants {
         public static final double HUMERUS_LENGTH = Units.inchesToMeters(40);
 
         public static final double PIVOT_HEIGHT = Units.inchesToMeters(45.6);
+
+        public static final double MID_CONE_SCORING_DIST = 1.4;
+        public static final double HIGH_CONE_SCORING_DIST = 1.46;
+
+        public static final double MID_CUBE_SCORING_DIST = 1.5;
+        public static final double HIGH_CUBE_SCORING_DIST = 1.6;
+
     }
 
     public static class Shoulder {
@@ -74,8 +75,13 @@ public final class Constants {
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.867019);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(1.282185);
-        public static final Rotation2d INTAKE_CONE = Rotation2d.fromRadians(1.111091);
+        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(1.111091);
+        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.873581);
+        public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromRadians(1.037839);
+        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(2.111365);
+        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(1.649983);
         public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(2.3);
+        public static final Rotation2d TOLERANCE_ANGLE = Rotation2d.fromRadians(1);
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
 
@@ -101,7 +107,11 @@ public final class Constants {
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.725371);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
-        public static final Rotation2d INTAKE_CONE = Rotation2d.fromRadians(-0.679611);
+        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(-0.679611);
+        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromDegrees(61.061158);
+        public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
+        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromDegrees(-41.560697);
+        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromDegrees(35.388460);
 
         public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
 
