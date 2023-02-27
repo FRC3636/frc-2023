@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.utils.AllianceUtils;
 
 public class DriveWithJoysticks implements Command {
     private final Drivetrain drivetrain;
@@ -19,7 +20,9 @@ public class DriveWithJoysticks implements Command {
     private final Joystick translation;
     private final Joystick rotation;
 
-    private Rotation2d fieldOrientationZero = new Rotation2d();
+    private Rotation2d fieldOrientationZero = Rotation2d.fromRadians( 
+        AllianceUtils.isBlue() ? 0 : Math.PI
+     );
 
     public DriveWithJoysticks(Drivetrain drivetrain, PoseEstimation poseEstimation, Joystick translation, Joystick rotation) {
         this.drivetrain = drivetrain;
