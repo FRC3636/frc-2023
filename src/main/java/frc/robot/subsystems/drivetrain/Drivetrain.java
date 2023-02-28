@@ -25,13 +25,13 @@ public class Drivetrain extends SubsystemBase {
     private final SwerveModules swerveModules;
 
     // The gyro sensor
-    private final Gyro gyro = (RobotBase.isReal() ? new NavXGyro() : new SIMGyro());
+    private final Gyro gyro;
 
     /**
      * Creates a new DriveSubsystem.
      */
     public Drivetrain() {
-        if(RobotBase.isSimulation()) {
+        if (RobotBase.isSimulation()) {
             this.swerveModules = new SwerveModules(
                     new SIMSwerveModule(DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET),
                     new SIMSwerveModule(DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET),
@@ -63,42 +63,50 @@ public class Drivetrain extends SubsystemBase {
             );
         }
 
+        gyro = (RobotBase.isReal() ? new NavXGyro() : new SIMGyro(swerveModules));
+
         RobotContainer.swerveTab.addNumber("Front Left", swerveModules.frontLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
         RobotContainer.swerveTab.addNumber("Front Right", swerveModules.frontRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
         RobotContainer.swerveTab.addNumber("Back Left", swerveModules.rearLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
         RobotContainer.swerveTab.addNumber("Back Right", swerveModules.rearRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
 
-        RobotContainer.swerveTab.addNumber("Gyro", () -> gyro.getAngle().getDegrees()).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.swerveTab.addNumber("Gyro", () -> gyro.getAngle().getRadians()).withWidget(BuiltInWidgets.kGraph);
     }
-
 
 
     @Override
     public void periodic() {
         RobotContainer.poseEstimation.updateOdometry(
-            getRotation(),
-            getModulePositions()
+                getRotation(),
+                getModulePositions()
         );
 
         gyro.update();
         swerveModules.update();
 
-        logModuleStates("Swerve State");
-        logModuleStates("Swerve Set State");
+        logModuleStates("Swerve State", swerveModules.getStates().asArray());
+        logModuleStates("Swerve Set State", new SwerveModuleState[]{
+                swerveModules.frontLeft.getSetState(),
+                swerveModules.frontRight.getSetState(),
+                swerveModules.rearLeft.getSetState(),
+                swerveModules.rearRight.getSetState()
+
+        });
     }
 
-    private void logModuleStates(String key) {
+    private void logModuleStates(String key, SwerveModuleState[] swerveModuleStates) {
         List<Double> dataList = new ArrayList<>();
-        for (SwerveModuleState swerveModuleState : swerveModules.getStates().asArray()) {
+        for (SwerveModuleState swerveModuleState : swerveModuleStates) {
             dataList.add(swerveModuleState.angle.getRadians());
             dataList.add(swerveModuleState.speedMetersPerSecond);
         }
-       SmartDashboard.putNumberArray(key,
+        SmartDashboard.putNumberArray(key,
                 dataList.stream().mapToDouble(Double::doubleValue).toArray());
     }
+
     public Rotation2d getRotation() {
         Rotation2d rot = gyro.getAngle();
-        
+
         if (DriveConstants.GYRO_REVERSED) {
             rot = rot.unaryMinus();
         }
@@ -119,6 +127,7 @@ public class Drivetrain extends SubsystemBase {
         SwerveModuleState[] swerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(speeds);
         setModuleStates(swerveModuleStates);
     }
+
     /**
      * Sets the wheels into an X formation to prevent movement.
      */

@@ -14,7 +14,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class Shoulder {
-    private final Arm arm;
+    protected final Arm arm;
 
     private final CANSparkMax motor1 = new CANSparkMax(Constants.Shoulder.MOTOR_1_ID,
             CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -22,9 +22,9 @@ public class Shoulder {
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final AbsoluteEncoder encoder = motor1.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
-    private ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.KS, Constants.Shoulder.KG,
+    protected ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.KS, Constants.Shoulder.KG,
             Constants.Shoulder.KV, Constants.Shoulder.KA);
-    private final PIDController pidController = new PIDController(Constants.Shoulder.KP, Constants.Shoulder.KI,
+    protected final PIDController pidController = new PIDController(Constants.Shoulder.KP, Constants.Shoulder.KI,
             Constants.Shoulder.KD);
 
     public Shoulder(Arm arm) {
@@ -35,6 +35,7 @@ public class Shoulder {
         motor1.setSmartCurrentLimit(40);
         motor2.setSmartCurrentLimit(40);
         motor2.follow(motor1, true);
+        motor1.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) / 151.2);  
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO);
         encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO);
 
@@ -46,23 +47,26 @@ public class Shoulder {
         pidController.setTolerance(Units.degreesToRadians(1));
     }
 
+    public void initialize() {
+        motor1.getEncoder().setPosition(getAngle().getRadians());
+    }
+
     public Rotation2d getAngle() {
         return Rotation2d.fromRadians(
-                encoder.getPosition()
-            > (Constants.Shoulder.MAX_ANGLE.getRadians())
+                (encoder.getPosition()
+            > Constants.Shoulder.MAX_ANGLE.getRadians() && motor1.getEncoder().getPosition() < Constants.Shoulder.TOLERANCE_ANGLE.getRadians())
                 ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO)
                 : encoder.getPosition());
     }
 
-    public double getActualVelocity() {
-        return encoder.getVelocity();
+    public Rotation2d getVelocity() {
+        return Rotation2d.fromRadians(encoder.getVelocity());
     }
 
 
     public void periodic() {
-        SmartDashboard.putNumber("Shoulder Angle", getAngle().getDegrees());
-        SmartDashboard.putNumber("Shoulder Velocity", getActualVelocity());
-        SmartDashboard.putNumber("Shoulder Angle Measured", encoder.getPosition());
+        SmartDashboard.putNumber("Shoulder Angle", getAngle().getRadians());
+        SmartDashboard.putNumber("Shoulder Velocity", getVelocity().getRadians());
     }
 
     /// Run the shoulder at the given setpoints using the feedforward and feedback controllers.
@@ -70,15 +74,14 @@ public class Shoulder {
     /// @param velocity The velocity setpoint. Measured in radians per second.
     /// @param acceleration The acceleration setpoint. Measured in radians per second squared.
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity, Rotation2d acceleration) {
-        velocity.plus(Rotation2d.fromRadians(
+        velocity = Rotation2d.fromRadians(velocity.getRadians() +
                 pidController.calculate(getAngle().getRadians(),
                         Math.max(
-                                position.getRadians() + RobotContainer.joystickRight.getZ() / 4,
+                                position.getRadians(),
                                 Arm.State.Stowed.getShoulderAngle().getRadians()
                         )
                 )
-        ));
-
+        );
 
         double voltage = feedforwardController.calculate(
                 getAngle().getRadians() - Math.PI / 2,
@@ -87,8 +90,6 @@ public class Shoulder {
         );
 
         motor1.setVoltage(voltage);
-
-        SmartDashboard.putNumber("Shoulder Applied Voltage", voltage);
     }
 
     static double signedModularDistance(double a, double b, double modulus) {

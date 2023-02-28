@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 
@@ -20,7 +21,7 @@ public class SIMSwerveModule implements SwerveModule{
     private final double chassisAngularOffset;
 
     private FlywheelSim driveSim = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
-    private FlywheelSim turnSim = new FlywheelSim(DCMotor.getNEO(1), Constants.ModuleConstants.TURNING_ENCODER_POSITION_FACTOR, 0.00001);
+    private FlywheelSim turnSim = new FlywheelSim(DCMotor.getNEO(1), Constants.ModuleConstants.TURNING_ENCODER_POSITION_FACTOR, 0.0001);
 
     private final PIDController drivePIDController;
     private final SimpleMotorFeedforward driveFeedForward;
@@ -30,6 +31,9 @@ public class SIMSwerveModule implements SwerveModule{
     private double turnAbsolutePosition = 0.0;
 
     private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
+
+    private SwerveModuleState setDesiredState = new SwerveModuleState(0.0, new Rotation2d());
+
 
     public SIMSwerveModule(double chassisAngularOffset) {
         this.chassisAngularOffset = chassisAngularOffset;
@@ -41,7 +45,7 @@ public class SIMSwerveModule implements SwerveModule{
         );
         driveFeedForward = new SimpleMotorFeedforward(0.116970, 0.133240);
         turnPIDController = new PIDController(
-                Constants.ModuleConstants.TURNING_P,
+                7,
                 Constants.ModuleConstants.TURNING_I,
                 Constants.ModuleConstants.TURNING_D
         );
@@ -94,6 +98,7 @@ public class SIMSwerveModule implements SwerveModule{
         turnPIDController.setSetpoint(optimizedDesiredState.angle.getRadians());
 
         this.desiredState = optimizedDesiredState;
+        this.setDesiredState = desiredState;
     }
 
     @Override
@@ -114,6 +119,6 @@ public class SIMSwerveModule implements SwerveModule{
 
     @Override
     public SwerveModuleState getSetState() {
-        return desiredState;
+        return setDesiredState;
     }
 }

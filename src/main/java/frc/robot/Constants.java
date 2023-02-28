@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.*;
@@ -13,8 +14,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 import java.util.Map;
-
-import static com.revrobotics.CANSparkMax.IdleMode;
 
 public final class Constants {
     public static class ControlConstants {
@@ -66,9 +65,17 @@ public final class Constants {
     }
 
     public static class Arm {
-        public static final double HUMERUS_LENGTH = Units.inchesToMeters(40);
+        public static final double HUMERUS_LENGTH = 1.010922;
+        public static final double PIVOT_HEIGHT = 1.162025;
+        public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
-        public static final double PIVOT_HEIGHT = Units.inchesToMeters(45.6);
+        public static final double MID_CONE_SCORING_DIST = 1.4;
+        public static final double HIGH_CONE_SCORING_DIST = 1.46;
+
+        public static final double MID_CUBE_SCORING_DIST = 1.5;
+        public static final double HIGH_CUBE_SCORING_DIST = 1.6;
+
+        public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
     }
 
     public static class Shoulder {
@@ -85,17 +92,22 @@ public final class Constants {
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 
-        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(0.143279);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(.178937);
-        public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(.570526);
-        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(.867019);
-        public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(.282185);
-        public static final Rotation2d INTAKE_CONE = Rotation2d.fromRadians(.111091);
-        public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(.3);
+        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.143279);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(2.178937);
+        public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
+        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.867019);
+        public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(1.282185);
+        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(1.111091);
+        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.873581);
+        public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromRadians(1.037839);
+        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(2.111365);
+        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(1.649983);
+        public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(2.3);
+        public static final Rotation2d TOLERANCE_ANGLE = Rotation2d.fromRadians(1);
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
 
-        public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(4, 6);
+        public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(8, 8);
     }
 
     public static class Wrist {
@@ -117,7 +129,11 @@ public final class Constants {
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.725371);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
-        public static final Rotation2d INTAKE_CONE = Rotation2d.fromRadians(-0.679611);
+        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(-0.679611);
+        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromDegrees(61.061158);
+        public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
+        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromDegrees(-41.560697);
+        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromDegrees(35.388460);
 
         public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
 
@@ -187,8 +203,8 @@ public final class Constants {
         public static final double TURNING_MIN_OUTPUT = -1;
         public static final double TURNING_MAX_OUTPUT = 1;
 
-        public static final IdleMode DRIVING_MOTOR_IDLE_MODE = IdleMode.kBrake;
-        public static final IdleMode TURNING_MOTOR_IDLE_MODE = IdleMode.kBrake;
+        public static final CANSparkMax.IdleMode DRIVING_MOTOR_IDLE_MODE = CANSparkMax.IdleMode.kBrake;
+        public static final CANSparkMax.IdleMode TURNING_MOTOR_IDLE_MODE = CANSparkMax.IdleMode.kBrake;
 
         public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps
         public static final int TURNING_MOTOR_CURRENT_LIMIT = 20; // amps

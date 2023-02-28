@@ -13,13 +13,13 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class Wrist {
-    private final Arm arm;
+    protected final Arm arm;
 
     private final CANSparkMax motor = new CANSparkMax(Constants.Wrist.ID, CANSparkMax.MotorType.kBrushless);
     private final DigitalInput limitSwitch = new DigitalInput(Constants.Wrist.LIMIT_SWITCH);
 
-    private final PIDController pidController = new PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD);
-    private final ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA);
+    protected final PIDController pidController = new PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD);
+    protected final ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA);
 
     public Wrist(Arm arm) {
         this.arm = arm;
@@ -41,6 +41,9 @@ public class Wrist {
     }
 
     public void followShoulderWithVelocity(Rotation2d velocity) {
+        if(Arm.State.getTarget() == Arm.State.Stowed && Arm.State.getRollerSpeed() == 0) {
+            velocity = Rotation2d.fromRadians(velocity.getRadians() + 1);
+        }
         runWithSetpoint(getSetPosition(), velocity);
     }
 
@@ -49,13 +52,13 @@ public class Wrist {
     }
 
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
-        velocity.plus(Rotation2d.fromRadians(pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians())));
+        velocity = Rotation2d.fromRadians(velocity.getRadians() + pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
 
-        SmartDashboard.putNumber("Wrist Setpoint", position.getDegrees());
-        SmartDashboard.putNumber("Wrist Set Velocity", velocity.getDegrees());
+        SmartDashboard.putNumber("Wrist Setpoint", position.getRadians());
 
         if (isLimitSwitchPressed() && velocity.getRadians() >= 0) {
             motor.set(0);
+            return;
         }
 
         motor.setVoltage(feedforward.calculate(arm.getWristAngle().getRadians(), velocity.getRadians()));
@@ -95,14 +98,13 @@ public class Wrist {
 
     public void periodic() {
         SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
-        SmartDashboard.putNumber("Wrist Angle", motor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(motor.getEncoder().getPosition()));
         SmartDashboard.putNumber("Wrist Set Point", Arm.State.getTarget().getWristAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
         SmartDashboard.putNumber("minSafeAngle", (360.0/2.0/Math.PI)*getMinAngle(safeHeight(arm.getShoulderAngle().getDegrees())));
 
         if(isLimitSwitchPressed()) {
             motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET.getRadians());
-            motor.set(0);
         }
     }
 }
