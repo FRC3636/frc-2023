@@ -68,6 +68,9 @@ public final class Constants {
     public static class Arm {
         public static final double HUMERUS_LENGTH = 1.010922;
         public static final double PIVOT_HEIGHT = 1.162025;
+        public static final double PIVOT_FORWARD_OFFSET = 0.203391;
+
+        public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
     }
 
     public static class Shoulder {

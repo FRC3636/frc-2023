@@ -1,11 +1,11 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmMoveCommand;
+
+import java.util.logging.Logger;
 
 public class Arm extends SubsystemBase {
 
@@ -38,12 +40,13 @@ public class Arm extends SubsystemBase {
         setHumerus.setColor(new Color8Bit(0, 255, 255));
         setManipulator.setColor(new Color8Bit(0, 100, 255));
 
+        RobotContainer.armTab.addDoubleArray("Arm Position", this::getArm3dPose);
         RobotContainer.armTab.add("Arm", arm);
-        SmartDashboard.putNumberArray("TEST POS", new double[]{0, 0.203391, 1.162025, 0, 0, 90, 0});
     }
 
     @Override
     public void periodic() {
+
         shoulder.periodic();
         wrist.periodic();
         rollers.periodic();
@@ -53,6 +56,39 @@ public class Arm extends SubsystemBase {
 
         setHumerus.setAngle(State.getTarget().getShoulderAngle().minus(Rotation2d.fromDegrees(90)));
         setManipulator.setAngle(State.target.getWristAngle().plus(Rotation2d.fromDegrees(90)).minus(State.getTarget().getShoulderAngle()));
+    }
+
+    public double[] getArm3dPose() {
+        Pose3d shoulderPose = new Pose3d(
+                Constants.Arm.PIVOT_FORWARD_OFFSET,
+                0,
+                Constants.Arm.PIVOT_HEIGHT,
+                new Rotation3d(0, -getShoulderAngle().getRadians(), 0));
+
+        Translation2d relativeWristOrigin = Constants.Arm.RELATIVE_WRIST_POSE.rotateBy(getShoulderAngle());
+
+        Pose3d wristPose = new Pose3d(
+                Constants.Arm.PIVOT_FORWARD_OFFSET + relativeWristOrigin.getX(),
+                0,
+                Constants.Arm.PIVOT_HEIGHT + relativeWristOrigin.getY(),
+                new Rotation3d(0, -getWristAngle().getRadians(), 0));
+
+        return new double[] {
+                shoulderPose.getX(),
+                shoulderPose.getY(),
+                shoulderPose.getZ(),
+                shoulderPose.getRotation().getQuaternion().getW(),
+                shoulderPose.getRotation().getQuaternion().getX(),
+                shoulderPose.getRotation().getQuaternion().getY(),
+                shoulderPose.getRotation().getQuaternion().getZ(),
+                wristPose.getX(),
+                wristPose.getY(),
+                wristPose.getZ(),
+                wristPose.getRotation().getQuaternion().getW(),
+                wristPose.getRotation().getQuaternion().getX(),
+                wristPose.getRotation().getQuaternion().getY(),
+                wristPose.getRotation().getQuaternion().getZ(),
+        };
     }
 
     public Rotation2d getShoulderAngle() {
