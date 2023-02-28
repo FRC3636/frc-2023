@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
@@ -200,8 +203,8 @@ public final class Constants {
         public static final double TURNING_MIN_OUTPUT = -1;
         public static final double TURNING_MAX_OUTPUT = 1;
 
-        public static final IdleMode DRIVING_MOTOR_IDLE_MODE = IdleMode.kBrake;
-        public static final IdleMode TURNING_MOTOR_IDLE_MODE = IdleMode.kBrake;
+        public static final CANSparkMax.IdleMode DRIVING_MOTOR_IDLE_MODE = CANSparkMax.IdleMode.kBrake;
+        public static final CANSparkMax.IdleMode TURNING_MOTOR_IDLE_MODE = CANSparkMax.IdleMode.kBrake;
 
         public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps
         public static final int TURNING_MOTOR_CURRENT_LIMIT = 20; // amps
