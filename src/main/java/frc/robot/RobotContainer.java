@@ -7,8 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -22,17 +20,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ArmHoldCommand;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.AlignToNode;
 import frc.robot.poseestimation.PoseEstimation;
-import frc.robot.commands.MoveToPoint;
-import frc.robot.commands.ArmHoldCommand;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Rollers;
-import frc.robot.vision.PoseEstimation;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.*;
 
 public class RobotContainer {
@@ -76,6 +71,8 @@ public class RobotContainer {
 
         // FIXME: don't run on FMS
         PathPlannerServer.startServer(5811);
+
+        arm.setDefaultCommand(new ArmHoldCommand(arm));
 
         drivetrain.setDefaultCommand(driveCommand);
     }
