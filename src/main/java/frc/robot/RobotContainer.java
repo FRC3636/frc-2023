@@ -108,9 +108,9 @@ public class RobotContainer {
 
       // State Changes
       new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
-              .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cone)));
-      new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
               .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cube)));
+      new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
+              .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cone)));
 
       new Trigger(() -> controller.getPOV() == 0).onTrue(new InstantCommand(() -> Arm.State.moveShoulderOffset(Rotation2d.fromDegrees(2))));
       new Trigger(() -> controller.getPOV() == 180).onTrue(new InstantCommand(() -> Arm.State.moveShoulderOffset(Rotation2d.fromDegrees(-2))));
