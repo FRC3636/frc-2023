@@ -20,6 +20,7 @@ public final class Constants {
         public static final int JOYSTICK_RIGHT_PORT = 0;
         public static final int JOYSTICK_LEFT_PORT = 1;
         public static final int CONTROLLER_PORT = 2;
+        public static final int BUTTON_PANEL_PORT = 3;
     }
 
     public static final class DriveConstants {
@@ -69,11 +70,14 @@ public final class Constants {
         public static final double PIVOT_HEIGHT = 1.162025;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
-        public static final double MID_CONE_SCORING_DIST = 1.4;
         public static final double HIGH_CONE_SCORING_DIST = 1.46;
-
-        public static final double MID_CUBE_SCORING_DIST = 1.5;
         public static final double HIGH_CUBE_SCORING_DIST = 1.6;
+
+        public static final double MID_CONE_SCORING_DIST = 1.4;
+        public static final double MID_CUBE_SCORING_DIST = 1.5;
+
+        public static final double LOW_CONE_SCORING_DIST = 1.5;
+        public static final double LOW_CUBE_SCORING_DIST = 1;
 
         public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
     }
@@ -98,6 +102,7 @@ public final class Constants {
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.867019);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(1.282185);
         public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(1.111091);
+        public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromRadians(0.6);
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.873581);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromRadians(1.037839);
         public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(2.111365);
@@ -130,6 +135,7 @@ public final class Constants {
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.725371);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
         public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(-0.679611);
+        public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromRadians(0.2);
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromDegrees(61.061158);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
         public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromDegrees(-41.560697);
@@ -212,7 +218,7 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final double MAX_SPEED_METERS_PER_SECOND = 5;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 10;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
@@ -222,8 +228,8 @@ public final class Constants {
         // Constraint for the motion profiled robot angle controller
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
                 MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
-        
-        public static final Transform2d NODE_ALIGN_TRANSFORM = new Transform2d(
+
+        public static final Transform2d NODE_HIGH_TRANSFORM = new Transform2d(
                 new Translation2d(-1, 0),
                 Rotation2d.fromRadians(Math.PI)
         );
@@ -252,6 +258,9 @@ public final class Constants {
         public static final double tapeWidth = Units.inchesToMeters(2.0);
         public static final double aprilTagWidth = Units.inchesToMeters(6.0);
         public static class Grids {
+
+            public static final double[] GRID_BOUNDARIES = new double[] {0, 1.910, 3.586, 5.446649};
+
             // X layout
             public static final double outerX = Units.inchesToMeters(54.25);
             public static final double lowX =
