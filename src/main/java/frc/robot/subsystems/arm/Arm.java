@@ -1,21 +1,18 @@
 package frc.robot.subsystems.arm;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmMoveCommand;
+import frc.robot.utils.Node;
 
 public class Arm extends SubsystemBase {
 
@@ -111,7 +108,7 @@ public class Arm extends SubsystemBase {
         Slide(Constants.Shoulder.SLIDE_CONE_ANGLE, Constants.Shoulder.SLIDE_CUBE_ANGLE, Constants.Wrist.SLIDE_CONE_ANGLE, Constants.Wrist.SLIDE_CUBE_ANGLE),
         High(Constants.Shoulder.HIGH_CONE_ANGLE, Constants.Shoulder.HIGH_CUBE_ANGLE, Constants.Wrist.HIGH_CONE_ANGLE, Constants.Wrist.HIGH_CUBE_ANGLE),
         Mid(Constants.Shoulder.MID_CONE_ANGLE, Constants.Shoulder.MID_CUBE_ANGLE, Constants.Wrist.MID_CONE_ANGLE, Constants.Wrist.MID_CUBE_ANGLE),
-        Low(Constants.Shoulder.INTAKE_CONE_ANGLE, Constants.Shoulder.INTAKE_CONE_ANGLE, Constants.Wrist.INTAKE_CONE_ANGLE, Constants.Wrist.MID_CUBE_ANGLE),
+        Low(Constants.Shoulder.INTAKE_CONE_ANGLE, Constants.Shoulder.LOW_CUBE_ANGLE, Constants.Wrist.INTAKE_CONE_ANGLE, Constants.Wrist.LOW_CUBE_ANGLE),
         Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.STOWED_ANGLE, Constants.Wrist.CUBE_ANGLE);
 
         private final Rotation2d shoulderCubeAngle;
@@ -163,6 +160,21 @@ public class Arm extends SubsystemBase {
 
         public static State getTarget() {
             return target;
+        }
+
+        public static void setTargetFromNode(Node node) {
+            State.gamePiece = node.getNodeType();
+            switch (node.getLevel()) {
+                case Low:
+                    State.target = Low;
+                    break;
+                case Mid:
+                    State.target = Mid;
+                    break;
+                case High:
+                    State.target = High;
+            }
+            new ArmMoveCommand(RobotContainer.arm).schedule();
         }
 
         public static void setTarget(State target) {

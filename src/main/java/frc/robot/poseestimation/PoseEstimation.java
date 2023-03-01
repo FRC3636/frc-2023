@@ -8,9 +8,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 
@@ -24,7 +26,7 @@ public class PoseEstimation {
 
     private TimeInterpolatableBuffer<Pose2d> poseHistory = TimeInterpolatableBuffer.createBuffer(1.5);
 
-    private static final double DIFFERENTIATION_TIME = 0.020;
+    private static final double DIFFERENTIATION_TIME = Robot.kDefaultPeriod;
 
     public PoseEstimation() {
         poseEstimator = new SwerveDrivePoseEstimator(
