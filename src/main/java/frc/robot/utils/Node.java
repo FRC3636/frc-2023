@@ -12,9 +12,9 @@ import frc.robot.subsystems.arm.Arm;
 public class Node {
     public static Node target = null;
 
-    public final Arm.State.GamePiece nodeType;
-    public final Level level;
-    public final Column column;
+    private final Arm.State.GamePiece nodeType;
+    private final Level level;
+    private final Column column;
 
     public Node(Arm.State.GamePiece nodeType, Level level, Column column) {
         this.nodeType = nodeType;
@@ -37,6 +37,10 @@ public class Node {
 
     public Arm.State.GamePiece getNodeType() {
         return nodeType;
+    }
+
+    public Column getColumn() {
+        return column;
     }
 
     public Transform2d getRobotOffset() {
