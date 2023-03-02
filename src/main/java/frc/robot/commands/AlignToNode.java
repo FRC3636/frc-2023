@@ -29,9 +29,9 @@ public class AlignToNode implements Command {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
 
-        Shuffleboard.getTab("Node Targeting").add("Node Target", Node.target.getNodeType());
-        Shuffleboard.getTab("Node Targeting").add("Column Target", Node.target.getColumn());
-        Shuffleboard.getTab("Node Targeting").add("Level Target", Node.target.getLevel());
+        Shuffleboard.getTab("Node Targeting").add("Node Target", Node.target.getNodeType().toString());
+        Shuffleboard.getTab("Node Targeting").add("Column Target", Node.target.getColumn().toString());
+        Shuffleboard.getTab("Node Targeting").add("Level Target", Node.target.getLevel().toString());
     }
 
     @Override

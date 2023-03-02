@@ -9,7 +9,7 @@ import frc.robot.RobotContainer;
 
 public class SIMShoulder extends Shoulder {
 
-    SingleJointedArmSim shoulderSim = new SingleJointedArmSim(
+    private final SingleJointedArmSim shoulderSim = new SingleJointedArmSim(
             DCMotor.getNEO(2),
             115.2,
             0.663,
@@ -26,6 +26,9 @@ public class SIMShoulder extends Shoulder {
 
     @Override
     public Rotation2d getAngle() {
+        if(shoulderSim == null) {
+            return new Rotation2d();
+        }
         return Rotation2d.fromRadians(shoulderSim.getAngleRads() + Math.PI / 2);
     }
 
