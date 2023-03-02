@@ -8,6 +8,7 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.AutoConstants;
@@ -27,6 +28,10 @@ public class AlignToNode implements Command {
     public AlignToNode(Drivetrain drivetrain, PoseEstimation poseEstimation) {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
+
+        Shuffleboard.getTab("Node Targeting").add("Node Target", Node.target.nodeType.toString());
+        Shuffleboard.getTab("Node Targeting").add("Colum Target", Node.target.column.toString());
+        Shuffleboard.getTab("Node Targeting").add("Level Target", Node.target.level.toString());
     }
 
     @Override
