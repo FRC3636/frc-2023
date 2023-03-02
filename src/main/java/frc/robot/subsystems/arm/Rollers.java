@@ -2,21 +2,18 @@ package frc.robot.subsystems.arm;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.arm.Arm;
 
 public class Rollers {
 
-    private final CANSparkMax rollers = new CANSparkMax(Constants.Rollers.ID,
-            CANSparkMaxLowLevel.MotorType.kBrushless);
+    private final CANSparkMax motor = new CANSparkMax(Constants.Rollers.ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     public Rollers() {
-        rollers.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        motor.restoreFactoryDefaults();
     }
 
     public void periodic() {
-        rollers.set(Arm.State.getRollerSpeed());
+        motor.set(Arm.State.getRollerSpeed());
     }
 
     public enum State {

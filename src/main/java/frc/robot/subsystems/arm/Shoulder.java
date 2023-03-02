@@ -30,6 +30,9 @@ public class Shoulder {
     public Shoulder(Arm arm) {
         this.arm = arm;
 
+        motor1.restoreFactoryDefaults();
+        motor2.restoreFactoryDefaults();
+
         motor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor2.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor1.setSmartCurrentLimit(40);
@@ -45,6 +48,9 @@ public class Shoulder {
         encoder.setInverted(true);
 
         pidController.setTolerance(Units.degreesToRadians(1));
+        motor1.getEncoder().setPosition(0);
+
+        initialize();
     }
 
     public void initialize() {
@@ -54,7 +60,7 @@ public class Shoulder {
     public Rotation2d getAngle() {
         return Rotation2d.fromRadians(
                 (encoder.getPosition()
-            > Constants.Shoulder.MAX_ANGLE.getRadians() && motor1.getEncoder().getPosition() < Constants.Shoulder.TOLERANCE_ANGLE.getRadians())
+            > Constants.Shoulder.MAX_ANGLE.getRadians() /*&& motor1.getEncoder().getPosition() < Constants.Shoulder.TOLERANCE_ANGLE.getRadians()*/)
                 ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO)
                 : encoder.getPosition());
     }

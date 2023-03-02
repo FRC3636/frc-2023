@@ -24,6 +24,8 @@ public class Wrist {
     public Wrist(Arm arm) {
         this.arm = arm;
 
+        motor.restoreFactoryDefaults();
+
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO);
         motor.setSmartCurrentLimit(40);
@@ -77,7 +79,7 @@ public class Wrist {
         if(
                 arm.getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()
                         || Arm.State.getTarget().getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()) {
-            return Rotation2d.fromRadians(Math.max(0, Arm.State.getTarget().getWristAngle().getRadians()));
+            return Rotation2d.fromRadians(Math.max(0.3, Arm.State.getTarget().getWristAngle().getRadians()));
         }
 
         return Arm.State.getTarget().getWristAngle();

@@ -143,7 +143,7 @@ public final class Constants {
 
         public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
 
-        public static final int LIMIT_SWITCH = 1;
+        public static final int LIMIT_SWITCH = 0;
         public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(63);
         public static final Rotation2d CONE_ANGLE = Rotation2d.fromDegrees(-40);
         public static final Rotation2d CUBE_ANGLE = Rotation2d.fromDegrees(40);
@@ -222,8 +222,8 @@ public final class Constants {
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
-        public static final double PX_CONTROLLER = 1;
-        public static final double P_THETA_CONTROLLER = 1;
+        public static final double PX_CONTROLLER = 4;
+        public static final double P_THETA_CONTROLLER = 4;
 
         // Constraint for the motion profiled robot angle controller
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
