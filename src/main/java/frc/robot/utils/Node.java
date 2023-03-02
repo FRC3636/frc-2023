@@ -10,7 +10,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.arm.Arm;
 
 public class Node {
-    public static Node target = new Node(0);
+    public static Node target = null;
 
     private final Arm.State.GamePiece nodeType;
     private final Level level;
