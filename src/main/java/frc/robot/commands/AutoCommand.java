@@ -12,17 +12,26 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.utils.Auto;
+import frc.robot.utils.Auto.ScoringType;
+import frc.robot.utils.Auto.StartingPosition;
 
 public class AutoCommand {
     static Map<String, Command> eventMap = Map.of(
         "print", new InstantCommand(() -> System.out.println("print event triggered"))
     );
 
-    public static Command makeAutoCommand(Drivetrain drivetrain, PoseEstimation poseEstimation, String name) {
-        // This will load the file "FullAuto.path" and generate it with a max velocity of 4 m/s and a max acceleration of 3 m/s^2
-        // for every path in the group
+    public static Command makeAutoCommand(Drivetrain drivetrain, PoseEstimation poseEstimation) {
+        // Pull in configuration from shuffleboard
+        StartingPosition startingPosition = Auto.startingPosition.getSelected();
+        ScoringType scoringType = Auto.scoringType.getSelected();
+        
+        // scuff. fix later.
+        var name = startingPosition.name().toLowerCase() + "-" + scoringType.name().toLowerCase();
+
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(name, new PathConstraints(Constants.AutoConstants.MAX_SPEED_METERS_PER_SECOND, Constants.AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED));
 
         // Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.

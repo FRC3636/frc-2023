@@ -30,6 +30,7 @@ import frc.robot.subsystems.LightsTable;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.utils.Auto;
 import frc.robot.utils.Node;
 
 public class RobotContainer {
@@ -64,6 +65,8 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureButtonBindings();
+
+        Auto.init();
 
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
 
@@ -155,6 +158,6 @@ public class RobotContainer {
 
 
     public Command getAutonomousCommand() {
-        return AutoCommand.makeAutoCommand(drivetrain, poseEstimation, "Basic");
+        return AutoCommand.makeAutoCommand(drivetrain, poseEstimation);
     }
 }
