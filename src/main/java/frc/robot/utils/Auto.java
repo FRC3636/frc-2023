@@ -35,5 +35,13 @@ public class Auto {
         scoringType.setDefaultOption("Balance", ScoringType.Balance);
         scoringType.addOption("Score", ScoringType.Score);
     }
+
+    public static StartingPosition getStartingPosition() {
+        return startingPosition.getSelected();
+    }
+
+    public static ScoringType getScoringType() {
+        return scoringType.getSelected();
+    }
     
 }
