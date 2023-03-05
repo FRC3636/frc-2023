@@ -25,6 +25,7 @@ import frc.robot.commands.AlignToNode;
 import frc.robot.commands.ArmHoldCommand;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.AutoBalance;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.LightsTable;
 import frc.robot.subsystems.arm.Arm;
@@ -59,6 +60,7 @@ public class RobotContainer {
 
     // Commands
     private DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft, joystickRight);
+    private AutoBalance autoBalanceCommand = new AutoBalance(drivetrain);
 
     // RGB
     public static final LightsTable lights = new LightsTable();
@@ -102,6 +104,9 @@ public class RobotContainer {
                 .whileTrue(new ParallelCommandGroup(new AlignToNode(
                         drivetrain,
                         poseEstimation), new InstantCommand(() -> {Arm.State.setTargetFromNode(Node.target);})));
+
+        new JoystickButton(joystickLeft, 2)
+        .whileTrue(autoBalanceCommand);
 
         // Intaking and Outtaking
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)

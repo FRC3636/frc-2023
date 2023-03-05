@@ -2,6 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
@@ -29,6 +30,11 @@ public class SIMGyro implements Gyro {
     @Override
     public Rotation2d getAngle() {
         return rotation;
+    }
+
+    @Override
+    public Rotation3d getRotation3d() {
+        return new Rotation3d();
     }
 
     @Override

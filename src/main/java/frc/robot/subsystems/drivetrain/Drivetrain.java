@@ -5,6 +5,7 @@
 package frc.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -112,6 +113,10 @@ public class Drivetrain extends SubsystemBase {
         }
 
         return rot;
+    }
+
+    public Rotation3d getRotation3d() {
+        return gyro.getRotation3d();
     }
 
     public SwerveModulePosition[] getModulePositions() {

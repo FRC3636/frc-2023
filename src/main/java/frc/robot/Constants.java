@@ -46,6 +46,9 @@ public final class Constants {
         public static final double REAR_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI;
         public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
 
+        // Charge Station Constants
+        public static final double CHARGE_STATION_TOLERANCE = Math.toRadians(11);
+
         // Delay between reading the gyro and using the value used to aproximate exact angle while spinning (0.02 is one loop)
         public static final double GYRO_READ_DELAY = 0.02;
 
@@ -61,6 +64,7 @@ public final class Constants {
         public static final int REAR_RIGHT_TURNING_CAN_ID = 17;
 
         public static final boolean GYRO_REVERSED = false;
+        public static final Rotation3d GYRO_ROTATION = new Rotation3d(0, 0, - Math.PI / 2);
 
         public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.001);
     }
