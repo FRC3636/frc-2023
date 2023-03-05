@@ -1,16 +1,14 @@
 package frc.robot.poseestimation;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import org.photonvision.PhotonCamera;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import frc.robot.Constants;
-
+import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
+import java.io.IOException;
+import java.util.Optional;
 
 public class PhotonVisionBackend extends VisionBackend {
     private final PhotonCamera camera;
@@ -28,12 +26,11 @@ public class PhotonVisionBackend extends VisionBackend {
 
     @Override
     public Optional<Measurement> getMeasurement() {
-        return poseEstimator.update().map((result) -> {
-            return new Measurement(
+        return poseEstimator.update().map((result) -> new Measurement(
                 result.timestampSeconds,
                 result.estimatedPose,
-                Constants.VisionConstants.PHOTONVISION_STD_DEV
-            );
-        });
+                Constants.VisionConstants.PHOTONVISION_STD_DEV,
+                result.targetsUsed.get(0).getPoseAmbiguity()
+        ));
     }
 }

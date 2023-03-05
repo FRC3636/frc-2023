@@ -52,7 +52,12 @@ public class PoseEstimation {
         poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
 
         if (usePhotonVisionEntry.getBoolean(false)) {
-            photonVision.getMeasurement().ifPresent(this::addVisionMeasurement);
+            try {
+                photonVision.getMeasurement().filter(measurement -> measurement.ambiguity < Constants.VisionConstants.AMBIGUITY_FILTER).ifPresent(this::addVisionMeasurement);
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
         }
 
         if (useLimelightEntry.getBoolean(false)) {

@@ -66,7 +66,7 @@ public final class Constants {
         public static final boolean GYRO_REVERSED = false;
         public static final Rotation3d GYRO_ROTATION = new Rotation3d(0, 0, - Math.PI / 2);
 
-        public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.001);
+        public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.01);
     }
 
     public static class Arm {
@@ -100,12 +100,12 @@ public final class Constants {
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 
-        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.143279);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(2.178937);
+        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.109670);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.910583);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.867019);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(1.282185);
-        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(1.111091);
+        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(1.082943);
         public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromRadians(0.6);
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.873581);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromRadians(1.037839);
@@ -134,12 +134,12 @@ public final class Constants {
         public static final double KA = 0.052069;
 
         public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(0);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.457023);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromDegrees(-18.185489);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.725371);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
-        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(-0.679611);
-        public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromRadians(0.2);
+        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromDegrees(-56.414788);
+        public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromDegrees(41.957416);
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromDegrees(61.061158);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
         public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromDegrees(-41.560697);
@@ -206,7 +206,7 @@ public final class Constants {
         public static final double DRIVING_MIN_OUTPUT = -1;
         public static final double DRIVING_MAX_OUTPUT = 1;
 
-        public static final double TURNING_P = 1;
+        public static final double TURNING_P = 2;
         public static final double TURNING_I = 0;
         public static final double TURNING_D = 0;
         public static final double TURNING_FF = 0;
@@ -222,7 +222,7 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final double MAX_SPEED_METERS_PER_SECOND = 5;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 10;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 5;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
@@ -247,13 +247,15 @@ public final class Constants {
         // FIXME: actually measure these constants
 
         public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(
-                new Translation3d(0.23, -0.14, 0.21),
+                new Translation3d(0.205697, -0.244475, 0.267365),
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 
-        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
+        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.5, 0.5, 0.3);
 
         public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
+
+        public static final double AMBIGUITY_FILTER = 0.05;
     }
 
     public static class FieldConstants {

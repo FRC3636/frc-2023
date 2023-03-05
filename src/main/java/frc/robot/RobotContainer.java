@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.RamseteAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -15,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -58,6 +61,9 @@ public class RobotContainer {
 
     public static Field2d field = new Field2d();
 
+    private GenericEntry autoAlignmentSelector =
+            autoTab.add("Auto Selector", 0).withWidget(BuiltInWidgets.kTextView).getEntry();
+
     // Commands
     private DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft, joystickRight);
     private AutoBalance autoBalanceCommand = new AutoBalance(drivetrain);
@@ -100,10 +106,10 @@ public class RobotContainer {
                         )
                 )));
 
-        new JoystickButton(joystickLeft, 1)
+        new JoystickButton(joystickRight, 2)
                 .whileTrue(new ParallelCommandGroup(new AlignToNode(
                         drivetrain,
-                        poseEstimation), new InstantCommand(() -> {Arm.State.setTargetFromNode(Node.target);})));
+                        poseEstimation), new InstantCommand(() -> {/*Arm.State.setTargetFromNode(Node.target);*/})));
 
         new JoystickButton(joystickLeft, 2)
         .whileTrue(autoBalanceCommand);
@@ -157,8 +163,9 @@ public class RobotContainer {
 
         for (int i = 0; i < 9; i++) {
             int finalI = i;
-            new JoystickButton(buttonPanel, i + 1).onTrue(new InstantCommand(() -> Node.target = new Node(finalI)));
+            new JoystickButton(buttonPanel, i + 1).onTrue(new InstantCommand(() -> Node.setTarget(new Node(finalI))));
         }
+        new JoystickButton(joystickRight, 3).onTrue(new InstantCommand(() -> Node.setTarget(new Node((int) autoAlignmentSelector.getInteger(0)))));
     }
 
 
