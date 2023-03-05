@@ -10,7 +10,7 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.arm.Arm;
 
 public class Node {
-    public static Node target = null;
+    private static Node target = new Node(0);
 
     private final Arm.State.GamePiece nodeType;
     private final Level level;
@@ -55,7 +55,7 @@ public class Node {
             case Low:
                 x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.LOW_CONE_SCORING_DIST : Constants.Arm.LOW_CUBE_SCORING_DIST;
         }
-        return new Transform2d(new Translation2d(x, 0.0), new Rotation2d(Math.PI));
+        return new Transform2d(new Translation2d(AllianceUtils.isBlue()? -x : x, 0.0), new Rotation2d(AllianceUtils.isBlue()? 0: Math.PI));
     }
 
     public Pose2d getNodePose() {
@@ -84,6 +84,15 @@ public class Node {
         }
 
         return AllianceUtils.allianceToField(new Pose2d(nodes[grid * 3 + column.getIndex()], new Rotation2d(Math.PI)));
+    }
+
+    public static void setTarget(Node target) {
+        Node.target = target;
+        RobotContainer.field.getObject("Node Position").setPose(target.getNodePose());
+    }
+
+    public static Node getTarget() {
+        return target;
     }
 
     public enum Level {

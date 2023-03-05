@@ -60,7 +60,7 @@ public class Shoulder {
     public Rotation2d getAngle() {
         return Rotation2d.fromRadians(
                 (encoder.getPosition()
-            > Constants.Shoulder.MAX_ANGLE.getRadians() /*&& motor1.getEncoder().getPosition() < Constants.Shoulder.TOLERANCE_ANGLE.getRadians()*/)
+            > Constants.Shoulder.MAX_ANGLE.getRadians() && motor1.getEncoder().getPosition() < Constants.Shoulder.TOLERANCE_ANGLE.getRadians())
                 ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO)
                 : encoder.getPosition());
     }

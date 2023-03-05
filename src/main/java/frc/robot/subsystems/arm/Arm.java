@@ -138,7 +138,7 @@ public class Arm extends SubsystemBase {
         }
 
         public Rotation2d getShoulderAngle() {
-            return(gamePiece == GamePiece.Cone) ? shoulderConeAngle.plus(shoulderOffset) : shoulderCubeAngle.plus(shoulderOffset);
+            return (gamePiece == GamePiece.Cone) ? shoulderConeAngle.plus(shoulderOffset) : shoulderCubeAngle.plus(shoulderOffset);
         }
 
         public Rotation2d getWristAngle() {

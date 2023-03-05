@@ -79,7 +79,7 @@ public class Wrist {
         if(
                 arm.getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()
                         || Arm.State.getTarget().getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()) {
-            return Rotation2d.fromRadians(Math.max(0.3, Arm.State.getTarget().getWristAngle().getRadians()));
+            return Rotation2d.fromRadians(Math.max(0, Arm.State.getTarget().getWristAngle().getRadians()));
         }
 
         return Arm.State.getTarget().getWristAngle();

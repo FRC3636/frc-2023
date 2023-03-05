@@ -29,9 +29,9 @@ public class AlignToNode implements Command {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
 
-        Shuffleboard.getTab("Node Targeting").add("Node Target", Node.target.getNodeType().toString());
-        Shuffleboard.getTab("Node Targeting").add("Column Target", Node.target.getColumn().toString());
-        Shuffleboard.getTab("Node Targeting").add("Level Target", Node.target.getLevel().toString());
+        Shuffleboard.getTab("Node Targeting").add("Node Target", Node.getTarget().getNodeType().toString());
+        Shuffleboard.getTab("Node Targeting").add("Column Target", Node.getTarget().getColumn().toString());
+        Shuffleboard.getTab("Node Targeting").add("Level Target", Node.getTarget().getLevel().toString());
     }
 
     @Override
@@ -39,20 +39,15 @@ public class AlignToNode implements Command {
 
         PathPlannerTrajectory trajectory;
 
-        if (Node.target != null) {
-            Pose2d target = Node.target.getNodePose().transformBy(Node.target.getRobotOffset());
+        Pose2d target = Node.getTarget().getNodePose().transformBy(Node.getTarget().getRobotOffset());
 
-            trajectory = buildTrajectory(target);
+        trajectory = buildTrajectory(target);
 
 
-            RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
-            RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
-            RobotContainer.field.getObject("Target").setPose(target);
-            RobotContainer.field.getObject("Node target").setPose(Node.target.getNodePose());
+        RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
+        RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
+        RobotContainer.field.getObject("Target").setPose(target);
 
-        } else {
-            trajectory = buildTrajectory(new Pose2d());
-        }
 
         swerveControllerCommand = new PPSwerveControllerCommand(
                 trajectory,
