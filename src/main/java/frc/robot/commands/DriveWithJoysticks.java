@@ -21,7 +21,7 @@ public class DriveWithJoysticks implements Command {
     private final Joystick rotation;
 
     private Rotation2d fieldOrientationZero = Rotation2d.fromRadians( 
-        AllianceUtils.isBlue() ? Math.PI : 0
+        AllianceUtils.isBlue() ? 0 : Math.PI
      );
 
     public DriveWithJoysticks(Drivetrain drivetrain, PoseEstimation poseEstimation, Joystick translation, Joystick rotation) {
@@ -30,6 +30,14 @@ public class DriveWithJoysticks implements Command {
 
         this.translation = translation;
         this.rotation = rotation;
+    }
+
+    @Override
+    public void initialize() {
+        fieldOrientationZero = Rotation2d.fromRadians(
+                AllianceUtils.isBlue() ? 0 : Math.PI
+        );
+        drivetrain.resetEncoders();
     }
 
     @Override

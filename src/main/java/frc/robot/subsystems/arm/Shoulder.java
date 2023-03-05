@@ -40,7 +40,7 @@ public class Shoulder {
         motor2.follow(motor1, true);
         motor1.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) / 151.2);  
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO);
-        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO);
+        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO / 60.0);
 
         RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
 

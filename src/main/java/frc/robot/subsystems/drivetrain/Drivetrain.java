@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotContainer;
 import frc.robot.utils.Node;
@@ -75,7 +76,6 @@ public class Drivetrain extends SubsystemBase {
         RobotContainer.swerveTab.addNumber("Gyro", () -> gyro.getAngle().getRadians()).withWidget(BuiltInWidgets.kGraph);
     }
 
-
     @Override
     public void periodic() {
         RobotContainer.poseEstimation.updateOdometry(
@@ -92,8 +92,18 @@ public class Drivetrain extends SubsystemBase {
                 swerveModules.frontRight.getSetState(),
                 swerveModules.rearLeft.getSetState(),
                 swerveModules.rearRight.getSetState()
-
         });
+        SmartDashboard.putNumberArray("Swerve Module Distance", new double[] {
+                swerveModules.frontLeft.getPosition().distanceMeters / Constants.ModuleConstants.WHEEL_CIRCUMFERENCE_METERS,
+                swerveModules.frontRight.getPosition().distanceMeters / Constants.ModuleConstants.WHEEL_CIRCUMFERENCE_METERS,
+                swerveModules.rearLeft.getPosition().distanceMeters / Constants.ModuleConstants.WHEEL_CIRCUMFERENCE_METERS,
+                swerveModules.rearRight.getPosition().distanceMeters / Constants.ModuleConstants.WHEEL_CIRCUMFERENCE_METERS});
+
+        SmartDashboard.putNumberArray("Swerve Module Distance Revolutions", new double[] {
+                swerveModules.frontLeft.getPosition().distanceMeters,
+                swerveModules.frontRight.getPosition().distanceMeters,
+                swerveModules.rearLeft.getPosition().distanceMeters,
+                swerveModules.rearRight.getPosition().distanceMeters});
     }
 
     private void logModuleStates(String key, SwerveModuleState[] swerveModuleStates) {

@@ -28,6 +28,7 @@ public class Wrist {
 
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO);
+        motor.getEncoder().setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO / 60.0);
         motor.setSmartCurrentLimit(40);
         motor.setInverted(false);
 

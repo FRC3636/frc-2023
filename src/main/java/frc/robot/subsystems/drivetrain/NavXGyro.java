@@ -10,6 +10,11 @@ import frc.robot.Constants.DriveConstants;
 public class NavXGyro implements Gyro{
     private final AHRS navX = new AHRS();
 
+    public NavXGyro() {
+        navX.calibrate();
+        reset();
+    }
+
     @Override
     public boolean isConnected() {
         return navX.isConnected();
