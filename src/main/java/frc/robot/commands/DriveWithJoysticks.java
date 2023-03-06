@@ -30,13 +30,6 @@ public class DriveWithJoysticks implements Command {
 
         this.translation = translation;
         this.rotation = rotation;
-    }
-
-    @Override
-    public void initialize() {
-        fieldOrientationZero = Rotation2d.fromRadians(
-                AllianceUtils.isBlue() ? 0 : Math.PI
-        );
         drivetrain.resetEncoders();
     }
 

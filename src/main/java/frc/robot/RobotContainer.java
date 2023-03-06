@@ -88,14 +88,19 @@ public class RobotContainer {
 
         arm.setDefaultCommand(new ArmHoldCommand(arm));
 
+        for (Arm.State value : Arm.State.values()) {
+            armTab.addDoubleArray(value.name(), () -> Arm.State.getPresets(value));
+        }
+
         drivetrain.setDefaultCommand(driveCommand);
     }
 
     private void configureButtonBindings() {
-        new JoystickButton(joystickRight, 1)
+        new JoystickButton(joystickLeft, 1)
                 .whileTrue(new RunCommand(
                         drivetrain::setX,
                         drivetrain));
+
         new JoystickButton(joystickLeft, 6)
                 .onTrue(new InstantCommand(driveCommand::resetFieldOrientation));
         new JoystickButton(joystickLeft, 7)
