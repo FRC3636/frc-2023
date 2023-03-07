@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.RamseteAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,18 +16,10 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AlignToNode;
-import frc.robot.commands.ArmHoldCommand;
-import frc.robot.commands.AutoCommand;
-import frc.robot.commands.DriveWithJoysticks;
-import frc.robot.commands.AutoBalance;
+import frc.robot.commands.*;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.LightsTable;
 import frc.robot.subsystems.arm.Arm;
@@ -96,11 +87,7 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        new JoystickButton(joystickLeft, 1)
-                .whileTrue(new RunCommand(
-                        drivetrain::setX,
-                        drivetrain));
-
+        // Pose Estimation
         new JoystickButton(joystickLeft, 6)
                 .onTrue(new InstantCommand(driveCommand::resetFieldOrientation));
         new JoystickButton(joystickLeft, 7)
@@ -111,15 +98,33 @@ public class RobotContainer {
                         )
                 )));
 
-        new JoystickButton(joystickRight, 2)
-                .whileTrue(new ParallelCommandGroup(new AlignToNode(
-                        drivetrain,
-                        poseEstimation), new InstantCommand(() -> {/*Arm.State.setTargetFromNode(Node.target);*/})));
+        // Driving
+        new JoystickButton(joystickLeft, 1)
+                .whileTrue(new RunCommand(
+                        drivetrain::setX,
+                        drivetrain));
+
+        new JoystickButton(joystickRight, 4)
+                .whileTrue(
+                        new ParallelCommandGroup(
+                                new SequentialCommandGroup(
+                                        new AlignToNode(drivetrain, poseEstimation),
+                                        new RunCommand(drivetrain::setX, drivetrain)),
+                                new InstantCommand(() -> {Arm.State.setTargetFromNode(Node.getTarget());})
+                        )
+                );
+
+        new JoystickButton(joystickRight, 3).whileTrue(
+                new SequentialCommandGroup(
+                        new AlignToNode(drivetrain, poseEstimation),
+                        new RunCommand(drivetrain::setX, drivetrain)
+                )
+        );
 
         new JoystickButton(joystickLeft, 2)
         .whileTrue(autoBalanceCommand);
 
-        // Intaking and Outtaking
+        // Rollers
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)
                 .onTrue(new InstantCommand(() -> {
                     Arm.State.setRollerState(Rollers.State.Intake);
@@ -136,12 +141,13 @@ public class RobotContainer {
                     Arm.State.setRollerState(Rollers.State.Off);
                 }));
 
-        // State Changes
+        // Arm Control
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
                 .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cube)));
         new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
                 .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cone)));
 
+        new JoystickButton(controller, XboxController.Button.kRightStick.value).onTrue(new InstantCommand(Arm.State::resetOffset));
         new Trigger(() -> controller.getPOV() == 0).onTrue(new InstantCommand(() -> Arm.State.moveShoulderOffset(Rotation2d.fromDegrees(2))));
         new Trigger(() -> controller.getPOV() == 180).onTrue(new InstantCommand(() -> Arm.State.moveShoulderOffset(Rotation2d.fromDegrees(-2))));
         new Trigger(() -> controller.getPOV() == 90).onTrue(new InstantCommand(() -> Arm.State.moveWristOffset(Rotation2d.fromDegrees(2))));
@@ -166,11 +172,14 @@ public class RobotContainer {
             Arm.State.setTarget(Arm.State.Teller);
         }));
 
+
+        // Node Selector
         for (int i = 0; i < 9; i++) {
             int finalI = i;
             new JoystickButton(buttonPanel, i + 1).onTrue(new InstantCommand(() -> Node.setTarget(new Node(finalI))));
         }
-        new JoystickButton(joystickRight, 3).onTrue(new InstantCommand(() -> Node.setTarget(new Node((int) autoAlignmentSelector.getInteger(0)))));
+        new JoystickButton(joystickRight, 2).onTrue(new InstantCommand(() -> Node.setTarget(new Node((int) autoAlignmentSelector.getInteger(0)))));
+
     }
 
 

@@ -20,9 +20,7 @@ public class DriveWithJoysticks implements Command {
     private final Joystick translation;
     private final Joystick rotation;
 
-    private Rotation2d fieldOrientationZero = Rotation2d.fromRadians( 
-        AllianceUtils.isBlue() ? 0 : Math.PI
-     );
+    private Rotation2d fieldOrientationZero = AllianceUtils.getFieldOrientationZero();
 
     public DriveWithJoysticks(Drivetrain drivetrain, PoseEstimation poseEstimation, Joystick translation, Joystick rotation) {
         this.drivetrain = drivetrain;
@@ -35,6 +33,7 @@ public class DriveWithJoysticks implements Command {
 
     @Override
     public void execute() {
+        // Negative because joysticks are inverted
         double tx = MathUtil.applyDeadband(-translation.getY() * (translation.getZ() + 1)/2, 0.15);
         double ty = MathUtil.applyDeadband(-translation.getX() * (translation.getZ() + 1)/2, 0.15);
         double r = MathUtil.applyDeadband(-rotation.getX() * (rotation.getZ() + 1)/2, 0.15);

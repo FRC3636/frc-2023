@@ -1,6 +1,7 @@
 package frc.robot.utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -26,5 +27,9 @@ public class AllianceUtils {
 
     public static boolean isBlue() {
         return DriverStation.getAlliance().equals(Alliance.Blue);
+    }
+
+    public static Rotation2d getFieldOrientationZero() {
+        return Rotation2d.fromRadians( isBlue() ? 0 : Math.PI);
     }
 }

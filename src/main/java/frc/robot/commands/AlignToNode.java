@@ -1,109 +1,20 @@
 package frc.robot.commands;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPoint;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.RobotContainer;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.Node;
 
-import java.util.Set;
-
-public class AlignToNode implements Command {
-    private final Drivetrain drivetrain;
-    private final PoseEstimation poseEstimation;
-
-    private PPSwerveControllerCommand swerveControllerCommand;
+public class AlignToNode extends SequentialCommandGroup {
 
     public AlignToNode(Drivetrain drivetrain, PoseEstimation poseEstimation) {
-        this.drivetrain = drivetrain;
-        this.poseEstimation = poseEstimation;
-
-        Shuffleboard.getTab("Node Targeting").add("Node Target", Node.getTarget().getNodeType().toString());
-        Shuffleboard.getTab("Node Targeting").add("Column Target", Node.getTarget().getColumn().toString());
-        Shuffleboard.getTab("Node Targeting").add("Level Target", Node.getTarget().getLevel().toString());
-    }
-
-    @Override
-    public void initialize() {
-
-        PathPlannerTrajectory trajectory;
-
-        Pose2d target = Node.getTarget().getNodePose().transformBy(Node.getTarget().getRobotOffset());
-
-        trajectory = buildTrajectory(target);
-
-
-        RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
-        RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
-        RobotContainer.field.getObject("Target").setPose(target);
-
-
-        swerveControllerCommand = new PPSwerveControllerCommand(
-                trajectory,
-                poseEstimation::getEstimatedPose,
-                new PIDController(AutoConstants.PX_CONTROLLER, 0.0, 0.0),
-                new PIDController(AutoConstants.PX_CONTROLLER, 0.0, 0.0),
-                new PIDController(AutoConstants.P_THETA_CONTROLLER, 0.0, 0.0),
-                drivetrain::drive
+        super(
+                new FollowTrajectoryToPoint(drivetrain, poseEstimation, () -> Node.getTarget().getNodePose().transformBy(Node.getTarget().getRobotOffset())),
+                new DriveToPoint(drivetrain, poseEstimation, () -> Node.getTarget().getNodePose().transformBy(Node.getTarget().getRobotOffset()))
         );
-
-        swerveControllerCommand.initialize();
     }
 
-    private PathPlannerTrajectory buildTrajectory(Pose2d target) {
-        Pose2d initial = poseEstimation.getEstimatedPose();
-        Translation2d initialV = poseEstimation.getEstimatedVelocity();
-
-        PathPlannerTrajectory trajectory = PathPlanner.generatePath(
-                new PathConstraints(
-                        AutoConstants.MAX_SPEED_METERS_PER_SECOND,
-                        AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
-                ),
-                new PathPoint(
-                        initial.getTranslation(),
-                        initialV.getNorm() == 0 ?
-                                target.getTranslation().minus(initial.getTranslation()).getAngle() :
-                                initialV.getAngle(),
-                        initial.getRotation(),
-                        initialV.getNorm()),
-                new PathPoint(
-                        target.getTranslation(),
-                        target.getTranslation().minus(initial.getTranslation()).getAngle(),
-                        target.getRotation())
-        );
-
-        return trajectory;
-    }
-
-    @Override
-    public void execute() {
-        swerveControllerCommand.execute();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        swerveControllerCommand.end(interrupted);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return swerveControllerCommand.isFinished();
-    }
-
-    @Override
-    public Set<Subsystem> getRequirements() {
-        return Set.of(drivetrain);
-    }
 
 }

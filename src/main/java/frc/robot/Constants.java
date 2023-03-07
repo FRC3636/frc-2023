@@ -226,8 +226,14 @@ public final class Constants {
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
-        public static final double PX_CONTROLLER = 4;
-        public static final double P_THETA_CONTROLLER = 4;
+        public static final double P_TRANSLATION_PATH_CONTROLLER = 4;
+        public static final double P_THETA_PATH_CONTROLLER = 4;
+
+        public static final double P_TRANSLATION_POINT_CONTROLLER = 0.1;
+        public static final double P_THETA_POINT_CONTROLLER = 0.1;
+
+        public static final double TRANSLATION_TOLERANCE = 0.01;
+        public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
         // Constraint for the motion profiled robot angle controller
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
