@@ -42,9 +42,8 @@ public class FollowTrajectoryToPoint implements Command {
 
 
         RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
-        RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
+        RobotContainer.field.getRobotObject().setTrajectory(trajectory);
         RobotContainer.field.getObject("Target").setPose(target);
-
 
         swerveControllerCommand = new PPSwerveControllerCommand(
                 trajectory,

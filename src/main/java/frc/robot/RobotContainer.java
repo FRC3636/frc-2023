@@ -133,14 +133,15 @@ public class RobotContainer {
 
         new JoystickButton(joystickRight, 4)
                 .whileTrue(
-                        new AndReturnToStart(poseEstimation, drivetrain, new ProxyCommand(new ParallelCommandGroup(
+                        new ParallelCommandGroup(
                                 new SequentialCommandGroup(
-                                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode),
-                                        new RunCommand(drivetrain::setX, drivetrain)),
+                                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode)
+//                                        new RunCommand(drivetrain::setX, drivetrain)
+                                ),
                                 new InstantCommand(() -> {
                                     Arm.State.setTargetFromNode(this.targetNode);
                                 })
-                        )))
+                        )
                 );
 
         new JoystickButton(joystickRight, 3).whileTrue(

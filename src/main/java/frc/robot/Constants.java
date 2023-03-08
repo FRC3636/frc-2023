@@ -229,8 +229,8 @@ public final class Constants {
         public static final double P_TRANSLATION_PATH_CONTROLLER = 4;
         public static final double P_THETA_PATH_CONTROLLER = 4;
 
-        public static final double P_TRANSLATION_POINT_CONTROLLER = 0.1;
-        public static final double P_THETA_POINT_CONTROLLER = 0.1;
+        public static final double P_TRANSLATION_POINT_CONTROLLER = 2;
+        public static final double P_THETA_POINT_CONTROLLER = 4;
 
         public static final double TRANSLATION_TOLERANCE = 0.01;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);

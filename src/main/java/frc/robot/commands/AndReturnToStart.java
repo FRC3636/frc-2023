@@ -29,20 +29,26 @@ public class AndReturnToStart implements Command {
     public void initialize() {
         start = poseEstimation.getEstimatedPose();
 
+        innerEnded = false;
+
         inner.initialize();
     }
 
     @Override
     public void execute() {
-        if (!inner.isFinished()) {
-            inner.execute();
-        } else if (!innerEnded) {
-            inner.end(false);
-            innerEnded = true;
 
-            returnToStart = new NavigateToPoint(drivetrain, poseEstimation, () -> start);
-            returnToStart.initialize();
-            returnToStart.execute();
+        if (!innerEnded) {
+            if (!inner.isFinished()) {
+                inner.execute();
+            }
+            else {
+                inner.end(false);
+                innerEnded = true;
+
+                returnToStart = new NavigateToPoint(drivetrain, poseEstimation, start);
+                returnToStart.initialize();
+                returnToStart.execute();
+            }
         } else {
             returnToStart.execute();
         }
