@@ -86,11 +86,6 @@ public class Node {
         return AllianceUtils.allianceToField(new Pose2d(nodes[grid * 3 + column.getIndex()], new Rotation2d(Math.PI)));
     }
 
-    public static void setTarget(Node target) {
-        Node.target = target;
-        RobotContainer.field.getObject("Node Position").setPose(target.getNodePose());
-    }
-
     public static Node getTarget() {
         return target;
     }

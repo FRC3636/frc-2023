@@ -11,7 +11,7 @@ import frc.robot.utils.AllianceUtils;
 
 import java.util.function.Supplier;
 
-public class DriveToPoint extends CommandBase {
+public class PIDDriveToPoint extends CommandBase {
 
     private final Drivetrain drivetrain;
     private final PoseEstimation poseEstimation;
@@ -21,7 +21,7 @@ public class DriveToPoint extends CommandBase {
     private final PIDController yController = new PIDController(Constants.AutoConstants.P_TRANSLATION_POINT_CONTROLLER, 0, 0);
     private final PIDController thetaController = new PIDController(Constants.AutoConstants.P_THETA_POINT_CONTROLLER, 0, 0);
 
-    public DriveToPoint(Drivetrain drivetrain, PoseEstimation poseEstimation, Supplier<Pose2d> target) {
+    public PIDDriveToPoint(Drivetrain drivetrain, PoseEstimation poseEstimation, Supplier<Pose2d> target) {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
         this.target = target;

@@ -62,7 +62,11 @@ public class RobotContainer {
     // RGB
     public static final LightsTable lights = new LightsTable();
 
+    //Movement Command
+    public AlignToSelectedNode alignToSelectedNode = new AlignToSelectedNode(drivetrain, poseEstimation);
+
     public RobotContainer() {
+
         configureButtonBindings();
 
         Auto.init();
@@ -108,7 +112,7 @@ public class RobotContainer {
                 .whileTrue(
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
-                                        new AlignToNode(drivetrain, poseEstimation),
+                                        this.alignToSelectedNode,
                                         new RunCommand(drivetrain::setX, drivetrain)),
                                 new InstantCommand(() -> {Arm.State.setTargetFromNode(Node.getTarget());})
                         )
@@ -116,7 +120,7 @@ public class RobotContainer {
 
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
-                        new AlignToNode(drivetrain, poseEstimation),
+                        this.alignToSelectedNode,
                         new RunCommand(drivetrain::setX, drivetrain)
                 )
         );
@@ -176,14 +180,19 @@ public class RobotContainer {
         // Node Selector
         for (int i = 0; i < 9; i++) {
             int finalI = i;
-            new JoystickButton(buttonPanel, i + 1).onTrue(new InstantCommand(() -> Node.setTarget(new Node(finalI))));
+            new JoystickButton(buttonPanel, i + 1).onTrue(new InstantCommand(() -> this.setTargetNode(new Node(finalI))));
         }
-        new JoystickButton(joystickRight, 2).onTrue(new InstantCommand(() -> Node.setTarget(new Node((int) autoAlignmentSelector.getInteger(0)))));
+        new JoystickButton(joystickRight, 2).onTrue(new InstantCommand(() -> this.setTargetNode(new Node((int) autoAlignmentSelector.getInteger(0)))));
 
     }
 
 
     public Command getAutonomousCommand() {
         return AutoCommand.makeAutoCommand(drivetrain, poseEstimation);
+    }
+
+    public void setTargetNode(Node targetNode){
+        RobotContainer.field.getObject("Node Position").setPose(targetNode.getNodePose());
+        this.alignToSelectedNode.setTargetNode(targetNode);
     }
 }

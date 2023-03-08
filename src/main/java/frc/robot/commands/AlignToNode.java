@@ -1,20 +1,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.Node;
 
-public class AlignToNode extends SequentialCommandGroup {
+import java.util.function.Supplier;
 
-    public AlignToNode(Drivetrain drivetrain, PoseEstimation poseEstimation) {
-        super(
-                new FollowTrajectoryToPoint(drivetrain, poseEstimation, () -> Node.getTarget().getNodePose().transformBy(Node.getTarget().getRobotOffset())),
-                new DriveToPoint(drivetrain, poseEstimation, () -> Node.getTarget().getNodePose().transformBy(Node.getTarget().getRobotOffset()))
-        );
+public class AlignToNode extends NavigateToPoint {
+
+    public AlignToNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Node targetNode) {
+        super(drivetrain, poseEstimation, () -> targetNode.getNodePose().transformBy(targetNode.getRobotOffset()));
     }
-
-
 }
