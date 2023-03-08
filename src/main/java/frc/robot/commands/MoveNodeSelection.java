@@ -4,8 +4,8 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Arm.State.GamePiece;
 import frc.robot.utils.Node;
@@ -15,7 +15,7 @@ public class MoveNodeSelection extends InstantCommand {
     private static final int maxLevel = Node.Level.values().length;
 
     /** Creates a new MoveNodeSelection. */
-    public MoveNodeSelection(final MovementDirection direction) {
+    public MoveNodeSelection(RobotContainer robot, final MovementDirection direction) {
         super(() -> {
             System.out.println("Moving node selection");
             final Node currentTarget = Node.getTarget();
@@ -62,7 +62,7 @@ public class MoveNodeSelection extends InstantCommand {
 
             final GamePiece nodeType = Arm.State.GamePiece.fromLevelAndColumn(level, column);
             final Node newTarget = new Node(nodeType, levelObject, columnObject);
-            Node.setTarget(newTarget);
+            robot.setTargetNode(newTarget);
 
             System.out.println("New target -> (level %s, %s)".formatted(levelObject, columnObject));
         });
