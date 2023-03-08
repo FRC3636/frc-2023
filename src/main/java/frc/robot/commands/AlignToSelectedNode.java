@@ -1,11 +1,15 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.Node;
 
-public class AlignToSelectedNode extends CommandBase {
+import java.util.Set;
+
+public class AlignToSelectedNode implements Command {
 
     private AlignToNode innerCommand;
 
@@ -23,22 +27,27 @@ public class AlignToSelectedNode extends CommandBase {
     }
 
     @Override
-    public void execute(){
+    public void execute() {
         innerCommand.execute();
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         innerCommand.initialize();
     }
 
     @Override
-    public void end(boolean terminated){
+    public boolean isFinished() {
+        return innerCommand.isFinished();
+    }
+
+    @Override
+    public void end(boolean terminated) {
         innerCommand.end(terminated);
     }
 
     @Override
-    public boolean isFinished(){
-        return innerCommand.isFinished();
+    public Set<Subsystem> getRequirements() {
+        return Set.of(drivetrain);
     }
 }
