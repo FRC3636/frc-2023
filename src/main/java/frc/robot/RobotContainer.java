@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -184,6 +186,10 @@ public class RobotContainer {
         }
         new JoystickButton(joystickRight, 2).onTrue(new InstantCommand(() -> this.setTargetNode(new Node((int) autoAlignmentSelector.getInteger(0)))));
 
+
+        //calibration movement routine
+        new JoystickButton(joystickLeft, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, () -> poseEstimation.getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, 4), Rotation2d.fromRadians(0)))));
+        new JoystickButton(joystickRight, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, () -> poseEstimation.getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, -4), Rotation2d.fromRadians(0)))));
     }
 
 
