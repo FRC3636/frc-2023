@@ -21,4 +21,24 @@ public class AlignToSelectedNode extends CommandBase {
     public void setTargetNode(Node targetNode){
         this.innerCommand = new AlignToNode(this.drivetrain, this.poseEstimation, targetNode);
     }
+
+    @Override
+    public void execute(){
+        innerCommand.execute();
+    }
+
+    @Override
+    public void initialize(){
+        innerCommand.initialize();
+    }
+
+    @Override
+    public void end(boolean terminated){
+        innerCommand.end(terminated);
+    }
+
+    @Override
+    public boolean isFinished(){
+        return innerCommand.isFinished();
+    }
 }
