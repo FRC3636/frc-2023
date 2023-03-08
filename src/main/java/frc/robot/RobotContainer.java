@@ -138,7 +138,7 @@ public class RobotContainer {
                                         new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode),
                                         new RunCommand(drivetrain::setX, drivetrain)),
                                 new InstantCommand(() -> {
-                                    Arm.State.setTargetFromNode(Node.getTarget());
+                                    Arm.State.setTargetFromNode(this.targetNode);
                                 })
                         )))
                 );
