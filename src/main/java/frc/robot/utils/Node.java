@@ -10,8 +10,6 @@ import frc.robot.RobotContainer;
 import frc.robot.subsystems.arm.Arm;
 
 public class Node {
-    private static Node target = new Node(0);
-
     private final Arm.State.GamePiece nodeType;
     private final Level level;
     private final Column column;
@@ -84,10 +82,6 @@ public class Node {
         }
 
         return AllianceUtils.allianceToField(new Pose2d(nodes[grid * 3 + column.getIndex()], new Rotation2d(Math.PI)));
-    }
-
-    public static Node getTarget() {
-        return target;
     }
 
     public enum Level {

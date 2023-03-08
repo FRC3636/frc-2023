@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
+import frc.robot.commands.alignment.AlignToSelectedNode;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.LightsTable;
 import frc.robot.subsystems.arm.Arm;
@@ -65,7 +66,7 @@ public class RobotContainer {
     public static final LightsTable lights = new LightsTable();
 
     //Movement Command
-    public AlignToSelectedNode alignToSelectedNode = new AlignToSelectedNode(drivetrain, poseEstimation);
+    public Node targetNode = new Node(0);
 
     public RobotContainer() {
 
@@ -114,15 +115,15 @@ public class RobotContainer {
                 .whileTrue(
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
-                                        this.alignToSelectedNode,
+                                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode),
                                         new RunCommand(drivetrain::setX, drivetrain)),
-                                new InstantCommand(() -> {Arm.State.setTargetFromNode(Node.getTarget());})
+                                new InstantCommand(() -> {Arm.State.setTargetFromNode(this.targetNode);})
                         )
                 );
 
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
-                        this.alignToSelectedNode,
+                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode),
                         new RunCommand(drivetrain::setX, drivetrain)
                 )
         );
@@ -188,8 +189,8 @@ public class RobotContainer {
 
 
         //calibration movement routine
-        new JoystickButton(joystickLeft, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, () -> poseEstimation.getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, 4), Rotation2d.fromRadians(0)))));
-        new JoystickButton(joystickRight, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, () -> poseEstimation.getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, -4), Rotation2d.fromRadians(0)))));
+        new JoystickButton(joystickLeft, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, poseEstimation.getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, 4), Rotation2d.fromRadians(0)))));
+        new JoystickButton(joystickRight, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, poseEstimation.getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, -4), Rotation2d.fromRadians(0)))));
     }
 
 
@@ -199,6 +200,6 @@ public class RobotContainer {
 
     public void setTargetNode(Node targetNode){
         RobotContainer.field.getObject("Node Position").setPose(targetNode.getNodePose());
-        this.alignToSelectedNode.setTargetNode(targetNode);
+        this.targetNode = targetNode;
     }
 }

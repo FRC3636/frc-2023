@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public class NavigateToPoint extends SequentialCommandGroup {
 
-    public NavigateToPoint(Drivetrain drivetrain, PoseEstimation poseEstimation, Supplier<Pose2d> target){
+    public NavigateToPoint(Drivetrain drivetrain, PoseEstimation poseEstimation, Pose2d target){
         super(
                 new FollowTrajectoryToPoint(drivetrain, poseEstimation, target),
                 new PIDDriveToPoint(drivetrain, poseEstimation, target)

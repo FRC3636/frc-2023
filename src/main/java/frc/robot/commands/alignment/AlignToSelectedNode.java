@@ -1,9 +1,12 @@
-package frc.robot.commands;
+package frc.robot.commands.alignment;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.commands.alignment.AlignToNode;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.Node;
+
+import java.util.function.Supplier;
 
 public class AlignToSelectedNode extends CommandBase {
 
@@ -12,14 +15,13 @@ public class AlignToSelectedNode extends CommandBase {
     private Drivetrain drivetrain;
     private PoseEstimation poseEstimation;
 
-    public AlignToSelectedNode(Drivetrain drivetrain, PoseEstimation poseEstimation){
+    private Supplier<Node> targetNode;
+
+    public AlignToSelectedNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Supplier<Node> targetNode){
         this.innerCommand = new AlignToNode(drivetrain, poseEstimation, new Node(0));
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
-    }
-
-    public void setTargetNode(Node targetNode){
-        this.innerCommand = new AlignToNode(this.drivetrain, this.poseEstimation, targetNode);
+        this.targetNode = targetNode;
     }
 
     @Override
@@ -29,6 +31,7 @@ public class AlignToSelectedNode extends CommandBase {
 
     @Override
     public void initialize(){
+        this.innerCommand = new AlignToNode(this.drivetrain, this.poseEstimation, targetNode.get());
         innerCommand.initialize();
     }
 
