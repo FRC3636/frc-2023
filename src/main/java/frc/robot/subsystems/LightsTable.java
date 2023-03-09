@@ -26,16 +26,16 @@ public class LightsTable extends SubsystemBase {
     public void periodic() {
         if(requestMode) {
             String targetPreset = Arm.State.getGamePiece().name().toLowerCase();
-            this.setLightsPreset(targetPreset);
+            this.setArmLights(targetPreset);
         } else {
-            this.setLightsPreset("rainbow");
+            this.setArmLights("none");
         }
     }
 
-    public void setLightsPreset(String presetId) {
+    public void setArmLights(String presetId) {
         if(!Objects.equals(current, presetId)) {
             current = presetId;
-            table.putValue("presetId", NetworkTableValue.makeString(presetId));
+            table.putValue("arm_section", NetworkTableValue.makeString(presetId));
         }
     }
 
