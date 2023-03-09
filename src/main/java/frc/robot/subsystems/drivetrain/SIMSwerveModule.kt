@@ -1,124 +1,81 @@
-package frc.robot.subsystems.drivetrain;
+package frc.robot.subsystems.drivetrain
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.Robot;
+import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.SimpleMotorFeedforward
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.kinematics.SwerveModulePosition
+import edu.wpi.first.math.kinematics.SwerveModuleState
+import edu.wpi.first.math.system.plant.DCMotor
+import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.simulation.FlywheelSim
+import frc.robot.Constants
 
-public class SIMSwerveModule implements SwerveModule{
+class SIMSwerveModule(private val chassisAngularOffset: Double) : SwerveModule {
+    private val driveSim = FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025)
+    private val turnSim = FlywheelSim(DCMotor.getNEO(1), Constants.ModuleConstants.TURNING_ENCODER_POSITION_FACTOR, 0.0001)
+    private val drivePIDController: PIDController = PIDController(
+            0.9,
+            Constants.ModuleConstants.DRIVING_I,
+            Constants.ModuleConstants.DRIVING_D
+    )
+    private val driveFeedForward: SimpleMotorFeedforward = SimpleMotorFeedforward(0.116970, 0.133240)
+    private val turnPIDController: PIDController = PIDController(
+            7.0,
+            Constants.ModuleConstants.TURNING_I,
+            Constants.ModuleConstants.TURNING_D
+    )
+    private var drivePosition = 0.0
+    override var swerveEncoderPosition = chassisAngularOffset
+        private set
+    private var desiredState = SwerveModuleState(0.0, Rotation2d.fromRadians(swerveEncoderPosition))
+    override var setState: SwerveModuleState = SwerveModuleState(0.0, Rotation2d())
+        private set
 
-    private final double chassisAngularOffset;
-
-    private FlywheelSim driveSim = new FlywheelSim(DCMotor.getNEO(1), 6.75, 0.025);
-    private FlywheelSim turnSim = new FlywheelSim(DCMotor.getNEO(1), Constants.ModuleConstants.TURNING_ENCODER_POSITION_FACTOR, 0.0001);
-
-    private final PIDController drivePIDController;
-    private final SimpleMotorFeedforward driveFeedForward;
-    private final PIDController turnPIDController;
-
-    private double drivePosition = 0.0;
-    private double turnAbsolutePosition = 0.0;
-
-    private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
-
-    private SwerveModuleState setDesiredState = new SwerveModuleState(0.0, new Rotation2d());
-
-
-    public SIMSwerveModule(double chassisAngularOffset) {
-        this.chassisAngularOffset = chassisAngularOffset;
-
-        drivePIDController = new PIDController(
-                0.9,
-                Constants.ModuleConstants.DRIVING_I,
-                Constants.ModuleConstants.DRIVING_D
-        );
-        driveFeedForward = new SimpleMotorFeedforward(0.116970, 0.133240);
-        turnPIDController = new PIDController(
-                7,
-                Constants.ModuleConstants.TURNING_I,
-                Constants.ModuleConstants.TURNING_D
-        );
-
-        turnPIDController.enableContinuousInput(0, Math.PI * 2);
-
-        desiredState.angle = Rotation2d.fromRadians(turnAbsolutePosition);
-        drivePosition = 0;
-        turnAbsolutePosition = chassisAngularOffset;
+    init {
+        turnPIDController.enableContinuousInput(0.0, Math.PI * 2)
     }
 
-    @Override
-    public void update() {
+    override fun update() {
         driveSim.setInputVoltage(MathUtil.clamp(driveFeedForward.calculate(desiredState.speedMetersPerSecond) +
-                drivePIDController.calculate(driveSim.getAngularVelocityRadPerSec()),
-                -12, 12));
-
-        driveSim.update(Robot.kDefaultPeriod);
-        
+                drivePIDController.calculate(driveSim.angularVelocityRadPerSec),
+                -12.0, 12.0))
+        driveSim.update(TimedRobot.kDefaultPeriod)
         turnSim.setInputVoltage(MathUtil.clamp(
-                turnPIDController.calculate(turnAbsolutePosition),
-                -12, 12));
-
-        turnSim.update(Robot.kDefaultPeriod);
-
-        drivePosition += driveSim.getAngularVelocityRadPerSec() * Robot.kDefaultPeriod;
-        turnAbsolutePosition = (turnAbsolutePosition + turnSim.getAngularVelocityRadPerSec() * Robot.kDefaultPeriod) % (Math.PI * 2);
+                turnPIDController.calculate(swerveEncoderPosition),
+                -12.0, 12.0))
+        turnSim.update(TimedRobot.kDefaultPeriod)
+        drivePosition += driveSim.angularVelocityRadPerSec * TimedRobot.kDefaultPeriod
+        swerveEncoderPosition = (swerveEncoderPosition + turnSim.angularVelocityRadPerSec * TimedRobot.kDefaultPeriod) % (Math.PI * 2)
     }
 
-    @Override
-    public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(
+    override val position: SwerveModulePosition
+        get() = SwerveModulePosition(
                 drivePosition,
-                new Rotation2d(turnAbsolutePosition - chassisAngularOffset));
-    }
+                Rotation2d(swerveEncoderPosition - chassisAngularOffset))
 
-    @Override
-    public void setDesiredState(SwerveModuleState desiredState) {
+    override fun setDesiredState(desiredState: SwerveModuleState) {
         // Apply chassis angular offset to the desired state.
-        SwerveModuleState correctedDesiredState = new SwerveModuleState();
-        correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-        correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(chassisAngularOffset));
+        val correctedDesiredState = SwerveModuleState()
+        correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond
+        correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(chassisAngularOffset))
 
         // Optimize the reference state to avoid spinning further than 90 degrees.
-        SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
-                new Rotation2d(turnAbsolutePosition));
+        val optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,
+                Rotation2d(swerveEncoderPosition))
 
         // Command driving and turning SPARKS MAX towards their respective setpoints.
-        drivePIDController.setSetpoint(optimizedDesiredState.speedMetersPerSecond);
-        turnPIDController.setSetpoint(optimizedDesiredState.angle.getRadians());
-
-        this.desiredState = optimizedDesiredState;
-        this.setDesiredState = desiredState;
+        drivePIDController.setpoint = optimizedDesiredState.speedMetersPerSecond
+        turnPIDController.setpoint = optimizedDesiredState.angle.radians
+        this.desiredState = optimizedDesiredState
+        setState = desiredState
     }
 
-    @Override
-    public SwerveModuleState getState() {
-        return new SwerveModuleState(driveSim.getAngularVelocityRadPerSec(),
-                new Rotation2d(turnAbsolutePosition - chassisAngularOffset));
-    }
+    override val state: SwerveModuleState
+        get() = SwerveModuleState(driveSim.angularVelocityRadPerSec,
+                Rotation2d(swerveEncoderPosition - chassisAngularOffset))
 
-    @Override
-    public double getSwerveEncoderPosition() {
-        return turnAbsolutePosition;
-    }
-
-    @Override
-    public void resetEncoders() {
-        drivePosition = 0;
-    }
-
-    @Override
-    public SwerveModuleState getSetState() {
-        return setDesiredState;
+    override fun resetEncoders() {
+        drivePosition = 0.0
     }
 }

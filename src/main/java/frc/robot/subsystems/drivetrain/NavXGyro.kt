@@ -1,58 +1,43 @@
-package frc.robot.subsystems.drivetrain;
+package frc.robot.subsystems.drivetrain
 
-import com.kauailabs.navx.frc.AHRS;
+import com.kauailabs.navx.frc.AHRS
+import edu.wpi.first.math.geometry.Quaternion
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Rotation3d
+import frc.robot.Constants.DriveConstants
 
-import edu.wpi.first.math.geometry.Quaternion;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import frc.robot.Constants.DriveConstants;
+class NavXGyro : Gyro {
+    private val navX = AHRS()
+    override val connected: Boolean
+        get() = navX.isConnected
+    override val angle: Rotation2d
+        get() = navX.rotation2d
+    override val rotation3d: Rotation3d
+        get() = DriveConstants.GYRO_ROTATION.rotateBy(
+                Rotation3d(
+                        Quaternion(
+                                navX.quaternionW.toDouble(),
+                                navX.quaternionX.toDouble(),
+                                navX.quaternionY.toDouble(),
+                                navX.quaternionZ.toDouble()
+                        )
+                )
+        ).rotateBy(DriveConstants.GYRO_ROTATION.unaryMinus())
+    override val rate: Rotation2d
+        get() = Rotation2d.fromDegrees(navX.rate)
 
-public class NavXGyro implements Gyro{
-    private final AHRS navX = new AHRS();
-
-    public NavXGyro() {
-        navX.calibrate();
-        reset();
+    init {
+        navX.calibrate()
+        reset()
     }
 
-    @Override
-    public boolean isConnected() {
-        return navX.isConnected();
+    override fun setGyroRotation(rotation: Rotation2d) {
+        navX.reset()
+        navX.angleAdjustment = -rotation.degrees // Probably non-functional
     }
 
-    @Override
-    public Rotation2d getAngle() {
-        return navX.getRotation2d();
-    }
-
-    @Override
-    public Rotation3d getRotation3d() {
-        return DriveConstants.GYRO_ROTATION.rotateBy(new Rotation3d(new Quaternion(
-            navX.getQuaternionW(),
-            navX.getQuaternionX(),
-            navX.getQuaternionY(),
-            navX.getQuaternionZ()
-        ))).rotateBy(DriveConstants.GYRO_ROTATION.unaryMinus());
-    }
-
-    @Override
-    public void setGyroRotation(Rotation2d rotation2d) {
-        navX.reset();
-        navX.setAngleAdjustment(-rotation2d.getDegrees()); // Probably non-functional
-    }
-
-    @Override
-    public void update() {
-
-    }
-
-    @Override
-    public void reset() {
-        navX.reset();
-    }
-
-    @Override
-    public Rotation2d getRate() {
-        return Rotation2d.fromDegrees(navX.getRate());
+    override fun update() {}
+    override fun reset() {
+        navX.reset()
     }
 }

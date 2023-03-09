@@ -1,59 +1,40 @@
-package frc.robot.commands;
+package frc.robot.commands
 
-import java.util.Set;
+import edu.wpi.first.math.MathUtil
+import edu.wpi.first.math.kinematics.ChassisSpeeds
+import edu.wpi.first.wpilibj.Joystick
+import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.Subsystem
+import frc.robot.Constants.DriveConstants
+import frc.robot.poseestimation.PoseEstimation
+import frc.robot.subsystems.drivetrain.Drivetrain
+import frc.robot.utils.AllianceUtils
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.poseestimation.PoseEstimation;
-import frc.robot.subsystems.drivetrain.Drivetrain;
-import frc.robot.utils.AllianceUtils;
+class DriveWithJoysticks(private val drivetrain: Drivetrain, private val poseEstimation: PoseEstimation, private val translation: Joystick, private val rotation: Joystick) : Command {
+    private var fieldOrientationZero = AllianceUtils.fieldOrientationZero
 
-public class DriveWithJoysticks implements Command {
-    private final Drivetrain drivetrain;
-    private final PoseEstimation poseEstimation;
-
-    private final Joystick translation;
-    private final Joystick rotation;
-
-    private Rotation2d fieldOrientationZero = AllianceUtils.getFieldOrientationZero();
-
-    public DriveWithJoysticks(Drivetrain drivetrain, PoseEstimation poseEstimation, Joystick translation, Joystick rotation) {
-        this.drivetrain = drivetrain;
-        this.poseEstimation = poseEstimation;
-
-        this.translation = translation;
-        this.rotation = rotation;
-        drivetrain.resetEncoders();
+    init {
+        drivetrain.resetEncoders()
     }
 
-    @Override
-    public void execute() {
+    override fun execute() {
         // Negative because joysticks are inverted
-        double tx = MathUtil.applyDeadband(-translation.getY() * (translation.getZ() + 1)/2, 0.15);
-        double ty = MathUtil.applyDeadband(-translation.getX() * (translation.getZ() + 1)/2, 0.15);
-        double r = MathUtil.applyDeadband(-rotation.getX() * (rotation.getZ() + 1)/2, 0.15);
-
-        double vx = tx * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
-        double vy = ty * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
-        double omega = r * DriveConstants.MAX_ANGULAR_SPEED;
-
-        ChassisSpeeds fieldRelSpeeds = new ChassisSpeeds(vx, vy, omega);
-        ChassisSpeeds robotRelSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelSpeeds, poseEstimation.getEstimatedPose().getRotation().minus(fieldOrientationZero));
-
-        drivetrain.drive(robotRelSpeeds);
+        val tx = MathUtil.applyDeadband(-translation.y * (translation.z + 1) / 2, 0.15)
+        val ty = MathUtil.applyDeadband(-translation.x * (translation.z + 1) / 2, 0.15)
+        val r = MathUtil.applyDeadband(-rotation.x * (rotation.z + 1) / 2, 0.15)
+        val vx = tx * DriveConstants.MAX_SPEED_METERS_PER_SECOND
+        val vy = ty * DriveConstants.MAX_SPEED_METERS_PER_SECOND
+        val omega = r * DriveConstants.MAX_ANGULAR_SPEED
+        val fieldRelSpeeds = ChassisSpeeds(vx, vy, omega)
+        val robotRelSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelSpeeds, poseEstimation.estimatedPose.rotation.minus(fieldOrientationZero))
+        drivetrain.drive(robotRelSpeeds)
     }
 
-    @Override
-    public Set<Subsystem> getRequirements() {
-        return Set.of(drivetrain);
+    override fun getRequirements(): Set<Subsystem> {
+        return mutableSetOf<Subsystem>(drivetrain)
     }
 
-    public void resetFieldOrientation() {
-        fieldOrientationZero = poseEstimation.getEstimatedPose().getRotation();
+    fun resetFieldOrientation() {
+        fieldOrientationZero = poseEstimation.estimatedPose.rotation
     }
 }

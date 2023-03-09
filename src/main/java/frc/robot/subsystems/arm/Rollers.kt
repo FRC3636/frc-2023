@@ -1,33 +1,22 @@
-package frc.robot.subsystems.arm;
+package frc.robot.subsystems.arm
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import frc.robot.Constants;
+import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkMaxLowLevel
+import frc.robot.Constants
 
-public class Rollers {
+class Rollers {
+    private val motor = CANSparkMax(Constants.Rollers.ID, CANSparkMaxLowLevel.MotorType.kBrushless)
 
-    private final CANSparkMax motor = new CANSparkMax(Constants.Rollers.ID, CANSparkMaxLowLevel.MotorType.kBrushless);
-    public Rollers() {
-        motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        motor.restoreFactoryDefaults();
+    init {
+        motor.idleMode = CANSparkMax.IdleMode.kBrake
+        motor.restoreFactoryDefaults()
     }
 
-    public void periodic() {
-        motor.set(Arm.State.getRollerSpeed());
+    fun periodic() {
+        motor.set(Arm.State.rollerSpeed)
     }
 
-    public enum State {
-        Intake(Constants.Rollers.INTAKE_CONE, Constants.Rollers.INTAKE_CUBE),
-        Outtake(Constants.Rollers.OUTTAKE_CONE, Constants.Rollers.OUTTAKE_CUBE),
-        Off(0, 0);
-
-        public final double coneSpeed;
-        public final double cubeSpeed;
-
-        State(double coneSpeed, double cubeSpeed) {
-            this.coneSpeed = coneSpeed;
-            this.cubeSpeed = cubeSpeed;
-        }
-
+    enum class State(val coneSpeed: Double, val cubeSpeed: Double) {
+        Intake(Constants.Rollers.INTAKE_CONE, Constants.Rollers.INTAKE_CUBE), Outtake(Constants.Rollers.OUTTAKE_CONE, Constants.Rollers.OUTTAKE_CUBE), Off(0.0, 0.0);
     }
 }

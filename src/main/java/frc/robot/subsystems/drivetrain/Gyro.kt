@@ -1,20 +1,14 @@
-package frc.robot.subsystems.drivetrain;
+package frc.robot.subsystems.drivetrain
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Rotation3d
 
-public interface Gyro {
-    boolean isConnected();
-
-    Rotation2d getAngle();
-
-    Rotation3d getRotation3d();
-
-    void setGyroRotation(Rotation2d rotation);
-
-    void update();
-
-    void reset();
-
-    Rotation2d getRate();
+interface Gyro {
+    val connected: Boolean
+    fun setGyroRotation(rotation: Rotation2d)
+    fun update()
+    fun reset()
+    val angle: Rotation2d
+    val rate: Rotation2d
+    val rotation3d: Rotation3d
 }

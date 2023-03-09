@@ -1,94 +1,83 @@
-package frc.robot.poseestimation;
+package frc.robot.poseestimation
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import frc.robot.Constants;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.math.VecBuilder
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
+import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer
+import edu.wpi.first.math.kinematics.SwerveModulePosition
+import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
+import frc.robot.Constants
+import frc.robot.Constants.DriveConstants
+import frc.robot.RobotContainer
+import frc.robot.poseestimation.VisionBackend.Measurement
 
-public class PoseEstimation {
-    private PhotonVisionBackend photonVision;
-    private LimelightBackend limelight;
-    private SwerveDrivePoseEstimator poseEstimator;
-
-    private GenericEntry usePhotonVisionEntry = RobotContainer.autoTab.add("Use PhotonVision", true).withWidget(BuiltInWidgets.kToggleButton).getEntry();
-    private GenericEntry useLimelightEntry = RobotContainer.autoTab.add("Use Limelight", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
-
-    private TimeInterpolatableBuffer<Pose2d> poseHistory = TimeInterpolatableBuffer.createBuffer(1.5);
-
-    private static final double DIFFERENTIATION_TIME = Robot.kDefaultPeriod;
-
-    public PoseEstimation() {
-        poseEstimator = new SwerveDrivePoseEstimator(
+class PoseEstimation {
+    private var photonVision: PhotonVisionBackend? = null
+    private val limelight: LimelightBackend
+    private val poseEstimator: SwerveDrivePoseEstimator = SwerveDrivePoseEstimator(
             DriveConstants.DRIVE_KINEMATICS,
-            RobotContainer.drivetrain.getRotation(),
-            RobotContainer.drivetrain.getModulePositions(),
-            new Pose2d(),
-            Constants.DriveConstants.ODOMETRY_STD_DEV,
-            VecBuilder.fill(0, 0, 0) // will be overwritten for each measurement
-        );
+            RobotContainer.drivetrain.rotation,
+            RobotContainer.drivetrain.modulePositions,
+            Pose2d(),
+            DriveConstants.ODOMETRY_STD_DEV,
+            VecBuilder.fill(0.0, 0.0, 0.0) // will be overwritten for each measurement
+    )
+    private val usePhotonVisionEntry = RobotContainer.autoTab.add("Use PhotonVision", true).withWidget(BuiltInWidgets.kToggleButton).entry
+    private val useLimelightEntry = RobotContainer.autoTab.add("Use Limelight", false).withWidget(BuiltInWidgets.kToggleButton).entry
+    private val poseHistory = TimeInterpolatableBuffer.createBuffer<Pose2d>(1.5)
 
+    init {
         try {
-            photonVision = new PhotonVisionBackend();
-        } catch (Exception e) {
-            System.out.println("Failed to initialize PhotonVision");
-            e.printStackTrace();
+            photonVision = PhotonVisionBackend()
+        } catch (e: Exception) {
+            println("Failed to initialize PhotonVision")
+            e.printStackTrace()
         }
-
-        limelight = new LimelightBackend();
+        limelight = LimelightBackend()
     }
 
-    public void periodic() {
-        poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
-
+    fun periodic() {
+        poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.estimatedPosition)
         if (usePhotonVisionEntry.getBoolean(false)) {
             try {
-                photonVision.getMeasurement().filter(measurement -> measurement.ambiguity < Constants.VisionConstants.AMBIGUITY_FILTER).ifPresent(this::addVisionMeasurement);
-            }
-            catch(Exception e) {
-                e.printStackTrace();
+                photonVision!!.measurement.filter { measurement: Measurement? -> measurement!!.ambiguity < Constants.VisionConstants.AMBIGUITY_FILTER }.ifPresent { measurement: Measurement? -> addVisionMeasurement(measurement) }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
-
         if (useLimelightEntry.getBoolean(false)) {
-            limelight.getMeasurement().ifPresent(this::addVisionMeasurement);
+            limelight.measurement.ifPresent { measurement: Measurement? -> addVisionMeasurement(measurement) }
+        }
+        RobotContainer.field.robotPose = estimatedPose
+    }
+
+    fun updateOdometry(gyro: Rotation2d?, modulePositions: Array<SwerveModulePosition>) {
+        poseEstimator.update(gyro, modulePositions)
+    }
+
+    val estimatedPose: Pose2d
+        get() = poseEstimator.estimatedPosition
+    val estimatedVelocity: Translation2d
+        get() {
+            val now = Timer.getFPGATimestamp()
+            val current = poseHistory.getSample(now).get().translation
+            val previous = poseHistory.getSample(now - DIFFERENTIATION_TIME).get().translation
+            return current.minus(previous).div(DIFFERENTIATION_TIME)
         }
 
-        RobotContainer.field.setRobotPose(getEstimatedPose());
+    fun resetPose(pose: Pose2d?) {
+        poseEstimator.resetPosition(RobotContainer.drivetrain.rotation, RobotContainer.drivetrain.modulePositions, pose)
     }
 
-    public void updateOdometry(Rotation2d gyro, SwerveModulePosition[] modulePositions) {
-        poseEstimator.update(gyro, modulePositions);
+    private fun addVisionMeasurement(measurement: Measurement?) {
+        poseEstimator.addVisionMeasurement(measurement!!.pose.toPose2d(), measurement.timestamp, measurement.stdDeviation)
     }
 
-    public Pose2d getEstimatedPose() {
-        return poseEstimator.getEstimatedPosition();
-    }
-
-    public Translation2d getEstimatedVelocity() {
-        double now = Timer.getFPGATimestamp();
-
-        Translation2d current = poseHistory.getSample(now).get().getTranslation();
-        Translation2d previous = poseHistory.getSample(now - DIFFERENTIATION_TIME).get().getTranslation();
-
-        return current.minus(previous).div(DIFFERENTIATION_TIME);
-    }
-
-    public void resetPose(Pose2d pose) {
-        poseEstimator.resetPosition(RobotContainer.drivetrain.getRotation(), RobotContainer.drivetrain.getModulePositions(), pose);
-    }
-
-    private void addVisionMeasurement(VisionBackend.Measurement measurement) {
-        poseEstimator.addVisionMeasurement(measurement.pose.toPose2d(), measurement.timestamp, measurement.stdDeviation);
+    companion object {
+        private const val DIFFERENTIATION_TIME: Double = TimedRobot.kDefaultPeriod
     }
 }

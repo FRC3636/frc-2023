@@ -1,111 +1,54 @@
-package frc.robot.utils;
+package frc.robot.utils
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.arm.Arm;
+import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Transform2d
+import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.wpilibj.DriverStation
+import frc.robot.Constants
+import frc.robot.RobotContainer
+import frc.robot.subsystems.arm.Arm.State.GamePiece
+import frc.robot.utils.AllianceUtils.allianceToField
+import frc.robot.utils.AllianceUtils.isBlue
 
-public class Node {
-    private final Arm.State.GamePiece nodeType;
-    private final Level level;
-    private final Column column;
-
-    public Node(Arm.State.GamePiece nodeType, Level level, Column column) {
-        this.nodeType = nodeType;
-        this.level = level;
-        this.column = column;
+class Node(val nodeType: GamePiece, val level: Level, val column: Column) {
+    constructor(node: Int) : this(
+            GamePiece.fromNodeId(node),
+            Level.values()[node / 3],
+            Column.values()[node % 3]) {
     }
 
-    public Node(int node) {
-        this(
-                Arm.State.GamePiece.fromNodeId(node),
-                Level.values()[node / 3],
-                Column.values()[node % 3]);
-
-    }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public Arm.State.GamePiece getNodeType() {
-        return nodeType;
-    }
-
-    public Column getColumn() {
-        return column;
-    }
-
-    public Transform2d getRobotOffset() {
-        double x = 0;
-        switch (level) {
-            case High:
-                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.HIGH_CONE_SCORING_DIST
-                        : Constants.Arm.HIGH_CUBE_SCORING_DIST;
-                break;
-            case Mid:
-                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.MID_CONE_SCORING_DIST
-                        : Constants.Arm.MID_CUBE_SCORING_DIST;
-                break;
-            case Low:
-                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.LOW_CONE_SCORING_DIST
-                        : Constants.Arm.LOW_CUBE_SCORING_DIST;
+    val robotOffset: Transform2d
+        get() {
+            var x = 0.0
+            x = when (level) {
+                Level.High -> if (nodeType == GamePiece.Cone) Constants.Arm.HIGH_CONE_SCORING_DIST else Constants.Arm.HIGH_CUBE_SCORING_DIST
+                Level.Mid -> if (nodeType == GamePiece.Cone) Constants.Arm.MID_CONE_SCORING_DIST else Constants.Arm.MID_CUBE_SCORING_DIST
+                Level.Low -> if (nodeType == GamePiece.Cone) Constants.Arm.LOW_CONE_SCORING_DIST else Constants.Arm.LOW_CUBE_SCORING_DIST
+            }
+            return Transform2d(Translation2d(if (isBlue) -x else x, 0.0),
+                    Rotation2d(if (isBlue) 0.0 else Math.PI))
         }
-        return new Transform2d(new Translation2d(AllianceUtils.isBlue() ? -x : x, 0.0),
-                new Rotation2d(AllianceUtils.isBlue() ? 0 : Math.PI));
-    }
-
-    public Pose2d getNodePose() {
-        Translation2d[] nodes;
-
-        Pose2d robotPose = RobotContainer.poseEstimation.getEstimatedPose();
-
-        int grid = (robotPose.getY() > Constants.FieldConstants.Grids.GRID_BOUNDARIES[1]
-                ? robotPose.getY() > Constants.FieldConstants.Grids.GRID_BOUNDARIES[2] ? 2 : 1
-                : 0);
-
-        switch (level) {
-            case High:
-                nodes = Constants.FieldConstants.Grids.highTranslations;
-                break;
-            case Mid:
-                nodes = Constants.FieldConstants.Grids.midTranslations;
-                break;
-            case Low:
-                nodes = Constants.FieldConstants.Grids.lowTranslations;
-                break;
-            default:
-                nodes = new Translation2d[0];
-                break;
+    val nodePose: Pose2d?
+        get() {
+            val robotPose = RobotContainer.poseEstimation.estimatedPose
+            val grid = if (robotPose.y > Constants.FieldConstants.Grids.GRID_BOUNDARIES[1]) if (robotPose.y > Constants.FieldConstants.Grids.GRID_BOUNDARIES[2]) 2 else 1 else 0
+            val nodes: Array<Translation2d?> = when (level) {
+                Level.High -> Constants.FieldConstants.Grids.highTranslations
+                Level.Mid -> Constants.FieldConstants.Grids.midTranslations
+                Level.Low -> Constants.FieldConstants.Grids.lowTranslations
+            }
+            return allianceToField(Pose2d(nodes[grid * 3 + column.index], Rotation2d(Math.PI)))
         }
 
-        return AllianceUtils.allianceToField(new Pose2d(nodes[grid * 3 + column.getIndex()], new Rotation2d(Math.PI)));
+    enum class Level {
+        High, Mid, Low
     }
 
-    public enum Level {
-        High,
-        Mid,
-        Low,
+    enum class Column(private val blueIndex: Int) {
+        LeftCone(2), Cube(1), RightCone(0);
+
+        val index: Int
+            get() = if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) blueIndex else 2 - blueIndex
     }
-
-    public enum Column {
-        LeftCone(2),
-        Cube(1),
-        RightCone(0);
-
-        private final int blueIndex;
-
-        public int getIndex() {
-            return DriverStation.getAlliance() == DriverStation.Alliance.Blue ? blueIndex : 2 - blueIndex;
-        }
-
-        Column(int blueIndex) {
-            this.blueIndex = blueIndex;
-        }
-    }
-
 }

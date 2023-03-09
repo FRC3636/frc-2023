@@ -1,114 +1,96 @@
-package frc.robot.subsystems.arm;
+package frc.robot.subsystems.arm
 
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.util.Color8Bit;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.commands.ArmMoveCommand;
-import frc.robot.utils.Node;
+import edu.wpi.first.math.geometry.Pose3d
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Rotation3d
+import edu.wpi.first.math.util.Units
+import edu.wpi.first.wpilibj.RobotBase
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d
+import edu.wpi.first.wpilibj.util.Color8Bit
+import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.Constants
+import frc.robot.RobotContainer
+import frc.robot.commands.ArmMoveCommand
+import frc.robot.utils.Node
 
-public class Arm extends SubsystemBase {
+class Arm : SubsystemBase() {
+    private val shoulder: Shoulder = if (RobotBase.isSimulation()) SIMShoulder(this) else Shoulder(this)
+    private val wrist: Wrist = if (RobotBase.isSimulation()) SIMWrist(this) else Wrist(this)
+    private val rollers: Rollers = Rollers()
+    private val arm = Mechanism2d(Units.inchesToMeters(28.0), Constants.Arm.PIVOT_HEIGHT + 0.5)
+    private val pivot = arm.getRoot("pivot", Units.inchesToMeters(22.0), Constants.Arm.PIVOT_HEIGHT)
+    private val humerus = pivot
+            .append(MechanismLigament2d("humerus", Constants.Arm.HUMERUS_LENGTH, 0.0))
+    private val manipulator = humerus
+            .append(MechanismLigament2d("manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0.0))
+    private val setHumerus = pivot
+            .append(MechanismLigament2d("set humerus", Constants.Arm.HUMERUS_LENGTH, 0.0))
+    private val setManipulator = setHumerus
+            .append(MechanismLigament2d("set manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0.0))
 
-    private final Shoulder shoulder;
-    private final Wrist wrist;
-    private final Rollers rollers;
-
-    private final Mechanism2d arm = new Mechanism2d(Units.inchesToMeters(28), Constants.Arm.PIVOT_HEIGHT + 0.5);
-    private final MechanismRoot2d pivot = arm.getRoot("pivot", Units.inchesToMeters(22), Constants.Arm.PIVOT_HEIGHT);
-    private final MechanismLigament2d humerus = pivot
-            .append(new MechanismLigament2d("humerus", Constants.Arm.HUMERUS_LENGTH, 0));
-    private final MechanismLigament2d manipulator = humerus
-            .append(new MechanismLigament2d("manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
-
-    private final MechanismLigament2d setHumerus = pivot
-            .append(new MechanismLigament2d("set humerus", Constants.Arm.HUMERUS_LENGTH, 0));
-    private final MechanismLigament2d setManipulator = setHumerus
-            .append(new MechanismLigament2d("set manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
-
-    public Arm() {
-        shoulder = (RobotBase.isSimulation()) ? new SIMShoulder(this) : new Shoulder(this);
-        wrist = (RobotBase.isSimulation()) ? new SIMWrist(this) : new Wrist(this);
-        rollers = new Rollers();
-
-        setHumerus.setColor(new Color8Bit(0, 255, 255));
-        setManipulator.setColor(new Color8Bit(0, 100, 255));
-
-        RobotContainer.armTab.addDoubleArray("Arm Position", this::getArm3dPose);
-        RobotContainer.armTab.add("Arm", arm);
+    init {
+        setHumerus.color = Color8Bit(0, 255, 255)
+        setManipulator.color = Color8Bit(0, 100, 255)
+        RobotContainer.armTab.addDoubleArray("Arm Position") { arm3dPose }
+        RobotContainer.armTab.add("Arm", arm)
     }
 
-    @Override
-    public void periodic() {
-        shoulder.periodic();
-        wrist.periodic();
-        rollers.periodic();
-
-        humerus.setAngle(getShoulderAngle().minus(Rotation2d.fromDegrees(90)));
-        manipulator.setAngle(wrist.getAngle().plus(Rotation2d.fromDegrees(90)));
-
-        setHumerus.setAngle(State.getTarget().getShoulderAngle().minus(Rotation2d.fromDegrees(90)));
-        setManipulator.setAngle(State.target.getWristAngle().plus(Rotation2d.fromDegrees(90))
-                .minus(State.getTarget().getShoulderAngle()));
+    override fun periodic() {
+        shoulder.periodic()
+        wrist.periodic()
+        rollers.periodic()
+        humerus.setAngle(shoulderAngle!!.minus(Rotation2d.fromDegrees(90.0)))
+        manipulator.setAngle(wrist.angle!!.plus(Rotation2d.fromDegrees(90.0)))
+        setHumerus.setAngle(State.target.shoulderAngle.minus(Rotation2d.fromDegrees(90.0)))
+        setManipulator.setAngle(State.target.wristAngle.plus(Rotation2d.fromDegrees(90.0))
+                .minus(State.target.shoulderAngle))
     }
 
-    public double[] getArm3dPose() {
-        Pose3d shoulderPose = new Pose3d(
-                Constants.Arm.PIVOT_FORWARD_OFFSET,
-                0,
-                Constants.Arm.PIVOT_HEIGHT,
-                new Rotation3d(0, -getShoulderAngle().getRadians(), 0));
+    val arm3dPose: DoubleArray
+        get() {
+            val shoulderPose = Pose3d(
+                    Constants.Arm.PIVOT_FORWARD_OFFSET,
+                    0.0,
+                    Constants.Arm.PIVOT_HEIGHT,
+                    Rotation3d(0.0, -shoulderAngle!!.radians, 0.0))
+            val relativeWristOrigin = Constants.Arm.RELATIVE_WRIST_POSE.rotateBy(shoulderAngle)
+            val wristPose = Pose3d(
+                    Constants.Arm.PIVOT_FORWARD_OFFSET + relativeWristOrigin.x,
+                    0.0,
+                    Constants.Arm.PIVOT_HEIGHT + relativeWristOrigin.y,
+                    Rotation3d(0.0, -wristAngle.radians, 0.0))
+            return doubleArrayOf(
+                    shoulderPose.x,
+                    shoulderPose.y,
+                    shoulderPose.z,
+                    shoulderPose.rotation.quaternion.w,
+                    shoulderPose.rotation.quaternion.x,
+                    shoulderPose.rotation.quaternion.y,
+                    shoulderPose.rotation.quaternion.z,
+                    wristPose.x,
+                    wristPose.y,
+                    wristPose.z,
+                    wristPose.rotation.quaternion.w,
+                    wristPose.rotation.quaternion.x,
+                    wristPose.rotation.quaternion.y,
+                    wristPose.rotation.quaternion.z)
+        }
 
-        Translation2d relativeWristOrigin = Constants.Arm.RELATIVE_WRIST_POSE.rotateBy(getShoulderAngle());
+    val shoulderAngle: Rotation2d
+        get() = shoulder.angle
+    val shoulderVelocity: Rotation2d
+        get() = shoulder.velocity
 
-        Pose3d wristPose = new Pose3d(
-                Constants.Arm.PIVOT_FORWARD_OFFSET + relativeWristOrigin.getX(),
-                0,
-                Constants.Arm.PIVOT_HEIGHT + relativeWristOrigin.getY(),
-                new Rotation3d(0, -getWristAngle().getRadians(), 0));
-
-        return new double[] {
-                shoulderPose.getX(),
-                shoulderPose.getY(),
-                shoulderPose.getZ(),
-                shoulderPose.getRotation().getQuaternion().getW(),
-                shoulderPose.getRotation().getQuaternion().getX(),
-                shoulderPose.getRotation().getQuaternion().getY(),
-                shoulderPose.getRotation().getQuaternion().getZ(),
-                wristPose.getX(),
-                wristPose.getY(),
-                wristPose.getZ(),
-                wristPose.getRotation().getQuaternion().getW(),
-                wristPose.getRotation().getQuaternion().getX(),
-                wristPose.getRotation().getQuaternion().getY(),
-                wristPose.getRotation().getQuaternion().getZ(),
-        };
+    fun runWithSetpoint(shoulderPosition: Rotation2d, velocity: Rotation2d) {
+        shoulder.runWithSetpoint(shoulderPosition, velocity, Rotation2d())
+        wrist.followShoulderWithVelocity(velocity.times(-1.0))
     }
 
-    public Rotation2d getShoulderAngle() {
-        return shoulder.getAngle();
-    }
+    val wristAngle: Rotation2d
+        get() = shoulderAngle.plus(wrist.angle)
 
-    public Rotation2d getShoulderVelocity() {
-        return shoulder.getVelocity();
-    }
-
-    public void runWithSetpoint(Rotation2d shoulderPosition, Rotation2d velocity) {
-        shoulder.runWithSetpoint(shoulderPosition, velocity, new Rotation2d());
-        wrist.followShoulderWithVelocity(velocity.times(-1));
-    }
-
-    public Rotation2d getWristAngle() {
-        return getShoulderAngle().plus(wrist.getAngle());
-    }
-
-    public enum State {
+    enum class State {
         Teller(Constants.Shoulder.TELLER_CONE_ANGLE, Constants.Shoulder.TELLER_CUBE_ANGLE,
                 Constants.Wrist.TELLER_CONE_ANGLE, Constants.Wrist.TELLER_CUBE_ANGLE),
         Slide(Constants.Shoulder.SLIDE_CONE_ANGLE, Constants.Shoulder.SLIDE_CUBE_ANGLE,
@@ -122,152 +104,139 @@ public class Arm extends SubsystemBase {
         Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.STOWED_ANGLE,
                 Constants.Wrist.CUBE_ANGLE);
 
-        private final Rotation2d shoulderCubeAngle;
-        private final Rotation2d shoulderConeAngle;
-        private final Rotation2d wristConeAngle;
-        private final Rotation2d wristCubeAngle;
+        private val shoulderCubeAngle: Rotation2d
+        private val shoulderConeAngle: Rotation2d
+        private val wristConeAngle: Rotation2d
+        private val wristCubeAngle: Rotation2d
+        private var shoulderConeOffset = Rotation2d()
+        private var shoulderCubeOffset = Rotation2d()
+        private var wristConeOffset = Rotation2d()
+        private var wristCubeOffset = Rotation2d()
 
-        private Rotation2d shoulderConeOffset = new Rotation2d();
-        private Rotation2d shoulderCubeOffset = new Rotation2d();
-        private Rotation2d wristConeOffset = new Rotation2d();
-        private Rotation2d wristCubeOffset = new Rotation2d();
-
-        private static State target = State.Stowed;
-        private static GamePiece gamePiece = GamePiece.Cube;
-        private static Rollers.State rollerState = Rollers.State.Off;
-
-        State(Rotation2d shoulderConeAngle, Rotation2d shoulderCubeAngle, Rotation2d wristConeAngle,
-                Rotation2d wristCubeAngle) {
-            this.shoulderCubeAngle = shoulderCubeAngle;
-            this.shoulderConeAngle = shoulderConeAngle;
-            this.wristConeAngle = wristConeAngle;
-            this.wristCubeAngle = wristCubeAngle;
+        constructor(shoulderConeAngle: Rotation2d, shoulderCubeAngle: Rotation2d, wristConeAngle: Rotation2d,
+                    wristCubeAngle: Rotation2d) {
+            this.shoulderCubeAngle = shoulderCubeAngle
+            this.shoulderConeAngle = shoulderConeAngle
+            this.wristConeAngle = wristConeAngle
+            this.wristCubeAngle = wristCubeAngle
         }
 
-        State(Rotation2d shoulderAngle) {
-            this.shoulderCubeAngle = shoulderAngle;
-            this.shoulderConeAngle = shoulderAngle;
-
-            this.wristConeAngle = defaultWristAngle(GamePiece.Cone);
-            this.wristCubeAngle = defaultWristAngle(GamePiece.Cube);
+        constructor(shoulderAngle: Rotation2d) {
+            shoulderCubeAngle = shoulderAngle
+            shoulderConeAngle = shoulderAngle
+            wristConeAngle = defaultWristAngle(GamePiece.Cone)
+            wristCubeAngle = defaultWristAngle(GamePiece.Cube)
         }
 
-        public static void moveShoulderOffset(Rotation2d difference) {
-            switch (gamePiece) {
-                case Cone:
-                    State.target.shoulderConeOffset = Rotation2d
-                            .fromRadians(State.target.shoulderConeOffset.getRadians() + difference.getRadians());
-                    break;
-                case Cube:
-                    State.target.shoulderCubeOffset = Rotation2d
-                            .fromRadians(State.target.shoulderCubeOffset.getRadians() + difference.getRadians());
+        val shoulderAngle: Rotation2d
+            get() = if (gamePiece == GamePiece.Cone) shoulderConeAngle.plus(shoulderConeOffset) else shoulderCubeAngle.plus(shoulderCubeOffset)
+        val wristAngle: Rotation2d
+            get() {
+                if (this == Stowed && rollerState === Rollers.State.Off) {
+                    return Constants.Wrist.LIMIT_SWITCH_OFFSET
+                }
+                return if (gamePiece == GamePiece.Cone) wristConeAngle.plus(wristConeOffset) else wristCubeAngle.plus(wristCubeOffset)
+            }
+
+        fun defaultWristAngle(gamePiece: GamePiece): Rotation2d {
+            return if (gamePiece == GamePiece.Cone) Constants.Wrist.CONE_ANGLE else Constants.Wrist.CUBE_ANGLE
+        }
+
+        enum class GamePiece {
+            Cone, Cube;
+
+            companion object {
+                fun fromNodeId(nodeId: Int): GamePiece {
+                    return if (nodeId % 3 == 1) Cube else Cone
+                }
+
+                @JvmStatic
+                fun fromLevelAndColumn(level: Int, column: Int): GamePiece {
+                    val nodeId = level * 3 + column
+                    return fromNodeId(nodeId)
+                }
             }
         }
 
-        public static void moveWristOffset(Rotation2d difference) {
-            switch (gamePiece) {
-                case Cone:
-                    State.target.wristConeOffset = Rotation2d
-                            .fromRadians(State.target.wristConeOffset.getRadians() + difference.getRadians());
-                    break;
-                case Cube:
-                    State.target.wristCubeOffset = Rotation2d
-                            .fromRadians(State.target.wristCubeOffset.getRadians() + difference.getRadians());
-            }
-        }
+        companion object {
+            var target = Stowed
+                set(value) {
+                    field = value
+                    ArmMoveCommand(RobotContainer.arm).schedule()
+                }
 
-        public static void resetOffset() {
-            switch (gamePiece) {
-                case Cone:
-                    State.target.wristConeOffset = new Rotation2d();
-                    State.target.shoulderConeOffset = new Rotation2d();
-                    break;
-                case Cube:
-                    State.target.wristCubeOffset = new Rotation2d();
-                    State.target.shoulderCubeOffset = new Rotation2d();
-            }
-        }
+            private var gamePiece = GamePiece.Cube
+            private var rollerState = Rollers.State.Off
+            fun moveShoulderOffset(difference: Rotation2d) {
+                when (gamePiece) {
+                    GamePiece.Cone -> target.shoulderConeOffset = Rotation2d
+                            .fromRadians(target.shoulderConeOffset.radians + difference.radians)
 
-        public Rotation2d getShoulderAngle() {
-            return (gamePiece == GamePiece.Cone) ? shoulderConeAngle.plus(shoulderConeOffset)
-                    : shoulderCubeAngle.plus(shoulderCubeOffset);
-        }
-
-        public Rotation2d getWristAngle() {
-            if (this == State.Stowed && rollerState == Rollers.State.Off) {
-                return Constants.Wrist.LIMIT_SWITCH_OFFSET;
-            }
-            return (gamePiece == GamePiece.Cone) ? wristConeAngle.plus(wristConeOffset)
-                    : wristCubeAngle.plus(wristCubeOffset);
-        }
-
-        public Rotation2d defaultWristAngle(GamePiece gamePiece) {
-            return (gamePiece == GamePiece.Cone) ? Constants.Wrist.CONE_ANGLE : Constants.Wrist.CUBE_ANGLE;
-        }
-
-        public static State getTarget() {
-            return target;
-        }
-
-        public static void setTargetFromNode(Node node) {
-            State.gamePiece = node.getNodeType();
-            switch (node.getLevel()) {
-                case Low:
-                    State.target = Low;
-                    break;
-                case Mid:
-                    State.target = Mid;
-                    break;
-                case High:
-                    State.target = High;
-            }
-            new ArmMoveCommand(RobotContainer.arm).schedule();
-        }
-
-        public static void setTarget(State target) {
-            State.target = target;
-            new ArmMoveCommand(RobotContainer.arm).schedule();
-        }
-
-        public static GamePiece getGamePiece() {
-            return gamePiece;
-        }
-
-        public static void setGamePiece(GamePiece gamePiece) {
-            State.gamePiece = gamePiece;
-            new ArmMoveCommand(RobotContainer.arm).schedule();
-        }
-
-        public static void setRollerState(Rollers.State state) {
-            State.rollerState = state;
-            new ArmMoveCommand(RobotContainer.arm).schedule();
-        }
-
-        public static double getRollerSpeed() {
-            return gamePiece == GamePiece.Cone ? rollerState.coneSpeed : rollerState.cubeSpeed;
-        }
-
-        public enum GamePiece {
-            Cone,
-            Cube;
-
-            public static GamePiece fromNodeId(final int nodeId) {
-                return nodeId % 3 == 1 ? Arm.State.GamePiece.Cube : Arm.State.GamePiece.Cone;
+                    GamePiece.Cube -> target.shoulderCubeOffset = Rotation2d
+                            .fromRadians(target.shoulderCubeOffset.radians + difference.radians)
+                }
             }
 
-            public static GamePiece fromLevelAndColumn(final int level, final int column) {
-                final int nodeId = level * 3 + column;
-                return fromNodeId(nodeId);
-            }
-        }
+            fun moveWristOffset(difference: Rotation2d) {
+                when (gamePiece) {
+                    GamePiece.Cone -> target.wristConeOffset = Rotation2d
+                            .fromRadians(target.wristConeOffset.radians + difference.radians)
 
-        public static double[] getPresets(State value) {
-            return new double[] {
-                    value.shoulderConeAngle.plus(value.shoulderConeOffset).getRadians(),
-                    value.shoulderCubeAngle.plus(value.shoulderCubeOffset).getRadians(),
-                    value.wristConeAngle.plus(value.wristConeOffset).getRadians(),
-                    value.wristCubeAngle.plus(value.wristCubeOffset).getRadians(),
-            };
+                    GamePiece.Cube -> target.wristCubeOffset = Rotation2d
+                            .fromRadians(target.wristCubeOffset.radians + difference.radians)
+                }
+            }
+
+            fun resetOffset() {
+                when (gamePiece) {
+                    GamePiece.Cone -> {
+                        target.wristConeOffset = Rotation2d()
+                        target.shoulderConeOffset = Rotation2d()
+                    }
+
+                    GamePiece.Cube -> {
+                        target.wristCubeOffset = Rotation2d()
+                        target.shoulderCubeOffset = Rotation2d()
+                    }
+                }
+            }
+
+            @JvmStatic
+            fun setTargetFromNode(node: Node) {
+                gamePiece = node.nodeType
+                target = when (node.level) {
+                    Node.Level.Low -> Low
+                    Node.Level.Mid -> Mid
+                    Node.Level.High -> High
+                }
+                ArmMoveCommand(RobotContainer.arm).schedule()
+            }
+
+            fun getGamePiece(): GamePiece {
+                return gamePiece
+            }
+
+            fun setGamePiece(gamePiece: GamePiece) {
+                Companion.gamePiece = gamePiece
+                ArmMoveCommand(RobotContainer.arm).schedule()
+            }
+
+            @JvmStatic
+            fun setRollerState(state: Rollers.State) {
+                rollerState = state
+                ArmMoveCommand(RobotContainer.arm).schedule()
+            }
+
+            val rollerSpeed: Double
+                get() = if (gamePiece == GamePiece.Cone) rollerState.coneSpeed else rollerState.cubeSpeed
+
+            fun getPresets(value: State): DoubleArray {
+                return doubleArrayOf(
+                        value.shoulderConeAngle.plus(value.shoulderConeOffset).radians,
+                        value.shoulderCubeAngle.plus(value.shoulderCubeOffset).radians,
+                        value.wristConeAngle.plus(value.wristConeOffset).radians,
+                        value.wristCubeAngle.plus(value.wristCubeOffset).radians)
+            }
         }
     }
 }

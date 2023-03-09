@@ -1,78 +1,53 @@
-package frc.robot.commands;
+package frc.robot.commands
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.poseestimation.PoseEstimation;
-import frc.robot.subsystems.drivetrain.Drivetrain;
-
-import java.util.Set;
+import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.Subsystem
+import frc.robot.poseestimation.PoseEstimation
+import frc.robot.subsystems.drivetrain.Drivetrain
 
 //Run the specified command, then return the robot to its position before the specified command was executed.
-public class AndReturnToStart implements Command {
-    private final Drivetrain drivetrain;
-    private final PoseEstimation poseEstimation;
-
-    private final Command inner;
-    private boolean innerEnded;
-
-    private Pose2d start;
-    private NavigateToPoint returnToStart;
-
-    public AndReturnToStart(PoseEstimation poseEstimation, Drivetrain drivetrain, Command inner) {
-        this.poseEstimation = poseEstimation;
-        this.drivetrain = drivetrain;
-
-        this.inner = inner;
+class AndReturnToStart(private val poseEstimation: PoseEstimation, private val drivetrain: Drivetrain, private val inner: Command) : Command {
+    private var innerEnded = false
+    private var start: Pose2d? = null
+    private var returnToStart: NavigateToPoint? = null
+    override fun initialize() {
+        start = poseEstimation.estimatedPose
+        innerEnded = false
+        inner.initialize()
     }
 
-    @Override
-    public void initialize() {
-        start = poseEstimation.getEstimatedPose();
-
-        innerEnded = false;
-
-        inner.initialize();
-    }
-
-    @Override
-    public void execute() {
-
+    override fun execute() {
         if (!innerEnded) {
-            if (!inner.isFinished()) {
-                inner.execute();
-            }
-            else {
-                inner.end(false);
-                innerEnded = true;
-
-                returnToStart = new NavigateToPoint(drivetrain, poseEstimation, start);
-                returnToStart.initialize();
-                returnToStart.execute();
+            if (!inner.isFinished) {
+                inner.execute()
+            } else {
+                inner.end(false)
+                innerEnded = true
+                returnToStart = NavigateToPoint(drivetrain, poseEstimation, start)
+                returnToStart!!.initialize()
+                returnToStart!!.execute()
             }
         } else {
-            returnToStart.execute();
+            returnToStart!!.execute()
         }
     }
 
-    @Override
-    public boolean isFinished() {
-        return innerEnded && returnToStart.isFinished();
+    override fun isFinished(): Boolean {
+        return innerEnded && returnToStart!!.isFinished
     }
 
-    @Override
-    public void end(boolean interrupted) {
+    override fun end(interrupted: Boolean) {
         if (!innerEnded) {
-            inner.end(interrupted);
+            inner.end(interrupted)
         } else {
-            returnToStart.end(interrupted);
+            returnToStart!!.end(interrupted)
         }
     }
 
-    @Override
-    public Set<Subsystem> getRequirements() {
-        Set<Subsystem> requirements = inner.getRequirements();
-        requirements.add(drivetrain);
-        return requirements;
+    override fun getRequirements(): Set<Subsystem> {
+        val requirements = inner.requirements
+        requirements.add(drivetrain)
+        return requirements
     }
 }

@@ -1,47 +1,39 @@
-package frc.robot.commands;
+package frc.robot.commands
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.Constants;
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.trajectory.TrapezoidProfile
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import edu.wpi.first.wpilibj2.command.CommandBase
+import frc.robot.Constants
+import frc.robot.subsystems.arm.Arm
 
-public class ArmMoveCommand extends CommandBase {
-    private final Arm arm;
+class ArmMoveCommand(private val arm: Arm) : CommandBase() {
+    private val timer = Timer()
+    private var profile: TrapezoidProfile? = null
 
-    private final Timer timer = new Timer();
-    private TrapezoidProfile profile;
-
-    public ArmMoveCommand(Arm arm) {
-        this.arm = arm;
-        addRequirements(arm);
+    init {
+        addRequirements(arm)
     }
 
-    @Override
-    public void initialize() {
-        SmartDashboard.putNumber("Shoulder Goal Position", Arm.State.getTarget().getShoulderAngle().getRadians());
-
-        profile = new TrapezoidProfile(
-            Constants.Shoulder.TRAPEZOID_PROFILE_CONSTRAINTS,
-            new TrapezoidProfile.State(Arm.State.getTarget().getShoulderAngle().getRadians(), 0),
-            new TrapezoidProfile.State(arm.getShoulderAngle().getRadians(), arm.getShoulderVelocity().getRadians())
-        );
-
-        timer.reset();
-        timer.start();
+    override fun initialize() {
+        SmartDashboard.putNumber("Shoulder Goal Position", Arm.State.target.shoulderAngle.radians)
+        profile = TrapezoidProfile(
+                Constants.Shoulder.TRAPEZOID_PROFILE_CONSTRAINTS,
+                TrapezoidProfile.State(Arm.State.target.shoulderAngle.radians, 0.0),
+                TrapezoidProfile.State(arm.shoulderAngle.radians, arm.shoulderVelocity.radians)
+        )
+        timer.reset()
+        timer.start()
     }
 
-    @Override
-    public void execute() {
-        TrapezoidProfile.State state = profile.calculate(timer.get());
-        SmartDashboard.putNumber("Shoulder State Goal Position", state.position);
-        arm.runWithSetpoint(Rotation2d.fromRadians(state.position), Rotation2d.fromRadians(state.velocity));
+    override fun execute() {
+        val state = profile!!.calculate(timer.get())
+        SmartDashboard.putNumber("Shoulder State Goal Position", state.position)
+        arm.runWithSetpoint(Rotation2d.fromRadians(state.position), Rotation2d.fromRadians(state.velocity))
     }
 
-    @Override
-    public boolean isFinished() {
-        return profile.isFinished(timer.get());
+    override fun isFinished(): Boolean {
+        return profile!!.isFinished(timer.get())
     }
 }

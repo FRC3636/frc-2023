@@ -1,112 +1,98 @@
-package frc.robot.subsystems.arm;
+package frc.robot.subsystems.arm
 
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.AbsoluteEncoder
+import com.revrobotics.CANSparkMax
+import com.revrobotics.CANSparkMaxLowLevel
+import com.revrobotics.SparkMaxAbsoluteEncoder
+import edu.wpi.first.math.controller.ArmFeedforward
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.util.Units
+import edu.wpi.first.wpilibj.DigitalInput
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.robot.Constants
+import frc.robot.RobotContainer
+import kotlin.math.asin
+import kotlin.math.cos
 
-import com.revrobotics.SparkMaxAbsoluteEncoder;
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
+open class Wrist(protected val arm: Arm) {
+    private val motor = CANSparkMax(Constants.Wrist.ID, CANSparkMaxLowLevel.MotorType.kBrushless)
+    private val limitSwitch = DigitalInput(Constants.Wrist.LIMIT_SWITCH)
+    private val encoder: AbsoluteEncoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle)
+    @JvmField
+    protected val pidController = PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD)
+    @JvmField
+    protected val feedforward = ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA)
 
-public class Wrist {
-    protected final Arm arm;
-
-    private final CANSparkMax motor = new CANSparkMax(Constants.Wrist.ID, CANSparkMax.MotorType.kBrushless);
-    private final DigitalInput limitSwitch = new DigitalInput(Constants.Wrist.LIMIT_SWITCH);
-    private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
-
-    protected final PIDController pidController = new PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD);
-    protected final ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA);
-
-    public Wrist(Arm arm) {
-        this.arm = arm;
-
-        motor.restoreFactoryDefaults();
-
-        motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO);
-        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO / 60.0);
-        motor.setSmartCurrentLimit(40);
-        motor.setInverted(false);
-
-        RobotContainer.armTab.add("Wrist PID", pidController).withWidget(BuiltInWidgets.kPIDController);
+    init {
+        motor.restoreFactoryDefaults()
+        motor.idleMode = CANSparkMax.IdleMode.kBrake
+        encoder.positionConversionFactor = Units.rotationsToRadians(1.0) * Constants.Wrist.GEAR_RATIO
+        encoder.velocityConversionFactor = Units.rotationsToRadians(1.0) * Constants.Wrist.GEAR_RATIO / 60.0
+        motor.setSmartCurrentLimit(40)
+        motor.inverted = false
+        RobotContainer.armTab.add("Wrist PID", pidController).withWidget(BuiltInWidgets.kPIDController)
     }
 
-    public Rotation2d getAngle() {
-        return Rotation2d.fromRadians(encoder.getPosition());
+    open val angle: Rotation2d?
+        get() = Rotation2d.fromRadians(encoder.position)
+
+    fun followShoulder() {
+        followShoulderWithVelocity(arm.shoulderVelocity)
     }
 
-    public void followShoulder() {
-        followShoulderWithVelocity(arm.getShoulderVelocity());
-    }
-
-    public void followShoulderWithVelocity(Rotation2d velocity) {
-        if(Arm.State.getTarget() == Arm.State.Stowed && Arm.State.getRollerSpeed() == 0) {
-            velocity = Rotation2d.fromRadians(velocity.getRadians() + 1);
+    open fun followShoulderWithVelocity(velocity: Rotation2d) {
+        var velocity = velocity
+        if (Arm.State.target == Arm.State.Stowed && Arm.State.rollerSpeed == 0.0) {
+            velocity = Rotation2d.fromRadians(velocity.radians + 1)
         }
-        runWithSetpoint(getSetPosition(), velocity);
+        runWithSetpoint(setPosition, velocity)
     }
 
-    public void runWithVelocity(Rotation2d velocity) {
-        runWithSetpoint(Rotation2d.fromRadians(encoder.getPosition()), velocity);
+    fun runWithVelocity(velocity: Rotation2d) {
+        runWithSetpoint(Rotation2d.fromRadians(encoder.position), velocity)
     }
 
-    public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
-        velocity = Rotation2d.fromRadians(velocity.getRadians() + pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
-
-        SmartDashboard.putNumber("Wrist Setpoint", position.getRadians());
-
-        if (isLimitSwitchPressed() && velocity.getRadians() >= 0) {
-            motor.set(0);
-            return;
+    open fun runWithSetpoint(position: Rotation2d, velocity: Rotation2d) {
+        var velocity = velocity
+        velocity = Rotation2d.fromRadians(velocity.radians + pidController.calculate(arm.wristAngle.radians, position.radians))
+        SmartDashboard.putNumber("Wrist Setpoint", position.radians)
+        if (isLimitSwitchPressed && velocity.radians >= 0) {
+            motor.set(0.0)
+            return
         }
-
-        motor.setVoltage(feedforward.calculate(arm.getWristAngle().getRadians(), velocity.getRadians()));
+        motor.setVoltage(feedforward.calculate(arm.wristAngle.radians, velocity.radians))
     }
 
-    public double getMinAngle(double height){
-        double intakeLength = Constants.Wrist.JOINT_TO_CORNER_DISTANCE;
-        double intakeAngleOffset = Constants.Wrist.HORIZONTAL_TO_CORNER_ANGLE;
-        double clearance = Constants.Wrist.CLEARANCE_HEIGHT;
-        double angle = -Math.asin((height-clearance)/intakeLength)+intakeAngleOffset;
-//        System.out.println("Math vs Real angle diff(degrees)=" + ((angle-motor.getEncoder().getPosition()))*(360/2/Math.PI));
-        return angle;
+    fun getMinAngle(height: Double): Double {
+        val intakeLength = Constants.Wrist.JOINT_TO_CORNER_DISTANCE
+        val intakeAngleOffset = Constants.Wrist.HORIZONTAL_TO_CORNER_ANGLE
+        val clearance = Constants.Wrist.CLEARANCE_HEIGHT
+        //        System.out.println("Math vs Real angle diff(degrees)=" + ((angle-motor.getEncoder().getPosition()))*(360/2/Math.PI));
+        return -asin((height - clearance) / intakeLength) + intakeAngleOffset
     }
 
-    public Rotation2d getSetPosition() {
-        if(
-                arm.getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()
-                        || Arm.State.getTarget().getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()) {
-            return Rotation2d.fromRadians(Math.max(0, Arm.State.getTarget().getWristAngle().getRadians()));
-        }
+    val setPosition: Rotation2d
+        get() = if (arm.shoulderAngle.radians < Constants.Wrist.MIN_SHOULDER_ANGLE.radians
+                || Arm.State.target.shoulderAngle.radians < Constants.Wrist.MIN_SHOULDER_ANGLE.radians) {
+            Rotation2d.fromRadians(0.0.coerceAtLeast(Arm.State.target.wristAngle.radians))
+        } else Arm.State.target.wristAngle
 
-        return Arm.State.getTarget().getWristAngle();
+    fun safeHeight(armAngle: Double): Double {
+        val armHeight = Constants.Arm.PIVOT_HEIGHT
+        val armLength = Constants.Arm.HUMERUS_LENGTH
+        return armHeight - cos(armAngle) * armLength
     }
 
-    public double safeHeight(double armAngle) {
-        double armHeight = Constants.Arm.PIVOT_HEIGHT;
-        double armLength = Constants.Arm.HUMERUS_LENGTH;
-        double height = armHeight - Math.cos(armAngle) * armLength;
-//        System.out.println("Joint To Ground Height(in)-----> " + height);
-        return height;
-    }
+    open val isLimitSwitchPressed: Boolean
+        get() = !limitSwitch.get()
 
-
-    public boolean isLimitSwitchPressed() {
-        return !limitSwitch.get();
-    }
-
-    public void periodic() {
-        SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
-        SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(encoder.getPosition()));
-        SmartDashboard.putNumber("Wrist Set Point", Arm.State.getTarget().getWristAngle().getDegrees());
-        SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
-        SmartDashboard.putNumber("minSafeAngle", (360.0/2.0/Math.PI)*getMinAngle(safeHeight(arm.getShoulderAngle().getDegrees())));
+    open fun periodic() {
+        SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get())
+        SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(encoder.position))
+        SmartDashboard.putNumber("Wrist Set Point", Arm.State.target.wristAngle.degrees)
+        SmartDashboard.putNumber("Wrist Relative", arm.wristAngle.degrees)
+        SmartDashboard.putNumber("minSafeAngle", 360.0 / 2.0 / Math.PI * getMinAngle(safeHeight(arm.shoulderAngle.degrees)))
     }
 }

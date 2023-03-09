@@ -1,138 +1,96 @@
-package frc.robot.subsystems.drivetrain;
+package frc.robot.subsystems.drivetrain
 
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.SwerveModulePosition
+import edu.wpi.first.math.kinematics.SwerveModuleState
 
-public class SwerveModules {
-    public final SwerveModule frontLeft;
-    public final SwerveModule frontRight;
-    public final SwerveModule rearLeft;
-    public final SwerveModule rearRight;
+class SwerveModules(val frontLeft: SwerveModule, val frontRight: SwerveModule, val rearLeft: SwerveModule, val rearRight: SwerveModule) {
+    private val modules: Array<SwerveModule>
 
-    private final SwerveModule[] modules;
-
-    public SwerveModules(SwerveModule frontLeft, SwerveModule frontRight, SwerveModule rearLeft, SwerveModule rearRight) {
-        this.frontLeft = frontLeft;
-        this.frontRight = frontRight;
-        this.rearLeft = rearLeft;
-        this.rearRight = rearRight;
-
-        this.modules = new SwerveModule[4];
-        this.modules[Corner.FrontLeft.index] = frontLeft;
-        this.modules[Corner.FrontRight.index] = frontRight;
-        this.modules[Corner.RearLeft.index] = rearLeft;
-        this.modules[Corner.RearRight.index] = rearRight;
+    init {
+        val modules = arrayOfNulls<SwerveModule?>(4)
+        modules[Corner.FrontLeft.index] = frontLeft
+        modules[Corner.FrontRight.index] = frontRight
+        modules[Corner.RearLeft.index] = rearLeft
+        modules[Corner.RearRight.index] = rearRight
+        this.modules = modules as Array<SwerveModule>
     }
 
-    public void update() {
-        for (SwerveModule module : modules) {
-            module.update();
+    fun update() {
+        for (module in modules) {
+            module.update()
         }
     }
 
-    public SwerveModule[] asArray() {
-        return this.modules;
+    fun asArray(): Array<SwerveModule> {
+        return modules
     }
 
-    public States getStates() {
-        SwerveModuleState[] states = new SwerveModuleState[4];
-
-        for (int i = 0; i < this.modules.length; i++) {
-            states[i] = this.modules[i].getState();
+    val states: States
+        get() {
+            return States(modules.map { it.state }.toTypedArray())
+        }
+    val positions: Positions
+        get() {
+            return Positions(modules.map { it.position }.toTypedArray())
         }
 
-        return new States(states);
-    }
-
-    public Positions getPositions() {
-        SwerveModulePosition[] positions = new SwerveModulePosition[4];
-
-        for (int i = 0; i < this.modules.length; i++) {
-            positions[i] = this.modules[i].getPosition();
-        }
-
-        return new Positions(positions);
-    }
-
-    public void resetEncoders() {
-        for (SwerveModule module : this.modules) {
-            module.resetEncoders();
+    fun resetEncoders() {
+        for (module in modules) {
+            module.resetEncoders()
         }
     }
 
-    public void setDesiredStates(SwerveModuleState[] desiredStates) {
-        for (int i = 0; i < desiredStates.length; i++) {
-            this.modules[i].setDesiredState(desiredStates[i]);
+    fun setDesiredStates(desiredStates: Array<SwerveModuleState>) {
+        for (i in desiredStates.indices) {
+            modules[i].setDesiredState(desiredStates[i])
         }
     }
 
-    public static class States {
-        public final SwerveModuleState frontLeft;
-        public final SwerveModuleState frontRight;
-        public final SwerveModuleState rearLeft;
-        public final SwerveModuleState rearRight;
+    class States {
+        val frontLeft: SwerveModuleState
+        val frontRight: SwerveModuleState
+        val rearLeft: SwerveModuleState
+        val rearRight: SwerveModuleState
+        private val states: Array<SwerveModuleState>
 
-        private final SwerveModuleState[] states;
-
-        public States(SwerveModuleState[] states) {
-            this.states = states;
-
-            this.frontLeft = this.states[Corner.FrontLeft.index];
-            this.frontRight = this.states[Corner.FrontRight.index];
-            this.rearLeft = this.states[Corner.RearLeft.index];
-            this.rearRight = this.states[Corner.RearRight.index];
+        constructor(states: Array<SwerveModuleState>) {
+            this.states = states
+            frontLeft = this.states[Corner.FrontLeft.index]
+            frontRight = this.states[Corner.FrontRight.index]
+            rearLeft = this.states[Corner.RearLeft.index]
+            rearRight = this.states[Corner.RearRight.index]
         }
 
-        public States(SwerveModuleState frontLeft, SwerveModuleState frontRight, SwerveModuleState rearLeft, SwerveModuleState rearRight) {
-            this.frontLeft = frontLeft;
-            this.frontRight = frontRight;
-            this.rearLeft = rearLeft;
-            this.rearRight = rearRight;
-
-            this.states = new SwerveModuleState[4];
-            this.states[Corner.FrontLeft.index] = frontLeft;
-            this.states[Corner.FrontRight.index] = frontRight;
-            this.states[Corner.RearLeft.index] = rearLeft;
-            this.states[Corner.RearRight.index] = rearRight;
+        constructor(frontLeft: SwerveModuleState, frontRight: SwerveModuleState, rearLeft: SwerveModuleState, rearRight: SwerveModuleState) {
+            this.frontLeft = frontLeft
+            this.frontRight = frontRight
+            this.rearLeft = rearLeft
+            this.rearRight = rearRight
+            val states = arrayOfNulls<SwerveModuleState>(4)
+            states[Corner.FrontLeft.index] = frontLeft
+            states[Corner.FrontRight.index] = frontRight
+            states[Corner.RearLeft.index] = rearLeft
+            states[Corner.RearRight.index] = rearRight
+            this.states = states as Array<SwerveModuleState>
         }
 
-        public SwerveModuleState[] asArray() {
-            return this.states;
+        fun asArray(): Array<SwerveModuleState> {
+            return states
         }
     }
 
-    public static class Positions {
-        public final SwerveModulePosition frontLeft;
-        public final SwerveModulePosition frontRight;
-        public final SwerveModulePosition rearLeft;
-        public final SwerveModulePosition rearRight;
+    class Positions(private val positions: Array<SwerveModulePosition>) {
+        val frontLeft: SwerveModulePosition = positions[Corner.FrontLeft.index]
+        val frontRight: SwerveModulePosition = positions[Corner.FrontRight.index]
+        val rearLeft: SwerveModulePosition = positions[Corner.RearLeft.index]
+        val rearRight: SwerveModulePosition = positions[Corner.RearRight.index]
 
-        private final SwerveModulePosition[] positions;
-
-        public Positions(SwerveModulePosition[] positions) {
-            this.positions = positions;
-
-            this.frontLeft = this.positions[Corner.FrontLeft.index];
-            this.frontRight = this.positions[Corner.FrontRight.index];
-            this.rearLeft = this.positions[Corner.RearLeft.index];
-            this.rearRight = this.positions[Corner.RearRight.index];
-        }
-
-        public SwerveModulePosition[] asArray() {
-            return this.positions;
+        fun asArray(): Array<SwerveModulePosition> {
+            return positions
         }
     }
 
-    public enum Corner {
-        FrontLeft(0),
-        FrontRight(1),
-        RearLeft(2),
-        RearRight(3);
-
-        public final int index;
-
-        Corner(int index) {
-            this.index = index;
-        }
+    enum class Corner(val index: Int) {
+        FrontLeft(0), FrontRight(1), RearLeft(2), RearRight(3);
     }
 }

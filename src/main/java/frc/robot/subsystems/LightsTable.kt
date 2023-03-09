@@ -1,49 +1,39 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableValue;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.arm.Arm;
+import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.networktables.NetworkTableValue
+import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.subsystems.arm.Arm
+import java.util.*
 
-import java.util.Objects;
+class LightsTable : SubsystemBase() {
+    private val instance = NetworkTableInstance.getDefault()
+    private val table = instance.getTable("Lights")
+    private var current: String? = null
+    private var requestMode = false
+    var lightsPreset: String?
+        get() = current
+        set(presetId) {
+            if (current != presetId) {
+                current = presetId
+                table.putValue("presetId", NetworkTableValue.makeString(presetId))
+            }
+        }
 
-public class LightsTable extends SubsystemBase {
-    private final NetworkTableInstance instance = NetworkTableInstance.getDefault();
-    private final NetworkTable table = instance.getTable("Lights");
-
-    private String current = null;
-    private boolean requestMode = false;
-
-    public LightsTable() {
-    }
-
-    public String getLightsPreset() {
-        return current;
-    }
-
-    @Override
-    public void periodic() {
-        if(requestMode) {
-            String targetPreset = Arm.State.getGamePiece().name().toLowerCase();
-            this.setLightsPreset(targetPreset);
+    override fun periodic() {
+        lightsPreset = if (requestMode) {
+            val targetPreset = Arm.State.getGamePiece().name.lowercase(Locale.getDefault())
+            targetPreset
         } else {
-            this.setLightsPreset("rainbow");
+            "rainbow"
         }
     }
 
-    public void setLightsPreset(String presetId) {
-        if(!Objects.equals(current, presetId)) {
-            current = presetId;
-            table.putValue("presetId", NetworkTableValue.makeString(presetId));
-        }
+    fun setEnabled(enabled: Boolean) {
+        table.putValue("enabled", NetworkTableValue.makeBoolean(enabled))
     }
 
-    public void setEnabled(boolean enabled) {
-        table.putValue("enabled", NetworkTableValue.makeBoolean(enabled));
-    }
-
-    public void setRequestMode(boolean enabled) {
-        this.requestMode = enabled;
+    fun setRequestMode(enabled: Boolean) {
+        requestMode = enabled
     }
 }
