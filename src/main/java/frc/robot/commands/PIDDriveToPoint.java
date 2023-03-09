@@ -55,6 +55,6 @@ public class PIDDriveToPoint extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return xController.atSetpfoint() && yController.atSetpoint() && thetaController.atSetpoint();
+        return xController.atSetpoint() && yController.atSetpoint() && thetaController.atSetpoint();
     }
 }
