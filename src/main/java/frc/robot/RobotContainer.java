@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
 import frc.robot.commands.alignment.AlignToSelectedNode;
 import frc.robot.commands.autonomous.AutoBalance;
+import frc.robot.commands.autonomous.AutoCommand;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.LightsTable;
 import frc.robot.subsystems.arm.Arm;
@@ -224,7 +225,7 @@ public class RobotContainer {
 
         command.addCommands(new InstantCommand(() -> poseEstimation.resetPose(startingPose)));
 
-        return command;
+        return AutoCommand.makeAutoCommand(drivetrain, poseEstimation, "test");
     }
 
     public void setTargetNode(Node targetNode) {

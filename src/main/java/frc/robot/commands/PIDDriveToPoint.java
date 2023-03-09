@@ -46,7 +46,7 @@ public class PIDDriveToPoint extends CommandBase {
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                         xController.calculate(poseEstimation.getEstimatedPose().getX()),
                         yController.calculate(poseEstimation.getEstimatedPose().getY()),
-                        thetaController.calculate(poseEstimation.getEstimatedPose().getRotation().getRadians()),
+                        thetaController.calculate(poseEstimation.getEstimatedPose().getRotation().minus(target.getRotation()).getRadians(), 0),
                         poseEstimation.getEstimatedPose().getRotation()
                 )
         );
@@ -54,6 +54,6 @@ public class PIDDriveToPoint extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return xController.atSetpoint() && yController.atSetpoint() && thetaController.atSetpoint();
+        return xController.atSetpfoint() && yController.atSetpoint() && thetaController.atSetpoint();
     }
 }

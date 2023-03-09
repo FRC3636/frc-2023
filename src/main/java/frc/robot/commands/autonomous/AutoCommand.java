@@ -12,12 +12,22 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.commands.AndReturnToStart;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.utils.Node;
 
 public class AutoCommand {
+    public static Node node = new Node(0);
+
     static Map<String, Command> eventMap = Map.of(
-        "print", new InstantCommand(() -> System.out.println("print event triggered"))
+            "print", new InstantCommand(() -> System.out.println("print event triggered")),
+            "score", new AndReturnToStart(
+                    RobotContainer.drivetrain,
+                    RobotContainer.poseEstimation,
+                    new AutoScore(RobotContainer.drivetrain, RobotContainer.poseEstimation, () -> AutoCommand.node)
+            )
     );
 
     public static Command makeAutoCommand(Drivetrain drivetrain, PoseEstimation poseEstimation, String name) {

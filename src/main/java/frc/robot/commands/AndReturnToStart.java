@@ -18,7 +18,7 @@ public class AndReturnToStart implements Command {
     private Pose2d start;
     private NavigateToPoint returnToStart;
 
-    public AndReturnToStart(PoseEstimation poseEstimation, Drivetrain drivetrain, Command inner) {
+    public AndReturnToStart(Drivetrain drivetrain, PoseEstimation poseEstimation, Command inner) {
         this.poseEstimation = poseEstimation;
         this.drivetrain = drivetrain;
 
@@ -70,8 +70,6 @@ public class AndReturnToStart implements Command {
 
     @Override
     public Set<Subsystem> getRequirements() {
-        Set<Subsystem> requirements = inner.getRequirements();
-        requirements.add(drivetrain);
-        return requirements;
+        return inner.getRequirements();
     }
 }
