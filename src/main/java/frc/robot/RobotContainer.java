@@ -149,10 +149,14 @@ public class RobotContainer {
         // Rollers
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)
                 .onTrue(new InstantCommand(() -> {
-                    Arm.State.setRollerState(Rollers.State.Intake);
+                        if (!joystickRight.getRawButton(1)) {
+                                Arm.State.setRollerState(Rollers.State.Intake);
+                        }
                 }))
                 .onFalse(new InstantCommand(() -> {
-                    Arm.State.setRollerState(Rollers.State.Off);
+                        if (!joystickRight.getRawButton(1)) {
+                                Arm.State.setRollerState(Rollers.State.Off);
+                        }
                 }));
 
         new JoystickButton(joystickRight, 1)
@@ -160,7 +164,11 @@ public class RobotContainer {
                     Arm.State.setRollerState(Rollers.State.Outtake);
                 }))
                 .onFalse(new InstantCommand(() -> {
-                    Arm.State.setRollerState(Rollers.State.Off);
+                        if (controller.getRawButton(XboxController.Button.kRightBumper.value)) {
+                                Arm.State.setRollerState(Rollers.State.Intake);
+                        } else {
+                                Arm.State.setRollerState(Rollers.State.Off);
+                        }
                 }));
 
         // Arm Control
