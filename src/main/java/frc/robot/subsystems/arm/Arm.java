@@ -22,15 +22,19 @@ public class Arm extends SubsystemBase {
 
     private final Mechanism2d arm = new Mechanism2d(Units.inchesToMeters(28), Constants.Arm.PIVOT_HEIGHT + 0.5);
     private final MechanismRoot2d pivot = arm.getRoot("pivot", Units.inchesToMeters(22), Constants.Arm.PIVOT_HEIGHT);
-    private final MechanismLigament2d humerus = pivot.append(new MechanismLigament2d("humerus", Constants.Arm.HUMERUS_LENGTH, 0));
-    private final MechanismLigament2d manipulator = humerus.append(new MechanismLigament2d("manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
+    private final MechanismLigament2d humerus = pivot
+            .append(new MechanismLigament2d("humerus", Constants.Arm.HUMERUS_LENGTH, 0));
+    private final MechanismLigament2d manipulator = humerus
+            .append(new MechanismLigament2d("manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
 
-    private final MechanismLigament2d setHumerus = pivot.append(new MechanismLigament2d("set humerus", Constants.Arm.HUMERUS_LENGTH, 0));
-    private final MechanismLigament2d setManipulator = setHumerus.append(new MechanismLigament2d("set manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
+    private final MechanismLigament2d setHumerus = pivot
+            .append(new MechanismLigament2d("set humerus", Constants.Arm.HUMERUS_LENGTH, 0));
+    private final MechanismLigament2d setManipulator = setHumerus
+            .append(new MechanismLigament2d("set manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
 
     public Arm() {
-        shoulder = (RobotBase.isSimulation())? new SIMShoulder(this): new Shoulder(this);
-        wrist = (RobotBase.isSimulation())? new SIMWrist(this): new Wrist(this);
+        shoulder = (RobotBase.isSimulation()) ? new SIMShoulder(this) : new Shoulder(this);
+        wrist = (RobotBase.isSimulation()) ? new SIMWrist(this) : new Wrist(this);
         rollers = new Rollers();
 
         setHumerus.setColor(new Color8Bit(0, 255, 255));
@@ -50,7 +54,8 @@ public class Arm extends SubsystemBase {
         manipulator.setAngle(wrist.getAngle().plus(Rotation2d.fromDegrees(90)));
 
         setHumerus.setAngle(State.getTarget().getShoulderAngle().minus(Rotation2d.fromDegrees(90)));
-        setManipulator.setAngle(State.target.getWristAngle().plus(Rotation2d.fromDegrees(90)).minus(State.getTarget().getShoulderAngle()));
+        setManipulator.setAngle(State.target.getWristAngle().plus(Rotation2d.fromDegrees(90))
+                .minus(State.getTarget().getShoulderAngle()));
     }
 
     public double[] getArm3dPose() {
@@ -104,12 +109,18 @@ public class Arm extends SubsystemBase {
     }
 
     public enum State {
-        Teller(Constants.Shoulder.TELLER_CONE_ANGLE, Constants.Shoulder.TELLER_CUBE_ANGLE, Constants.Wrist.TELLER_CONE_ANGLE, Constants.Wrist.TELLER_CUBE_ANGLE),
-        Slide(Constants.Shoulder.SLIDE_CONE_ANGLE, Constants.Shoulder.SLIDE_CUBE_ANGLE, Constants.Wrist.SLIDE_CONE_ANGLE, Constants.Wrist.SLIDE_CUBE_ANGLE),
-        High(Constants.Shoulder.HIGH_CONE_ANGLE, Constants.Shoulder.HIGH_CUBE_ANGLE, Constants.Wrist.HIGH_CONE_ANGLE, Constants.Wrist.HIGH_CUBE_ANGLE),
-        Mid(Constants.Shoulder.MID_CONE_ANGLE, Constants.Shoulder.MID_CUBE_ANGLE, Constants.Wrist.MID_CONE_ANGLE, Constants.Wrist.MID_CUBE_ANGLE),
-        Low(Constants.Shoulder.INTAKE_CONE_ANGLE, Constants.Shoulder.LOW_CUBE_ANGLE, Constants.Wrist.INTAKE_CONE_ANGLE, Constants.Wrist.LOW_CUBE_ANGLE),
-        Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.STOWED_ANGLE, Constants.Wrist.CUBE_ANGLE);
+        Teller(Constants.Shoulder.TELLER_CONE_ANGLE, Constants.Shoulder.TELLER_CUBE_ANGLE,
+                Constants.Wrist.TELLER_CONE_ANGLE, Constants.Wrist.TELLER_CUBE_ANGLE),
+        Slide(Constants.Shoulder.SLIDE_CONE_ANGLE, Constants.Shoulder.SLIDE_CUBE_ANGLE,
+                Constants.Wrist.SLIDE_CONE_ANGLE, Constants.Wrist.SLIDE_CUBE_ANGLE),
+        High(Constants.Shoulder.HIGH_CONE_ANGLE, Constants.Shoulder.HIGH_CUBE_ANGLE, Constants.Wrist.HIGH_CONE_ANGLE,
+                Constants.Wrist.HIGH_CUBE_ANGLE),
+        Mid(Constants.Shoulder.MID_CONE_ANGLE, Constants.Shoulder.MID_CUBE_ANGLE, Constants.Wrist.MID_CONE_ANGLE,
+                Constants.Wrist.MID_CUBE_ANGLE),
+        Low(Constants.Shoulder.INTAKE_CONE_ANGLE, Constants.Shoulder.LOW_CUBE_ANGLE, Constants.Wrist.INTAKE_CONE_ANGLE,
+                Constants.Wrist.LOW_CUBE_ANGLE),
+        Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.STOWED_ANGLE,
+                Constants.Wrist.CUBE_ANGLE);
 
         private final Rotation2d shoulderCubeAngle;
         private final Rotation2d shoulderConeAngle;
@@ -125,7 +136,8 @@ public class Arm extends SubsystemBase {
         private static GamePiece gamePiece = GamePiece.Cube;
         private static Rollers.State rollerState = Rollers.State.Off;
 
-        State(Rotation2d shoulderConeAngle, Rotation2d shoulderCubeAngle, Rotation2d wristConeAngle, Rotation2d wristCubeAngle) {
+        State(Rotation2d shoulderConeAngle, Rotation2d shoulderCubeAngle, Rotation2d wristConeAngle,
+                Rotation2d wristCubeAngle) {
             this.shoulderCubeAngle = shoulderCubeAngle;
             this.shoulderConeAngle = shoulderConeAngle;
             this.wristConeAngle = wristConeAngle;
@@ -141,26 +153,31 @@ public class Arm extends SubsystemBase {
         }
 
         public static void moveShoulderOffset(Rotation2d difference) {
-            switch(gamePiece) {
+            switch (gamePiece) {
                 case Cone:
-                    State.target.shoulderConeOffset = Rotation2d.fromRadians(State.target.shoulderConeOffset.getRadians() + difference.getRadians());
+                    State.target.shoulderConeOffset = Rotation2d
+                            .fromRadians(State.target.shoulderConeOffset.getRadians() + difference.getRadians());
                     break;
                 case Cube:
-                    State.target.shoulderCubeOffset = Rotation2d.fromRadians(State.target.shoulderCubeOffset.getRadians() + difference.getRadians());
+                    State.target.shoulderCubeOffset = Rotation2d
+                            .fromRadians(State.target.shoulderCubeOffset.getRadians() + difference.getRadians());
             }
         }
+
         public static void moveWristOffset(Rotation2d difference) {
-            switch(gamePiece) {
+            switch (gamePiece) {
                 case Cone:
-                    State.target.wristConeOffset = Rotation2d.fromRadians(State.target.wristConeOffset.getRadians() + difference.getRadians());
+                    State.target.wristConeOffset = Rotation2d
+                            .fromRadians(State.target.wristConeOffset.getRadians() + difference.getRadians());
                     break;
                 case Cube:
-                    State.target.wristCubeOffset = Rotation2d.fromRadians(State.target.wristCubeOffset.getRadians() + difference.getRadians());
+                    State.target.wristCubeOffset = Rotation2d
+                            .fromRadians(State.target.wristCubeOffset.getRadians() + difference.getRadians());
             }
         }
 
         public static void resetOffset() {
-            switch(gamePiece) {
+            switch (gamePiece) {
                 case Cone:
                     State.target.wristConeOffset = new Rotation2d();
                     State.target.shoulderConeOffset = new Rotation2d();
@@ -172,18 +189,20 @@ public class Arm extends SubsystemBase {
         }
 
         public Rotation2d getShoulderAngle() {
-            return (gamePiece == GamePiece.Cone) ? shoulderConeAngle.plus(shoulderConeOffset) : shoulderCubeAngle.plus(shoulderCubeOffset);
+            return (gamePiece == GamePiece.Cone) ? shoulderConeAngle.plus(shoulderConeOffset)
+                    : shoulderCubeAngle.plus(shoulderCubeOffset);
         }
 
         public Rotation2d getWristAngle() {
-            if(this == State.Stowed && rollerState == Rollers.State.Off) {
+            if (this == State.Stowed && rollerState == Rollers.State.Off) {
                 return Constants.Wrist.LIMIT_SWITCH_OFFSET;
             }
-            return(gamePiece == GamePiece.Cone) ? wristConeAngle.plus(wristConeOffset) : wristCubeAngle.plus(wristCubeOffset);
+            return (gamePiece == GamePiece.Cone) ? wristConeAngle.plus(wristConeOffset)
+                    : wristCubeAngle.plus(wristCubeOffset);
         }
 
         public Rotation2d defaultWristAngle(GamePiece gamePiece) {
-            return (gamePiece == GamePiece.Cone)? Constants.Wrist.CONE_ANGLE : Constants.Wrist.CUBE_ANGLE;
+            return (gamePiece == GamePiece.Cone) ? Constants.Wrist.CONE_ANGLE : Constants.Wrist.CUBE_ANGLE;
         }
 
         public static State getTarget() {
@@ -230,7 +249,16 @@ public class Arm extends SubsystemBase {
 
         public enum GamePiece {
             Cone,
-            Cube
+            Cube;
+
+            public static GamePiece fromNodeId(final int nodeId) {
+                return nodeId % 3 == 1 ? Arm.State.GamePiece.Cube : Arm.State.GamePiece.Cone;
+            }
+
+            public static GamePiece fromLevelAndColumn(final int level, final int column) {
+                final int nodeId = level * 3 + column;
+                return fromNodeId(nodeId);
+            }
         }
 
         public static double[] getPresets(State value) {

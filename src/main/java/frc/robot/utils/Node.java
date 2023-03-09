@@ -22,10 +22,9 @@ public class Node {
 
     public Node(int node) {
         this(
-                node % 3 == 1 ? Arm.State.GamePiece.Cube : Arm.State.GamePiece.Cone,
+                Arm.State.GamePiece.fromNodeId(node),
                 Level.values()[node / 3],
-                Column.values()[node % 3]
-        );
+                Column.values()[node % 3]);
 
     }
 
@@ -43,17 +42,21 @@ public class Node {
 
     public Transform2d getRobotOffset() {
         double x = 0;
-        switch(level) {
+        switch (level) {
             case High:
-                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.HIGH_CONE_SCORING_DIST : Constants.Arm.HIGH_CUBE_SCORING_DIST;
+                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.HIGH_CONE_SCORING_DIST
+                        : Constants.Arm.HIGH_CUBE_SCORING_DIST;
                 break;
             case Mid:
-                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.MID_CONE_SCORING_DIST : Constants.Arm.MID_CUBE_SCORING_DIST;
+                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.MID_CONE_SCORING_DIST
+                        : Constants.Arm.MID_CUBE_SCORING_DIST;
                 break;
             case Low:
-                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.LOW_CONE_SCORING_DIST : Constants.Arm.LOW_CUBE_SCORING_DIST;
+                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.LOW_CONE_SCORING_DIST
+                        : Constants.Arm.LOW_CUBE_SCORING_DIST;
         }
-        return new Transform2d(new Translation2d(AllianceUtils.isBlue()? -x : x, 0.0), new Rotation2d(AllianceUtils.isBlue()? 0: Math.PI));
+        return new Transform2d(new Translation2d(AllianceUtils.isBlue() ? -x : x, 0.0),
+                new Rotation2d(AllianceUtils.isBlue() ? 0 : Math.PI));
     }
 
     public Pose2d getNodePose() {
@@ -61,10 +64,9 @@ public class Node {
 
         Pose2d robotPose = RobotContainer.poseEstimation.getEstimatedPose();
 
-        int grid = (robotPose.getY() > Constants.FieldConstants.Grids.GRID_BOUNDARIES[1] ?
-                robotPose.getY() > Constants.FieldConstants.Grids.GRID_BOUNDARIES[2] ?
-                2 : 1 : 0
-        );
+        int grid = (robotPose.getY() > Constants.FieldConstants.Grids.GRID_BOUNDARIES[1]
+                ? robotPose.getY() > Constants.FieldConstants.Grids.GRID_BOUNDARIES[2] ? 2 : 1
+                : 0);
 
         switch (level) {
             case High:
@@ -96,6 +98,7 @@ public class Node {
         RightCone(0);
 
         private final int blueIndex;
+
         public int getIndex() {
             return DriverStation.getAlliance() == DriverStation.Alliance.Blue ? blueIndex : 2 - blueIndex;
         }
