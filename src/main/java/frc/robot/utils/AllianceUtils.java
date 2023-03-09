@@ -26,6 +26,23 @@ public class AllianceUtils {
         }
     }
 
+    public static Pose2d fieldToAlliance(Pose2d fieldPose) {
+        switch (DriverStation.getAlliance()) {
+            case Blue:
+                return fieldPose;
+            case Red:
+                return new Pose2d(
+                        new Translation2d(
+                                FieldConstants.fieldLength - fieldPose.getX(),
+                                fieldPose.getY()
+                        ),
+                        fieldPose.getRotation().unaryMinus()
+                );
+            default:
+                return null;
+        }
+    }
+
     public static boolean isBlue() {
         return DriverStation.getAlliance().equals(Alliance.Blue);
     }
