@@ -59,9 +59,9 @@ public class RobotContainer {
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
 
     public static Field2d field = new Field2d();
+    public static Field2d nodeSelector = new Field2d();
 
     private GenericEntry autoNodeSelector = autoTab.add("Auto Node", 0).withWidget(BuiltInWidgets.kTextView).getEntry();
-    private Field2d nodeSelector = new Field2d();
     private GenericEntry performAutoBalance = autoTab.add("Perform Auto Balance", false)
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
@@ -83,6 +83,7 @@ public class RobotContainer {
         configureButtonBindings();
 
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
+        armTab.add("Node Selector", nodeSelector).withWidget(BuiltInWidgets.kField).withSize(3, 3);
 
         driveSettingsTab.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
         driveSettingsTab.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
@@ -245,6 +246,11 @@ public class RobotContainer {
 
     public void setTargetNode(Node targetNode) {
         RobotContainer.field.getObject("Node Position").setPose(targetNode.getNodePose());
+        RobotContainer.nodeSelector.setRobotPose(
+                targetNode.getColumn().ordinal() * 1d + 0.5d,
+                3d - targetNode.getLevel().ordinal() * 1d - 0.5d,
+                new Rotation2d()
+        );
         this.targetNode = targetNode;
     }
 }
