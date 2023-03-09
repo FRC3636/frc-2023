@@ -9,13 +9,18 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.AndReturnToStart;
 import frc.robot.poseestimation.PoseEstimation;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.utils.AllianceUtils;
 import frc.robot.utils.Node;
 
 public class AutoCommand {
@@ -26,12 +31,20 @@ public class AutoCommand {
             "score", new AndReturnToStart(
                     RobotContainer.drivetrain,
                     RobotContainer.poseEstimation,
-                    new AutoScore(RobotContainer.drivetrain, RobotContainer.poseEstimation, () -> AutoCommand.node)
-            )
+                    new SequentialCommandGroup(
+                            new AutoScore(RobotContainer.drivetrain, RobotContainer.poseEstimation, () -> AutoCommand.node),
+                            new InstantCommand(() -> Arm.State.setTarget(Arm.State.Stowed)))
+            ),
+            "intake", new InstantCommand(() -> Arm.State.setRollerState(Rollers.State.Intake)),
+            "stow", new InstantCommand(() -> {
+                Arm.State.setRollerState(Rollers.State.Off);
+                Arm.State.setTarget(Arm.State.Stowed);
+            })
     );
 
     public static Command makeAutoCommand(Drivetrain drivetrain, PoseEstimation poseEstimation, String name) {
         List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(name, new PathConstraints(Constants.AutoConstants.MAX_SPEED_METERS_PER_SECOND, Constants.AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED));
+
 
         // Create the AutoBuilder. This only needs to be created once when robot code starts, not every time you want to create an auto command. A good place to put this is in RobotContainer along with your subsystems.
         SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(

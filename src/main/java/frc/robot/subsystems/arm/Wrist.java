@@ -30,8 +30,8 @@ public class Wrist {
         motor.restoreFactoryDefaults();
 
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO);
-        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO / 60.0);
+        encoder.setPositionConversionFactor(Units.rotationsToRadians(1));
+        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) / 60.0);
         motor.setSmartCurrentLimit(40);
         motor.setInverted(false);
 
@@ -39,7 +39,7 @@ public class Wrist {
     }
 
     public Rotation2d getAngle() {
-        return Rotation2d.fromRadians(encoder.getPosition());
+        return Rotation2d.fromRadians(encoder.getPosition() < Constants.Wrist.LIMIT_SWITCH_OFFSET.getRadians() ? encoder.getPosition() : encoder.getPosition() - Math.PI * 2);
     }
 
     public void followShoulder() {

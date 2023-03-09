@@ -83,6 +83,10 @@ public final class Constants {
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
 
+        public static final double MAX_TIME = 1.005050;
+
+        public static final double SAFE_RAISING_DISTANCE = 2.6;
+
         public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
     }
 
@@ -148,7 +152,7 @@ public final class Constants {
         public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
 
         public static final int LIMIT_SWITCH = 0;
-        public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(63);
+        public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(70);
         public static final Rotation2d CONE_ANGLE = Rotation2d.fromDegrees(-40);
         public static final Rotation2d CUBE_ANGLE = Rotation2d.fromDegrees(40);
 
@@ -221,7 +225,7 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double MAX_SPEED_METERS_PER_SECOND = 5;
+        public static final double MAX_SPEED_METERS_PER_SECOND = 3;
         public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 5;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
@@ -229,10 +233,10 @@ public final class Constants {
         public static final double P_TRANSLATION_PATH_CONTROLLER = 4;
         public static final double P_THETA_PATH_CONTROLLER = 4;
 
-        public static final double P_TRANSLATION_POINT_CONTROLLER = 2;
+        public static final double P_TRANSLATION_POINT_CONTROLLER = 3;
         public static final double P_THETA_POINT_CONTROLLER = 4;
 
-        public static final double TRANSLATION_TOLERANCE = 0.01;
+        public static final double TRANSLATION_TOLERANCE = 0.03;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
         // Constraint for the motion profiled robot angle controller

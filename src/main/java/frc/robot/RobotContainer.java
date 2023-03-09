@@ -61,6 +61,7 @@ public class RobotContainer {
     public static Field2d field = new Field2d();
 
     private GenericEntry autoNodeSelector = autoTab.add("Auto Node", 0).withWidget(BuiltInWidgets.kTextView).getEntry();
+    private Field2d nodeSelector = new Field2d();
     private GenericEntry performAutoBalance = autoTab.add("Perform Auto Balance", false)
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
@@ -210,7 +211,7 @@ public class RobotContainer {
         // Node Selector
         for (int i = 0; i < 9; i++) {
             int finalI = i;
-            new JoystickButton(buttonPanel, i + 1)
+            new JoystickButton(buttonPanel, i+1)
                     .onTrue(new InstantCommand(() -> this.setTargetNode(new Node(finalI))));
         }
         new JoystickButton(joystickRight, 2)

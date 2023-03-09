@@ -29,6 +29,8 @@ public class ArmMoveCommand extends CommandBase {
             new TrapezoidProfile.State(arm.getShoulderAngle().getRadians(), arm.getShoulderVelocity().getRadians())
         );
 
+        SmartDashboard.putNumber("Trajectory Time", profile.totalTime());
+
         timer.reset();
         timer.start();
     }

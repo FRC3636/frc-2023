@@ -17,7 +17,7 @@ public class AndReturnToStart implements Command {
     private boolean innerEnded;
 
     private Pose2d start;
-    private NavigateToPoint returnToStart;
+    private FollowTrajectoryToPoint returnToStart;
 
     public AndReturnToStart(Drivetrain drivetrain, PoseEstimation poseEstimation, Command inner) {
         this.poseEstimation = poseEstimation;
@@ -46,7 +46,7 @@ public class AndReturnToStart implements Command {
                 inner.end(false);
                 innerEnded = true;
 
-                returnToStart = new NavigateToPoint(drivetrain, poseEstimation, start);
+                returnToStart = new FollowTrajectoryToPoint(drivetrain, poseEstimation, start);
                 returnToStart.initialize();
                 returnToStart.execute();
             }

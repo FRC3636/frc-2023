@@ -22,9 +22,9 @@ import java.util.function.Supplier;
 
 //Uses PathPlanner to move the robot to the specified Pose2d
 public class FollowTrajectoryToPoint implements Command {
-    private final Drivetrain drivetrain;
-    private final PoseEstimation poseEstimation;
-    private final Pose2d target;
+    protected final Drivetrain drivetrain;
+    protected final PoseEstimation poseEstimation;
+    protected final Pose2d target;
 
     private PPSwerveControllerCommand swerveControllerCommand;
 
@@ -58,11 +58,11 @@ public class FollowTrajectoryToPoint implements Command {
         swerveControllerCommand.initialize();
     }
 
-    private PathPlannerTrajectory buildTrajectory(Pose2d target) {
+    protected PathPlannerTrajectory buildTrajectory(Pose2d target) {
         Pose2d initial = poseEstimation.getEstimatedPose();
         Translation2d initialV = poseEstimation.getEstimatedVelocity();
 
-        PathPlannerTrajectory trajectory = PathPlanner.generatePath(
+        return PathPlanner.generatePath(
                 new PathConstraints(
                         AutoConstants.MAX_SPEED_METERS_PER_SECOND,
                         AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
@@ -79,8 +79,6 @@ public class FollowTrajectoryToPoint implements Command {
                         target.getTranslation().minus(initial.getTranslation()).getAngle(),
                         target.getRotation())
         );
-
-        return trajectory;
     }
 
     @Override
