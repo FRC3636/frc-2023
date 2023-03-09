@@ -142,6 +142,10 @@ public final class Constants {
         public static final double fieldWidth = Units.inchesToMeters(315.5);
         public static final double tapeWidth = Units.inchesToMeters(2.0);
         public static final double aprilTagWidth = Units.inchesToMeters(6.0);
+
+        //constants for slide position relative to corner of field
+        public static final double slideX = Units.inchesToMeters(559.75);
+        public static final double slideY = Units.inchesToMeters(318.75);
         public static class Grids {
             // X layout
             public static final double outerX = Units.inchesToMeters(54.25);
