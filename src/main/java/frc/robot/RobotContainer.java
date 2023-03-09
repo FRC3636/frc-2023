@@ -7,7 +7,10 @@ package frc.robot;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -15,18 +18,21 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
 import frc.robot.commands.MoveNodeSelection.MovementDirection;
+import frc.robot.commands.alignment.AlignToSelectedNode;
+import frc.robot.commands.autonomous.AutoBalance;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.LightsTable;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
-import frc.robot.utils.Auto;
+import frc.robot.utils.AllianceUtils;
 import frc.robot.utils.Node;
 
 public class RobotContainer {
@@ -53,8 +59,12 @@ public class RobotContainer {
 
     public static Field2d field = new Field2d();
 
-    private GenericEntry autoAlignmentSelector = autoTab.add("Auto Selector", 0).withWidget(BuiltInWidgets.kTextView)
-            .getEntry();
+    private GenericEntry autoNodeSelector = autoTab.add("Auto Node", 0).withWidget(BuiltInWidgets.kTextView).getEntry();
+    private GenericEntry performAutoBalance = autoTab.add("Perform Auto Balance", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+
+    private final FieldObject2d startingPosition = field.getObject("Starting Position");
+    private final FieldObject2d autoBalanceStartingPosition = field.getObject("Auto Balance Starting Position");
 
     // Commands
     private DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft,
@@ -65,13 +75,10 @@ public class RobotContainer {
     public static final LightsTable lights = new LightsTable();
 
     // Movement Command
-    public AlignToSelectedNode alignToSelectedNode = new AlignToSelectedNode(drivetrain, poseEstimation);
+    public Node targetNode = new Node(0);
 
     public RobotContainer() {
-
         configureButtonBindings();
-
-        Auto.init();
 
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
 
@@ -80,8 +87,9 @@ public class RobotContainer {
 
         LiveWindow.enableTelemetry(arm);
 
-        // FIXME: don't run on FMS
-        PathPlannerServer.startServer(5811);
+        if (!DriverStation.isFMSAttached()) {
+            PathPlannerServer.startServer(5811);
+        }
 
         arm.setDefaultCommand(new ArmHoldCommand(arm));
 
@@ -90,6 +98,16 @@ public class RobotContainer {
         }
 
         drivetrain.setDefaultCommand(driveCommand);
+
+        if (autoBalanceStartingPosition.getPoses().isEmpty()) {
+            autoBalanceStartingPosition.setPose(
+                    AllianceUtils.allianceToField(
+                            new Pose2d(
+                                    new Translation2d(
+                                            0,
+                                            0),
+                                    new Rotation2d())));
+        }
     }
 
     private void configureButtonBindings() {
@@ -112,15 +130,16 @@ public class RobotContainer {
                 .whileTrue(
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
-                                        this.alignToSelectedNode,
-                                        new RunCommand(drivetrain::setX, drivetrain)),
+                                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode)
+                                // new RunCommand(drivetrain::setX, drivetrain)
+                                ),
                                 new InstantCommand(() -> {
-                                    Arm.State.setTargetFromNode(Node.getTarget());
+                                    Arm.State.setTargetFromNode(this.targetNode);
                                 })));
 
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
-                        this.alignToSelectedNode,
+                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode),
                         new RunCommand(drivetrain::setX, drivetrain)));
 
         new JoystickButton(joystickLeft, 2)
@@ -185,8 +204,8 @@ public class RobotContainer {
             new JoystickButton(buttonPanel, i + 1)
                     .onTrue(new InstantCommand(() -> this.setTargetNode(new Node(finalI))));
         }
-        new JoystickButton(joystickRight, 2).onTrue(
-                new InstantCommand(() -> this.setTargetNode(new Node((int) autoAlignmentSelector.getInteger(0)))));
+        new JoystickButton(joystickRight, 2)
+                .onTrue(new InstantCommand(() -> this.setTargetNode(new Node((int) autoNodeSelector.getInteger(0)))));
 
         new Trigger(() -> joystickLeft.getRawButtonPressed(3))
                 .onTrue(new MoveNodeSelection(this, MovementDirection.Right));
@@ -194,14 +213,28 @@ public class RobotContainer {
                 .onTrue(new MoveNodeSelection(this, MovementDirection.Left));
         new Trigger(() -> controller.getLeftY() >= 0.5).onTrue(new MoveNodeSelection(this, MovementDirection.Up));
         new Trigger(() -> controller.getLeftY() <= -0.5).onTrue(new MoveNodeSelection(this, MovementDirection.Down));
+        new JoystickButton(joystickRight, 2)
+                .onTrue(new InstantCommand(() -> this.setTargetNode(new Node((int) autoNodeSelector.getInteger(0)))));
+
+        // calibration movement routine
+        new JoystickButton(joystickLeft, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, poseEstimation
+                .getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, 4), Rotation2d.fromRadians(0)))));
+        new JoystickButton(joystickRight, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, poseEstimation
+                .getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, -4), Rotation2d.fromRadians(0)))));
     }
 
     public Command getAutonomousCommand() {
-        return AutoCommand.makeAutoCommand(drivetrain, poseEstimation);
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        Pose2d startingPose = startingPosition.getPose();
+
+        command.addCommands(new InstantCommand(() -> poseEstimation.resetPose(startingPose)));
+
+        return command;
     }
 
     public void setTargetNode(Node targetNode) {
         RobotContainer.field.getObject("Node Position").setPose(targetNode.getNodePose());
-        this.alignToSelectedNode.setTargetNode(targetNode);
+        this.targetNode = targetNode;
     }
 }

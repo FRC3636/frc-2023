@@ -126,10 +126,15 @@ public class Arm extends SubsystemBase {
         private final Rotation2d shoulderConeAngle;
         private final Rotation2d wristConeAngle;
         private final Rotation2d wristCubeAngle;
+
         private Rotation2d shoulderConeOffset = new Rotation2d();
         private Rotation2d shoulderCubeOffset = new Rotation2d();
         private Rotation2d wristConeOffset = new Rotation2d();
         private Rotation2d wristCubeOffset = new Rotation2d();
+
+        private static State target = State.Stowed;
+        private static GamePiece gamePiece = GamePiece.Cube;
+        private static Rollers.State rollerState = Rollers.State.Off;
 
         State(Rotation2d shoulderConeAngle, Rotation2d shoulderCubeAngle, Rotation2d wristConeAngle,
                 Rotation2d wristCubeAngle) {
@@ -199,10 +204,6 @@ public class Arm extends SubsystemBase {
         public Rotation2d defaultWristAngle(GamePiece gamePiece) {
             return (gamePiece == GamePiece.Cone) ? Constants.Wrist.CONE_ANGLE : Constants.Wrist.CUBE_ANGLE;
         }
-
-        private static State target = State.Stowed;
-        private static GamePiece gamePiece = GamePiece.Cube;
-        private static Rollers.State rollerState = Rollers.State.Off;
 
         public static State getTarget() {
             return target;
