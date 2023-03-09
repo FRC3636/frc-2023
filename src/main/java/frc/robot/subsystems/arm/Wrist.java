@@ -1,7 +1,9 @@
 package frc.robot.subsystems.arm;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,6 +19,7 @@ public class Wrist {
 
     private final CANSparkMax motor = new CANSparkMax(Constants.Wrist.ID, CANSparkMax.MotorType.kBrushless);
     private final DigitalInput limitSwitch = new DigitalInput(Constants.Wrist.LIMIT_SWITCH);
+    private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
     protected final PIDController pidController = new PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD);
     protected final ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA);
@@ -27,8 +30,8 @@ public class Wrist {
         motor.restoreFactoryDefaults();
 
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        motor.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO);
-        motor.getEncoder().setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO / 60.0);
+        encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO);
+        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO / 60.0);
         motor.setSmartCurrentLimit(40);
         motor.setInverted(false);
 
@@ -36,7 +39,7 @@ public class Wrist {
     }
 
     public Rotation2d getAngle() {
-        return Rotation2d.fromRadians(motor.getEncoder().getPosition());
+        return Rotation2d.fromRadians(encoder.getPosition());
     }
 
     public void followShoulder() {
@@ -51,7 +54,7 @@ public class Wrist {
     }
 
     public void runWithVelocity(Rotation2d velocity) {
-        runWithSetpoint(Rotation2d.fromRadians(motor.getEncoder().getPosition()), velocity);
+        runWithSetpoint(Rotation2d.fromRadians(encoder.getPosition()), velocity);
     }
 
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
@@ -101,13 +104,9 @@ public class Wrist {
 
     public void periodic() {
         SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
-        SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(motor.getEncoder().getPosition()));
+        SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(encoder.getPosition()));
         SmartDashboard.putNumber("Wrist Set Point", Arm.State.getTarget().getWristAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
         SmartDashboard.putNumber("minSafeAngle", (360.0/2.0/Math.PI)*getMinAngle(safeHeight(arm.getShoulderAngle().getDegrees())));
-
-        if(isLimitSwitchPressed()) {
-            motor.getEncoder().setPosition(Constants.Wrist.LIMIT_SWITCH_OFFSET.getRadians());
-        }
     }
 }
