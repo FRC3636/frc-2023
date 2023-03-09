@@ -226,17 +226,17 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final double MAX_SPEED_METERS_PER_SECOND = 3;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 5;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
-        public static final double P_TRANSLATION_PATH_CONTROLLER = 4;
-        public static final double P_THETA_PATH_CONTROLLER = 4;
+        public static final double P_TRANSLATION_PATH_CONTROLLER = 1;
+        public static final double P_THETA_PATH_CONTROLLER = 1;
 
-        public static final double P_TRANSLATION_POINT_CONTROLLER = 3;
-        public static final double P_THETA_POINT_CONTROLLER = 4;
+        public static final double P_TRANSLATION_POINT_CONTROLLER = 4;
+        public static final double P_THETA_POINT_CONTROLLER = 6;
 
-        public static final double TRANSLATION_TOLERANCE = 0.03;
+        public static final double TRANSLATION_TOLERANCE = 0.05;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
         // Constraint for the motion profiled robot angle controller

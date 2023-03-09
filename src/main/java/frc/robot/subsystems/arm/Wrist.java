@@ -30,6 +30,8 @@ public class Wrist {
         motor.restoreFactoryDefaults();
 
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        motor.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO);
+        motor.getEncoder().setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO / 60.0);
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1));
         encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) / 60.0);
         motor.setSmartCurrentLimit(40);
@@ -39,6 +41,10 @@ public class Wrist {
     }
 
     public Rotation2d getAngle() {
+        return Rotation2d.fromRadians(motor.getEncoder().getPosition());
+    }
+
+    public Rotation2d getAbsoluteAngle() {
         return Rotation2d.fromRadians(encoder.getPosition() < Constants.Wrist.LIMIT_SWITCH_OFFSET.getRadians() ? encoder.getPosition() : encoder.getPosition() - Math.PI * 2);
     }
 
@@ -108,5 +114,9 @@ public class Wrist {
         SmartDashboard.putNumber("Wrist Set Point", Arm.State.getTarget().getWristAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
         SmartDashboard.putNumber("minSafeAngle", (360.0/2.0/Math.PI)*getMinAngle(safeHeight(arm.getShoulderAngle().getDegrees())));
+        if(isLimitSwitchPressed()) {
+            motor.getEncoder().setPosition(getAbsoluteAngle().getRadians());
+        }
+
     }
 }

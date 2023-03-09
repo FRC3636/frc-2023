@@ -67,7 +67,7 @@ public class AutoBalance implements Command{
 
         //double driveSpeed = pidController.calculate(inclineDirection.getDistance(new Translation2d(0, 0)), 0);
         double driveSpeed = MathUtil.clamp(0.65 * distance/Math.sin(Math.toRadians(15)), -1, 1 );
-        driveSpeed /= NumOscillation + 1; // dampen the robot's oscilations by slowing down after oscilating
+        driveSpeed /= NumOscillation + 1; // dampen the robot's oscillations by slowing down after oscillating
         Translation2d driveVelocity = new Translation2d(driveSpeed, inclineAngle);
 
         ChassisSpeeds speeds = new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), 0);

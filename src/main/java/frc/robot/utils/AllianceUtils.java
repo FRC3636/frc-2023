@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 
 public class AllianceUtils {
@@ -27,6 +28,10 @@ public class AllianceUtils {
 
     public static boolean isBlue() {
         return DriverStation.getAlliance().equals(Alliance.Blue);
+    }
+
+    public static double getDistanceFromAlliance(Pose2d pose) {
+        return isBlue()? pose.getX() : FieldConstants.fieldLength - pose.getX();
     }
 
     public static Rotation2d getFieldOrientationZero() {

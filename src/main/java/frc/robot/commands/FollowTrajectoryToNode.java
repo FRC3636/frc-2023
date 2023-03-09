@@ -22,7 +22,9 @@ public class FollowTrajectoryToNode extends FollowTrajectoryToPoint{
     protected PathPlannerTrajectory buildTrajectory(Pose2d target) {
         PathPlannerTrajectory initialTrajectory = super.buildTrajectory(target);
 
-        if(initialTrajectory.getTotalTimeSeconds() > Constants.Arm.MAX_TIME) {
+        if(
+                initialTrajectory.getTotalTimeSeconds() > Constants.Arm.MAX_TIME + 0.5 &&
+                AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) > Constants.Arm.SAFE_RAISING_DISTANCE) {
             return initialTrajectory;
         }
 

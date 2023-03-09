@@ -31,9 +31,8 @@ public class AutoCommand {
             "score", new AndReturnToStart(
                     RobotContainer.drivetrain,
                     RobotContainer.poseEstimation,
-                    new SequentialCommandGroup(
-                            new AutoScore(RobotContainer.drivetrain, RobotContainer.poseEstimation, () -> AutoCommand.node),
-                            new InstantCommand(() -> Arm.State.setTarget(Arm.State.Stowed)))
+                    RobotContainer.arm,
+                    new AutoScore(RobotContainer.drivetrain, RobotContainer.poseEstimation, () -> AutoCommand.node)
             ),
             "intake", new InstantCommand(() -> Arm.State.setRollerState(Rollers.State.Intake)),
             "stow", new InstantCommand(() -> {

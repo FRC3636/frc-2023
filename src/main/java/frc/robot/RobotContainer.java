@@ -142,8 +142,10 @@ public class RobotContainer {
 
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
-                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode),
-                        new RunCommand(drivetrain::setX, drivetrain)));
+                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode)
+//                        new RunCommand(drivetrain::setX, drivetrain)
+                )
+        );
 
         new JoystickButton(joystickLeft, 2)
                 .whileTrue(autoBalanceCommand);

@@ -25,6 +25,7 @@ public class FollowTrajectoryToPoint implements Command {
     protected final Drivetrain drivetrain;
     protected final PoseEstimation poseEstimation;
     protected final Pose2d target;
+    public PathPlannerTrajectory trajectory;
 
     private PPSwerveControllerCommand swerveControllerCommand;
 
@@ -36,9 +37,6 @@ public class FollowTrajectoryToPoint implements Command {
 
     @Override
     public void initialize() {
-
-        PathPlannerTrajectory trajectory;
-
         trajectory = buildTrajectory(target);
 
 

@@ -1,10 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants;
 import frc.robot.poseestimation.PoseEstimation;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.utils.AllianceUtils;
 
 import java.util.Set;
 
@@ -12,25 +16,34 @@ import java.util.Set;
 public class AndReturnToStart implements Command {
     private final Drivetrain drivetrain;
     private final PoseEstimation poseEstimation;
+    private final Arm arm;
 
     private final Command inner;
     private boolean innerEnded;
+    private final Timer timer = new Timer();
 
-    private Pose2d start;
+    private Pose2d startingPose;
+    private Arm.State startingArmState;
     private FollowTrajectoryToPoint returnToStart;
 
-    public AndReturnToStart(Drivetrain drivetrain, PoseEstimation poseEstimation, Command inner) {
+    public AndReturnToStart(Drivetrain drivetrain, PoseEstimation poseEstimation, Arm arm, Command inner) {
         this.poseEstimation = poseEstimation;
         this.drivetrain = drivetrain;
+
+        this.arm = arm;
 
         this.inner = inner;
     }
 
     @Override
     public void initialize() {
-        start = poseEstimation.getEstimatedPose();
+        startingPose = poseEstimation.getEstimatedPose();
+
+        startingArmState = Arm.State.getTarget();
 
         innerEnded = false;
+
+        timer.reset();
 
         inner.initialize();
     }
@@ -46,12 +59,21 @@ public class AndReturnToStart implements Command {
                 inner.end(false);
                 innerEnded = true;
 
-                returnToStart = new FollowTrajectoryToPoint(drivetrain, poseEstimation, start);
+                returnToStart = new FollowTrajectoryToPoint(drivetrain, poseEstimation, startingPose);
                 returnToStart.initialize();
                 returnToStart.execute();
+
+                timer.start();
             }
         } else {
             returnToStart.execute();
+            if(
+                    timer.get() > returnToStart.trajectory.getTotalTimeSeconds() - Constants.Arm.MAX_TIME &&
+                    Arm.State.getTarget() != startingArmState &&
+                    AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) > Constants.Arm.SAFE_RAISING_DISTANCE - 0.5
+            ) {
+                Arm.State.setTarget(startingArmState);
+            }
         }
     }
 
