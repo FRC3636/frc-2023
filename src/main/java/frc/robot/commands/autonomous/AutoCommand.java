@@ -55,7 +55,7 @@ public class AutoCommand {
             new PIDConstants(Constants.AutoConstants.P_THETA_PATH_CONTROLLER, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
             drivetrain::setModuleStates, // Module states consumer used to output to the drive subsystem
             eventMap,
-            true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+            false, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
             drivetrain // The drive subsystem. Used to properly set the requirements of path following commands
         );
         
