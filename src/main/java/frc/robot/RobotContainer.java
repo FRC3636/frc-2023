@@ -207,10 +207,10 @@ public class RobotContainer {
         new JoystickButton(joystickRight, 2)
                 .onTrue(new InstantCommand(() -> this.setTargetNode(new Node((int) autoNodeSelector.getInteger(0)))));
 
-        new Trigger(() -> joystickLeft.getRawButtonPressed(3))
-                .onTrue(new MoveNodeSelection(this, MovementDirection.Right));
-        new Trigger(() -> controller.getRawAxis(1) <= -0.5)
+        new Trigger(() -> controller.getLeftX() >= 0.5)
                 .onTrue(new MoveNodeSelection(this, MovementDirection.Left));
+        new Trigger(() -> controller.getLeftX() <= -0.5)
+                .onTrue(new MoveNodeSelection(this, MovementDirection.Right));
         new Trigger(() -> controller.getLeftY() >= 0.5).onTrue(new MoveNodeSelection(this, MovementDirection.Up));
         new Trigger(() -> controller.getLeftY() <= -0.5).onTrue(new MoveNodeSelection(this, MovementDirection.Down));
         new JoystickButton(joystickRight, 2)

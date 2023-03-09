@@ -17,7 +17,6 @@ public class MoveNodeSelection extends InstantCommand {
     /** Creates a new MoveNodeSelection. */
     public MoveNodeSelection(RobotContainer robot, final MovementDirection direction) {
         super(() -> {
-            System.out.println("Moving node selection");
             final Node currentTarget = robot.targetNode;
             int column = currentTarget.getColumn().ordinal();
             int level = currentTarget.getLevel().ordinal();
