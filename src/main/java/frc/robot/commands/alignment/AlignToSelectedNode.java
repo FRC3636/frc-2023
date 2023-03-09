@@ -8,6 +8,8 @@ import frc.robot.utils.Node;
 
 import java.util.function.Supplier;
 
+
+//Moves the robot to the node returned by the specified node supplier.
 public class AlignToSelectedNode extends CommandBase {
 
     private AlignToNode innerCommand;
@@ -36,9 +38,7 @@ public class AlignToSelectedNode extends CommandBase {
     }
 
     @Override
-    public void end(boolean terminated){
-        innerCommand.end(terminated);
-    }
+    public void end(boolean terminated){ innerCommand.end(terminated); }
 
     @Override
     public boolean isFinished(){

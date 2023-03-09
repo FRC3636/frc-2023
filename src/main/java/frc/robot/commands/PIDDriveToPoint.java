@@ -11,6 +11,7 @@ import frc.robot.utils.AllianceUtils;
 
 import java.util.function.Supplier;
 
+//Uses PID to move the robot to the specified Pose2d
 public class PIDDriveToPoint extends CommandBase {
 
     private final Drivetrain drivetrain;

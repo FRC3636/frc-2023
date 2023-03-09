@@ -20,6 +20,7 @@ import frc.robot.utils.Node;
 import java.util.Set;
 import java.util.function.Supplier;
 
+//Uses PathPlanner to move the robot to the specified Pose2d
 public class FollowTrajectoryToPoint implements Command {
     private final Drivetrain drivetrain;
     private final PoseEstimation poseEstimation;

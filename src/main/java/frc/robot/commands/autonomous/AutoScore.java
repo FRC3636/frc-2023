@@ -12,6 +12,7 @@ import frc.robot.utils.Node;
 
 import java.util.function.Supplier;
 
+//Move to a node, position the arm and outtake the current game piece
 public class AutoScore extends SequentialCommandGroup {
     public AutoScore(Drivetrain drivetrain, PoseEstimation poseEstimation, Supplier<Node> targetNode){
         super(

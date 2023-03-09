@@ -8,6 +8,7 @@ import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.Node;
 
+//Navigate to the point in front of the node specified
 public class AlignToNode extends NavigateToPoint {
 
     public AlignToNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Node targetNode) {
