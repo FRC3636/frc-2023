@@ -255,7 +255,7 @@ public class Arm extends SubsystemBase {
 
         public static void setRollerState(Rollers.State state) {
             State.rollerState = state;
-            RobotContainer.lights.setRequestMode(state == Rollers.State.Intake);
+//            RobotContainer.lights.setRequestMode(state == Rollers.State.Intake);
             new ArmMoveCommand(RobotContainer.arm).schedule();
         }
 

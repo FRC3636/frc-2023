@@ -13,7 +13,7 @@ public class LightsTable extends SubsystemBase {
     private final NetworkTable table = instance.getTable("Lights");
 
     private String current = null;
-    private boolean requestMode = false;
+    private boolean requestMode = true;
 
     public LightsTable() {
     }

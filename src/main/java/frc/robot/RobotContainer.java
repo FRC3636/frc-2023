@@ -62,10 +62,6 @@ public class RobotContainer {
     public static Field2d field = new Field2d();
     public static Field2d nodeSelector = new Field2d();
 
-    private GenericEntry autoNodeSelector = autoTab.add("Auto Node", 0).withWidget(BuiltInWidgets.kTextView).getEntry();
-    private GenericEntry performAutoBalance = autoTab.add("Perform Auto Balance", false)
-            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-
     private final FieldObject2d startingPosition = field.getObject("Starting Position");
     private final FieldObject2d autoBalanceStartingPosition = field.getObject("Auto Balance Starting Position");
 
@@ -74,13 +70,18 @@ public class RobotContainer {
             joystickRight);
     private AutoBalance autoBalanceCommand = new AutoBalance(drivetrain);
 
+    private static SendableChooser<String> autoSelector;
+    public static SendableChooser<Node> autoNodeSelector;
+
     // RGB
     public static final LightsTable lights = new LightsTable();
 
     // Movement Command
-    public Node targetNode = new Node(0);
+    public static Node targetNode = new Node(0);
 
     public RobotContainer() {
+        autoNodeSelector = new SendableChooser<>();
+        autoNodeSelector.setDefaultOption("default", new Node(0));
         configureButtonBindings();
 
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
@@ -108,6 +109,22 @@ public class RobotContainer {
                                             0),
                                     new Rotation2d())));
         }
+
+        autoSelector = new SendableChooser<>();
+
+        autoSelector.setDefaultOption("Grid 1", "grid1");
+        autoSelector.addOption("Grid 2", "grid2");
+        autoSelector.addOption("Grid 3", "grid3");
+        autoSelector.addOption("Grid 3 2 ball", "grid3_2");
+
+
+        for (int i = 0; i < 9; i++) {
+            Node node = new Node(i);
+            autoNodeSelector.addOption(node.getColumn() + " " + node.getLevel(), node);
+        }
+
+        autoTab.add("Auto Selector", autoSelector);
+        autoTab.add("Auto Node Selector", autoNodeSelector);
     }
 
     private void configureButtonBindings() {
@@ -139,13 +156,16 @@ public class RobotContainer {
 
         new JoystickButton(joystickLeft, 4)
                 .whileTrue(
-                        new AutoScore(drivetrain, poseEstimation, () -> this.targetNode)
+                        new SequentialCommandGroup(
+                                new AutoScore(drivetrain, poseEstimation, () -> RobotContainer.targetNode),
+                                new RunCommand(drivetrain::setX, drivetrain)
+                        )
                 );
 
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
-                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode)
-//                        new RunCommand(drivetrain::setX, drivetrain)
+                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode),
+                        new RunCommand(drivetrain::setX, drivetrain)
                 )
         );
 
@@ -220,8 +240,6 @@ public class RobotContainer {
             new JoystickButton(buttonPanel, i+1)
                     .onTrue(new InstantCommand(() -> this.setTargetNode(new Node(finalI))));
         }
-        new JoystickButton(joystickRight, 2)
-                .onTrue(new InstantCommand(() -> this.setTargetNode(new Node((int) autoNodeSelector.getInteger(0)))));
 
         new Trigger(() -> controller.getLeftX() >= 0.5)
                 .onTrue(new MoveNodeSelection(this, MovementDirection.Left));
@@ -229,8 +247,6 @@ public class RobotContainer {
                 .onTrue(new MoveNodeSelection(this, MovementDirection.Right));
         new Trigger(() -> controller.getLeftY() >= 0.5).onTrue(new MoveNodeSelection(this, MovementDirection.Up));
         new Trigger(() -> controller.getLeftY() <= -0.5).onTrue(new MoveNodeSelection(this, MovementDirection.Down));
-        new JoystickButton(joystickRight, 2)
-                .onTrue(new InstantCommand(() -> this.setTargetNode(new Node((int) autoNodeSelector.getInteger(0)))));
     }
 
     public Command getAutonomousCommand() {
@@ -240,7 +256,7 @@ public class RobotContainer {
 
         command.addCommands(new InstantCommand(() -> poseEstimation.resetPose(startingPose)));
 
-        return AutoCommand.makeAutoCommand(drivetrain, poseEstimation, "test");
+        return AutoCommand.makeAutoCommand(drivetrain, poseEstimation, autoSelector.getSelected());
     }
 
     public void setTargetNode(Node targetNode) {

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotContainer;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
@@ -33,10 +34,12 @@ public class DriveWithJoysticks implements Command {
 
     @Override
     public void execute() {
+        double sensitivity = RobotContainer.joystickRight.getRawButtonPressed(5)? 0.25: 1;
+
         // Negative because joysticks are inverted
-        double tx = MathUtil.applyDeadband(-translation.getY() * (translation.getZ() + 1)/2, 0.15);
-        double ty = MathUtil.applyDeadband(-translation.getX() * (translation.getZ() + 1)/2, 0.15);
-        double r = MathUtil.applyDeadband(-rotation.getX() * (rotation.getZ() + 1)/2, 0.15);
+        double ty = MathUtil.applyDeadband(-translation.getX() * sensitivity, 0.1);
+        double tx = MathUtil.applyDeadband(-translation.getY() * sensitivity, 0.1);
+        double r = MathUtil.applyDeadband(-rotation.getX() * sensitivity, 0.1);
 
         double vx = tx * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
         double vy = ty * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
