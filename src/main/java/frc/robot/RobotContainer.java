@@ -28,6 +28,7 @@ import frc.robot.commands.MoveNodeSelection.MovementDirection;
 import frc.robot.commands.alignment.AlignToSelectedNode;
 import frc.robot.commands.autonomous.AutoBalance;
 import frc.robot.commands.autonomous.AutoCommand;
+import frc.robot.commands.autonomous.AutoScore;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.LightsTable;
 import frc.robot.subsystems.arm.Arm;
@@ -96,10 +97,6 @@ public class RobotContainer {
 
         arm.setDefaultCommand(new ArmHoldCommand(arm));
 
-        for (Arm.State value : Arm.State.values()) {
-            armTab.addDoubleArray(value.name(), () -> Arm.State.getPresets(value));
-        }
-
         drivetrain.setDefaultCommand(driveCommand);
 
         if (autoBalanceStartingPosition.getPoses().isEmpty()) {
@@ -139,6 +136,11 @@ public class RobotContainer {
                                 new InstantCommand(() -> {
                                     Arm.State.setTargetFromNode(this.targetNode);
                                 })));
+
+        new JoystickButton(joystickLeft, 4)
+                .whileTrue(
+                        new AutoScore(drivetrain, poseEstimation, () -> this.targetNode)
+                );
 
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
@@ -183,6 +185,7 @@ public class RobotContainer {
 
         new JoystickButton(controller, XboxController.Button.kRightStick.value)
                 .onTrue(new InstantCommand(Arm.State::resetOffset));
+
         new Trigger(() -> controller.getPOV() == 0)
                 .onTrue(new InstantCommand(() -> Arm.State.moveShoulderOffset(Rotation2d.fromDegrees(2))));
         new Trigger(() -> controller.getPOV() == 180)
@@ -228,12 +231,6 @@ public class RobotContainer {
         new Trigger(() -> controller.getLeftY() <= -0.5).onTrue(new MoveNodeSelection(this, MovementDirection.Down));
         new JoystickButton(joystickRight, 2)
                 .onTrue(new InstantCommand(() -> this.setTargetNode(new Node((int) autoNodeSelector.getInteger(0)))));
-
-        // calibration movement routine
-        new JoystickButton(joystickLeft, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, poseEstimation
-                .getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, 4), Rotation2d.fromRadians(0)))));
-        new JoystickButton(joystickRight, 5).onTrue(new NavigateToPoint(drivetrain, poseEstimation, poseEstimation
-                .getEstimatedPose().transformBy(new Transform2d(new Translation2d(0, -4), Rotation2d.fromRadians(0)))));
     }
 
     public Command getAutonomousCommand() {

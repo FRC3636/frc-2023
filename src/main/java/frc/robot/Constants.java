@@ -138,7 +138,7 @@ public final class Constants {
         public static final double KA = 0.052069;
 
         public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(0);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromDegrees(-18.185489);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.317397);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.725371);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
@@ -236,7 +236,7 @@ public final class Constants {
         public static final double P_TRANSLATION_POINT_CONTROLLER = 4;
         public static final double P_THETA_POINT_CONTROLLER = 6;
 
-        public static final double TRANSLATION_TOLERANCE = 0.05;
+        public static final double TRANSLATION_TOLERANCE = 0.02;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
         // Constraint for the motion profiled robot angle controller
@@ -261,7 +261,7 @@ public final class Constants {
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 
-        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.5, 0.5, 0.3);
+        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.7, 0.7, 0.5);
 
         public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
 

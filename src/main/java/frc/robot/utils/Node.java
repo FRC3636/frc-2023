@@ -24,7 +24,8 @@ public class Node {
         this(
                 Arm.State.GamePiece.fromNodeId(node),
                 Level.values()[node / 3],
-                Column.values()[node % 3]);
+                Column.values()[node % 3]
+        );
 
     }
 
@@ -84,6 +85,10 @@ public class Node {
         }
 
         return AllianceUtils.allianceToField(new Pose2d(nodes[grid * 3 + column.getIndex()], new Rotation2d(Math.PI)));
+    }
+
+    public Pose2d getRobotScoringPose() {
+        return getNodePose().transformBy(getRobotOffset());
     }
 
     public enum Level {
