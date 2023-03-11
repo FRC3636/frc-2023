@@ -46,7 +46,7 @@ public class AutoCommand {
                     new FollowTrajectoryToPoint(
                             RobotContainer.drivetrain,
                             RobotContainer.poseEstimation,
-                            AllianceUtils.allianceToField(new Pose2d(3.7, 2.9, new Rotation2d(0)))),
+                            () -> AllianceUtils.allianceToField(new Pose2d(3.7, 2.9, new Rotation2d(Math.PI)))),
                     new AutoBalance(RobotContainer.drivetrain))
     );
 
