@@ -19,7 +19,7 @@ public class AllianceUtils {
                         FieldConstants.fieldLength - alliancePose.getX(),
                         alliancePose.getY()
                     ),
-                    alliancePose.getRotation().unaryMinus()
+                    alliancePose.getRotation().minus(Rotation2d.fromRadians(Math.PI))
                 );
             default:
                 return null;
@@ -36,7 +36,7 @@ public class AllianceUtils {
                                 FieldConstants.fieldLength - fieldPose.getX(),
                                 fieldPose.getY()
                         ),
-                        fieldPose.getRotation().unaryMinus()
+                        fieldPose.getRotation().minus(new Rotation2d(Math.PI))
                 );
             default:
                 return null;
@@ -52,6 +52,6 @@ public class AllianceUtils {
     }
 
     public static Rotation2d getFieldOrientationZero() {
-        return Rotation2d.fromRadians( isBlue() ? 0 : Math.PI);
+        return Rotation2d.fromRadians(isBlue() ? 0 : Math.PI);
     }
 }

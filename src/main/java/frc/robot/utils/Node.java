@@ -56,8 +56,8 @@ public class Node {
                 x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.LOW_CONE_SCORING_DIST
                         : Constants.Arm.LOW_CUBE_SCORING_DIST;
         }
-        return new Transform2d(new Translation2d(AllianceUtils.isBlue() ? -x : x, 0.0),
-                new Rotation2d(AllianceUtils.isBlue() ? 0 : Math.PI));
+        return new Transform2d(new Translation2d(-x, 0.0),
+                new Rotation2d(0));
     }
 
     public Pose2d getNodePose() {

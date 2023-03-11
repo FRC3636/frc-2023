@@ -21,7 +21,7 @@ public class DriveWithJoysticks implements Command {
     private final Joystick translation;
     private final Joystick rotation;
 
-    private Rotation2d fieldOrientationZero = AllianceUtils.getFieldOrientationZero();
+    private Rotation2d fieldOrientationZeroOffset = new Rotation2d();
 
     public DriveWithJoysticks(Drivetrain drivetrain, PoseEstimation poseEstimation, Joystick translation, Joystick rotation) {
         this.drivetrain = drivetrain;
@@ -46,7 +46,7 @@ public class DriveWithJoysticks implements Command {
         double omega = r * DriveConstants.MAX_ANGULAR_SPEED;
 
         ChassisSpeeds fieldRelSpeeds = new ChassisSpeeds(vx, vy, omega);
-        ChassisSpeeds robotRelSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelSpeeds, poseEstimation.getEstimatedPose().getRotation().minus(fieldOrientationZero));
+        ChassisSpeeds robotRelSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelSpeeds, poseEstimation.getEstimatedPose().getRotation().minus(AllianceUtils.getFieldOrientationZero().plus(fieldOrientationZeroOffset)));
 
         drivetrain.drive(robotRelSpeeds);
     }
@@ -57,6 +57,6 @@ public class DriveWithJoysticks implements Command {
     }
 
     public void resetFieldOrientation() {
-        fieldOrientationZero = poseEstimation.getEstimatedPose().getRotation();
+        fieldOrientationZeroOffset = poseEstimation.getEstimatedPose().getRotation().minus(AllianceUtils.getFieldOrientationZero());
     }
 }

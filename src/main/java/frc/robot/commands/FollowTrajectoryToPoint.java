@@ -24,12 +24,12 @@ import java.util.function.Supplier;
 public class FollowTrajectoryToPoint implements Command {
     protected final Drivetrain drivetrain;
     protected final PoseEstimation poseEstimation;
-    protected final Pose2d target;
+    protected final Supplier<Pose2d> target;
     public PathPlannerTrajectory trajectory;
 
     private PPSwerveControllerCommand swerveControllerCommand;
 
-    public FollowTrajectoryToPoint(Drivetrain drivetrain, PoseEstimation poseEstimation, Pose2d target) {
+    public FollowTrajectoryToPoint(Drivetrain drivetrain, PoseEstimation poseEstimation, Supplier<Pose2d> target) {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
         this.target = target;
@@ -37,12 +37,12 @@ public class FollowTrajectoryToPoint implements Command {
 
     @Override
     public void initialize() {
-        trajectory = buildTrajectory(target);
+        trajectory = buildTrajectory(target.get());
 
 
         RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
         RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
-        RobotContainer.field.getObject("Target").setPose(target);
+        RobotContainer.field.getObject("Target").setPose(target.get());
 
         swerveControllerCommand = new PPSwerveControllerCommand(
                 trajectory,

@@ -20,7 +20,7 @@ public class FollowTrajectoryToNode extends FollowTrajectoryToPoint{
     private final Node targetNode;
 
     public FollowTrajectoryToNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Node targetNode) {
-        super(drivetrain, poseEstimation, targetNode.getRobotScoringPose());
+        super(drivetrain, poseEstimation, targetNode::getRobotScoringPose);
 
         this.targetNode = targetNode;
     }

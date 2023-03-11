@@ -37,6 +37,8 @@ public class Wrist {
         motor.setSmartCurrentLimit(40);
         motor.setInverted(false);
 
+        zeroEncoder();
+
         RobotContainer.armTab.add("Wrist PID", pidController).withWidget(BuiltInWidgets.kPIDController);
     }
 
@@ -89,7 +91,7 @@ public class Wrist {
         if(
                 arm.getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()
                         || Arm.State.getTarget().getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()) {
-            return Rotation2d.fromRadians(Math.max(0, Arm.State.getTarget().getWristAngle().getRadians()));
+            return Rotation2d.fromRadians(Math.max(-0.1, Arm.State.getTarget().getWristAngle().getRadians()));
         }
 
         return Arm.State.getTarget().getWristAngle();
@@ -117,6 +119,9 @@ public class Wrist {
         if(isLimitSwitchPressed()) {
             motor.getEncoder().setPosition(getAbsoluteAngle().getRadians());
         }
+    }
 
+    private void zeroEncoder() {
+        motor.getEncoder().setPosition(encoder.getPosition());
     }
 }
