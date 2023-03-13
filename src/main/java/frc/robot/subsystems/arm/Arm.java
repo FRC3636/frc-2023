@@ -210,18 +210,33 @@ public class Arm extends SubsystemBase {
         }
 
         public static void setTargetFromNode(Node node) {
-            State.gamePiece = node.getNodeType();
             switch (node.getLevel()) {
                 case Low:
                     State.target = Low;
                     break;
                 case Mid:
                     State.target = Mid;
+                    State.gamePiece = node.getNodeType();
                     break;
                 case High:
                     State.target = High;
+                    State.gamePiece = node.getNodeType();
             }
+
             new ArmMoveCommand(RobotContainer.arm).schedule();
+        }
+
+        public static State getTargetFromNode(Node node) {
+            switch (node.getLevel()) {
+                case Low:
+                    return Low;
+                case Mid:
+                    return Mid;
+                case High:
+                    return High;
+                default:
+                    return Stowed;
+            }
         }
 
         public static void setTarget(State target) {
@@ -240,7 +255,7 @@ public class Arm extends SubsystemBase {
 
         public static void setRollerState(Rollers.State state) {
             State.rollerState = state;
-            RobotContainer.lights.setRequestMode(state == Rollers.State.Intake);
+//            RobotContainer.lights.setRequestMode(state == Rollers.State.Intake);
             new ArmMoveCommand(RobotContainer.arm).schedule();
         }
 

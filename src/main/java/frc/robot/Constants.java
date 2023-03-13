@@ -47,7 +47,10 @@ public final class Constants {
         public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
 
         // Charge Station Constants
-        public static final double CHARGE_STATION_TOLERANCE = Math.toRadians(11);
+        public static final double CHARGE_TIPPING_ANGLE= Math.toRadians(12);
+        public static final double CHARGE_TOLERANCE = Math.toRadians(2.5);
+        public static final double CHARGE_MAX_SPEED = 0.6;
+        public static final double CHARGE_REDUCED_SPEED = 0.32;
 
         // Delay between reading the gyro and using the value used to aproximate exact angle while spinning (0.02 is one loop)
         public static final double GYRO_READ_DELAY = 0.02;
@@ -74,11 +77,11 @@ public final class Constants {
         public static final double PIVOT_HEIGHT = 1.162025;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
-        public static final double HIGH_CONE_SCORING_DIST = 1.46;
-        public static final double HIGH_CUBE_SCORING_DIST = 1.6;
+        public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(59);
+        public static final double HIGH_CUBE_SCORING_DIST =  Units.inchesToMeters(60);
 
-        public static final double MID_CONE_SCORING_DIST = 1.4;
-        public static final double MID_CUBE_SCORING_DIST = 1.5;
+        public static final double MID_CONE_SCORING_DIST = Units.inchesToMeters(57);
+        public static final double MID_CUBE_SCORING_DIST = Units.inchesToMeters(59);
 
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
@@ -105,16 +108,16 @@ public final class Constants {
         public static final double KD = 0.03;
 
         public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.109670);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.910583);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.980396);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
-        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.867019);
+        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.762299);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(1.282185);
         public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(1.082943);
         public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromRadians(0.6);
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.873581);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromRadians(1.037839);
-        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(2.111365);
-        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(1.649983);
+        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(2.041552);
+        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(1.580170);
         public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(2.3);
         public static final Rotation2d TOLERANCE_ANGLE = Rotation2d.fromRadians(1);
 
@@ -138,16 +141,16 @@ public final class Constants {
         public static final double KA = 0.052069;
 
         public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(0);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromDegrees(-18.185489);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.317397);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
-        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.725371);
+        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.655558);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
         public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromDegrees(-56.414788);
         public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromDegrees(41.957416);
-        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromDegrees(61.061158);
+        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.960988);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
-        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromDegrees(-41.560697);
-        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromDegrees(35.388460);
+        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(-0.760278);
+        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(0.827085);
 
         public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
 
@@ -170,6 +173,7 @@ public final class Constants {
         public static final double INTAKE_CUBE = 0.5;
         public static final double OUTTAKE_CONE = 0.5;
         public static final double OUTTAKE_CUBE = -.6;
+        public static final double HOLDING_PIECE_VOLTAGE = 11;
 
     }
 
@@ -236,7 +240,7 @@ public final class Constants {
         public static final double P_TRANSLATION_POINT_CONTROLLER = 4;
         public static final double P_THETA_POINT_CONTROLLER = 6;
 
-        public static final double TRANSLATION_TOLERANCE = 0.05;
+        public static final double TRANSLATION_TOLERANCE = 0.02;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
         // Constraint for the motion profiled robot angle controller
@@ -261,7 +265,7 @@ public final class Constants {
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 
-        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.5, 0.5, 0.3);
+        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.7, 0.7, 0.5);
 
         public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
 

@@ -13,8 +13,8 @@ public class AlignToNode extends SequentialCommandGroup {
 
     public AlignToNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Node targetNode) {
         super(
-                new FollowTrajectoryToNode(drivetrain, poseEstimation, targetNode.getNodePose().transformBy(targetNode.getRobotOffset())),
-                new PIDDriveToPoint(drivetrain, poseEstimation, targetNode.getNodePose().transformBy(targetNode.getRobotOffset()))
+                new FollowTrajectoryToNode(drivetrain, poseEstimation, targetNode),
+                new PIDDriveToPoint(drivetrain, poseEstimation, targetNode.getRobotScoringPose())
         );
     }
 }
