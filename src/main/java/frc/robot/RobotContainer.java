@@ -77,7 +77,7 @@ public class RobotContainer {
     public static final LightsTable lights = new LightsTable();
 
     // Movement Command
-    public static Node targetNode = new Node(0);
+    public Node targetNode = new Node(0);
 
     public RobotContainer() {
         autoNodeSelector = new SendableChooser<>();
@@ -157,14 +157,14 @@ public class RobotContainer {
         new JoystickButton(joystickLeft, 4)
                 .whileTrue(
                         new SequentialCommandGroup(
-                                new AutoScore(drivetrain, poseEstimation, () -> RobotContainer.targetNode),
+                                new AutoScore(drivetrain, poseEstimation, () -> this.targetNode),
                                 new RunCommand(drivetrain::setX, drivetrain)
                         )
                 );
 
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
-                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode),
+                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> targetNode),
                         new RunCommand(drivetrain::setX, drivetrain)
                 )
         );
