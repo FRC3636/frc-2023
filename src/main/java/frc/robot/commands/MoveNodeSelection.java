@@ -63,7 +63,7 @@ public class MoveNodeSelection extends InstantCommand {
             final Node newTarget = new Node(nodeType, levelObject, columnObject);
             robot.setTargetNode(newTarget);
 
-            System.out.println("New node selection -> (level %s, %s)".formatted(levelObject, columnObject));
+            System.out.printf("New node selection -> (level %s, %s)\n", levelObject, columnObject);
         });
     }
 
