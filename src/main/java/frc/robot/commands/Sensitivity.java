@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.Map;
+
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -14,58 +16,80 @@ import frc.robot.utils.AllianceUtils;
 
 public class Sensitivity extends CommandBase {
 
-  PoseEstimation poseEstimation;
+    PoseEstimation poseEstimation;
 
-  private final double TELLER_ZONE_TO_ALLIANCE = 13.1;
-  private final double TELLER_ZONE_RANGE = 2.45;
+    private final double TELLER_ZONE_TO_ALLIANCE = 13.1;
+    private final double TELLER_ZONE_RANGE = 2.45;
 
-  private GenericEntry knobSensitivityEnabled = RobotContainer.driveSettingsTab.add("Knob Sensitivity Enabled", true).withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-  private GenericEntry TellerSensitivityEntry = RobotContainer.driveSettingsTab.add("Teller Sensitivity", getTellerSensitivity()).withWidget(BuiltInWidgets.kTextView).getEntry();
-  private GenericEntry TranslationalSensitivityEntry = RobotContainer.driveSettingsTab.add("Translational Sensitivity", ((RobotContainer.joystickLeft.getZ()+1)/2)).withWidget(BuiltInWidgets.kTextView).getEntry();
-  private GenericEntry RotationalSensitivityEntry = RobotContainer.driveSettingsTab.add("Translational Sensitivity", ((RobotContainer.joystickRight.getZ()+1)/2)).withWidget(BuiltInWidgets.kTextView).getEntry();
-  
+    private GenericEntry knobSensitivityEnabled = RobotContainer.driveSettingsTab
+            .add("Knob Sensitivity Enabled", true)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
+    private GenericEntry TellerSensitivityEntry = RobotContainer.driveSettingsTab
+            .add("Teller Sensitivity", getTellerSensitivity())
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
 
-  public Sensitivity(PoseEstimation poseEstimation) {
-    this.poseEstimation = poseEstimation;
-  }
+    private GenericEntry TranslationalSensitivityEntry = RobotContainer.driveSettingsTab
+            .add("Translational Sensitivity", 1)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
 
-  @Override
-  public void execute() {
-      TellerSensitivityEntry.setDouble(getTellerSensitivity());
-      TranslationalSensitivityEntry.setDouble(((RobotContainer.joystickLeft.getZ()+1)/2));
-      RotationalSensitivityEntry.setDouble(((RobotContainer.joystickRight.getZ()+1)/2));
-  }
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    private GenericEntry RotationalSensitivityEntry = RobotContainer.driveSettingsTab
+            .add("Rotational Sensitivity", 1)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
 
-  public double getTellerSensitivity() {
-    if (inTellerZone() && RobotContainer.joystickRight.getTrigger()) {
-      double distanceInTellerZone = Math.min((TELLER_ZONE_RANGE + TELLER_ZONE_TO_ALLIANCE),
-          AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose())) - TELLER_ZONE_TO_ALLIANCE;
+    private GenericEntry TellerSensitivityDecreaseRate = RobotContainer.driveSettingsTab
+            .add("Teller Sensitivity Decrease Rate", 2)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", 0, "max", 5)).getEntry();
 
-      double tellerSensitivity = ((1 / TELLER_ZONE_RANGE) * (Math.pow(distanceInTellerZone, 2))) / TELLER_ZONE_RANGE;
-      return tellerSensitivity;
+    public Sensitivity(PoseEstimation poseEstimation) {
+        this.poseEstimation = poseEstimation;
     }
-    return 1;
-  }
 
-  public double getRotationalSensitivity(){
-    return knobSensitivityEnabled.getBoolean(false) ? ((RobotContainer.joystickRight.getZ()+1)/2) * getTellerSensitivity(): getTellerSensitivity();
-  }
+    @Override
+    public void execute() {
+        TellerSensitivityEntry.setDouble(getTellerSensitivity());
 
-  public double getTranslationalSensitivity(){
-    return knobSensitivityEnabled.getBoolean(false) ? ((RobotContainer.joystickLeft.getZ()+1)/2) * getTellerSensitivity(): getTellerSensitivity();
-  }
-
-  public boolean inTellerZone() {
-    if (AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) >= TELLER_ZONE_TO_ALLIANCE) {
-      return true;
-    } else {
-      return false;
+        if(knobSensitivityEnabled.getBoolean(false)){
+            TranslationalSensitivityEntry.setDouble(((RobotContainer.joystickLeft.getZ() + 1) / 2));
+            RotationalSensitivityEntry.setDouble(((RobotContainer.joystickRight.getZ() + 1) / 2));
+        }
     }
-  }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+
+    public double getTellerSensitivity() {
+        if (inTellerZone() && RobotContainer.joystickRight.getTrigger()) {
+            double distanceInTellerZone = Math.min((TELLER_ZONE_RANGE + TELLER_ZONE_TO_ALLIANCE),
+                    AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose())) - TELLER_ZONE_TO_ALLIANCE;
+
+            double tellerSensitivity = 1
+                    - (0.5 / Math.pow(TELLER_ZONE_RANGE, TellerSensitivityDecreaseRate.getDouble(2))
+                            * (Math.pow(distanceInTellerZone, TellerSensitivityDecreaseRate.getDouble(2))));
+            return tellerSensitivity;
+        }
+        return 1;
+    }
+
+    public double getRotationalSensitivity() {
+        return knobSensitivityEnabled.getBoolean(false)
+                ? RotationalSensitivityEntry.getDouble(1) * getTellerSensitivity()
+                : getTellerSensitivity();
+    }
+
+    public double getTranslationalSensitivity() {
+        return knobSensitivityEnabled.getBoolean(false)
+                ? TranslationalSensitivityEntry.getDouble(1) * getTellerSensitivity()
+                : getTellerSensitivity();
+    }
+
+    public boolean inTellerZone() {
+        if (AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) >= TELLER_ZONE_TO_ALLIANCE) {
+            return true;
+        }
+        return false;
+    }
 }
-
