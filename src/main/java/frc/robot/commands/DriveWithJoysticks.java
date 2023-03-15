@@ -37,18 +37,24 @@ public class DriveWithJoysticks implements Command {
         double sensitivity = RobotContainer.joystickRight.getRawButtonPressed(5)? 0.25: 1;
 
         // Negative because joysticks are inverted
-        double ty = MathUtil.applyDeadband(-translation.getX() * sensitivity, 0.1);
-        double tx = MathUtil.applyDeadband(-translation.getY() * sensitivity, 0.1);
-        double r = MathUtil.applyDeadband(-rotation.getX() * sensitivity, 0.1);
+        double translationx = MathUtil.applyDeadband(-translation.getY() * (translation.getZ() + 1)/2, 0.1);
+        double translationy = MathUtil.applyDeadband(-translation.getX() * (translation.getZ() + 1)/2, 0.1);
+        double r = MathUtil.applyDeadband(-rotation.getX() * (rotation.getZ() + 1)/2, 0.1);
 
-        double vx = tx * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
-        double vy = ty * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
+        boolean withinDeadband = translationx == 0 && translationy == 0 && r == 0;
+
+        double vx = translationx * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
+        double vy = translationy * DriveConstants.MAX_SPEED_METERS_PER_SECOND;
         double omega = r * DriveConstants.MAX_ANGULAR_SPEED;
 
         ChassisSpeeds fieldRelSpeeds = new ChassisSpeeds(vx, vy, omega);
         ChassisSpeeds robotRelSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelSpeeds, poseEstimation.getEstimatedPose().getRotation().minus(AllianceUtils.getFieldOrientationZero().plus(fieldOrientationZeroOffset)));
 
-        drivetrain.drive(robotRelSpeeds);
+        if(!withinDeadband){
+            drivetrain.drive(robotRelSpeeds);
+        }else{
+            drivetrain.setX();
+        }
     }
 
     @Override

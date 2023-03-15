@@ -47,7 +47,10 @@ public final class Constants {
         public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
 
         // Charge Station Constants
-        public static final double CHARGE_STATION_TOLERANCE = Math.toRadians(11);
+        public static final double CHARGE_TIPPING_ANGLE= Math.toRadians(12);
+        public static final double CHARGE_TOLERANCE = Math.toRadians(2.5);
+        public static final double CHARGE_MAX_SPEED = 0.6;
+        public static final double CHARGE_REDUCED_SPEED = 0.32;
 
         // Delay between reading the gyro and using the value used to aproximate exact angle while spinning (0.02 is one loop)
         public static final double GYRO_READ_DELAY = 0.02;
@@ -168,6 +171,7 @@ public final class Constants {
         public static final double INTAKE_CUBE = 0.5;
         public static final double OUTTAKE_CONE = 0.5;
         public static final double OUTTAKE_CUBE = -.6;
+        public static final double HOLDING_PIECE_VOLTAGE = 11;
 
     }
 
