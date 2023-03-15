@@ -11,18 +11,17 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 
 public class PoseEstimation {
-    private PhotonVisionBackend photonVision;
-    private LimelightBackend limelight;
     private SwerveDrivePoseEstimator poseEstimator;
 
-    private GenericEntry usePhotonVisionEntry = RobotContainer.autoTab.add("Use PhotonVision", true).withWidget(BuiltInWidgets.kToggleButton).getEntry();
-    private GenericEntry useLimelightEntry = RobotContainer.autoTab.add("Use Limelight", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+    private VisionBackend[] backends;
+    private GenericEntry[] backendToggles;
 
     private TimeInterpolatableBuffer<Pose2d> poseHistory = TimeInterpolatableBuffer.createBuffer(1.5);
 
@@ -38,30 +37,28 @@ public class PoseEstimation {
             VecBuilder.fill(0, 0, 0) // will be overwritten for each measurement
         );
 
+        backends = new VisionBackend[2];
+        backendToggles = new GenericEntry[2];
+
         try {
-            photonVision = new PhotonVisionBackend();
+            backends[0] = new PhotonVisionBackend("arducam");
+            backendToggles[0] = RobotContainer.autoTab.add("VisionBackend/PV", true).getEntry();
         } catch (Exception e) {
             System.out.println("Failed to initialize PhotonVision");
             e.printStackTrace();
         }
 
-        limelight = new LimelightBackend();
+        backends[1] = new LimelightBackend();
+        backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/LL", true).getEntry();
     }
 
     public void periodic() {
         poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
 
-        if (usePhotonVisionEntry.getBoolean(false)) {
-            try {
-                photonVision.getMeasurement().filter(measurement -> measurement.ambiguity < Constants.VisionConstants.AMBIGUITY_FILTER).ifPresent(this::addVisionMeasurement);
+        for (int i = 0; i < backends.length; i++) {
+            if (backendToggles[i].getBoolean(false)) {
+                backends[i].getMeasurement().ifPresent(this::addVisionMeasurement);
             }
-            catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (useLimelightEntry.getBoolean(false)) {
-            limelight.getMeasurement().ifPresent(this::addVisionMeasurement);
         }
 
         RobotContainer.field.setRobotPose(getEstimatedPose());

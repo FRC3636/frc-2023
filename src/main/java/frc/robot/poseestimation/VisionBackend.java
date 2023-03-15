@@ -14,13 +14,11 @@ public abstract class VisionBackend {
         public double timestamp;
         public Pose3d pose;
         public Matrix<N3, N1> stdDeviation;
-        public double ambiguity;
 
-        public Measurement(double timestamp, Pose3d pose, Matrix<N3, N1> stdDeviation, double ambiguity) {
+        public Measurement(double timestamp, Pose3d pose, Matrix<N3, N1> stdDeviation) {
             this.timestamp = timestamp;
             this.pose = pose;
             this.stdDeviation = stdDeviation;
-            this.ambiguity = ambiguity;
         }
     }
 }
