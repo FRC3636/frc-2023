@@ -6,7 +6,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -50,10 +52,6 @@ public class Wrist {
         return Rotation2d.fromRadians(encoder.getPosition() < Constants.Wrist.LIMIT_SWITCH_OFFSET.getRadians() ? encoder.getPosition() : encoder.getPosition() - Math.PI * 2);
     }
 
-    public void followShoulder() {
-        followShoulderWithVelocity(arm.getShoulderVelocity());
-    }
-
     public void followShoulderWithVelocity(Rotation2d velocity) {
         if(Arm.State.getTarget() == Arm.State.Stowed && Arm.State.getRollerSpeed() == 0) {
             velocity = Rotation2d.fromRadians(velocity.getRadians() + 1);
@@ -66,6 +64,10 @@ public class Wrist {
     }
 
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
+        if(velocity.getRadians() != 0) {
+            Rotation2d minAngle = getWristAngleFromHeight(0.4);
+        }
+
         velocity = Rotation2d.fromRadians(velocity.getRadians() + pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
 
         SmartDashboard.putNumber("Wrist Setpoint", position.getRadians());
@@ -78,33 +80,17 @@ public class Wrist {
         motor.setVoltage(feedforward.calculate(arm.getWristAngle().getRadians(), velocity.getRadians()));
     }
 
-    public double getMinAngle(double height){
-        double intakeLength = Constants.Wrist.JOINT_TO_CORNER_DISTANCE;
-        double intakeAngleOffset = Constants.Wrist.HORIZONTAL_TO_CORNER_ANGLE;
-        double clearance = Constants.Wrist.CLEARANCE_HEIGHT;
-        double angle = -Math.asin((height-clearance)/intakeLength)+intakeAngleOffset;
-//        System.out.println("Math vs Real angle diff(degrees)=" + ((angle-motor.getEncoder().getPosition()))*(360/2/Math.PI));
-        return angle;
-    }
-
     public Rotation2d getSetPosition() {
-        if(
-                arm.getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()
-                        || Arm.State.getTarget().getShoulderAngle().getRadians() < Constants.Wrist.MIN_SHOULDER_ANGLE.getRadians()) {
-            return Rotation2d.fromRadians(Math.max(-0.1, Arm.State.getTarget().getWristAngle().getRadians()));
-        }
-
         return Arm.State.getTarget().getWristAngle();
     }
 
-    public double safeHeight(double armAngle) {
-        double armHeight = Constants.Arm.PIVOT_HEIGHT;
-        double armLength = Constants.Arm.HUMERUS_LENGTH;
-        double height = armHeight - Math.cos(armAngle) * armLength;
-//        System.out.println("Joint To Ground Height(in)-----> " + height);
-        return height;
+    public Rotation2d getWristAngleFromHeight(double height) {
+        double jointHeight = Constants.Arm.PIVOT_HEIGHT - Constants.Arm.HUMERUS_LENGTH * Math.cos(arm.getShoulderAngle().getRadians());
+        if(Math.abs((height - jointHeight) / Constants.Arm.MANIPULATOR_LENGTH) > 1) {
+            return null;
+        }
+        return Rotation2d.fromRadians(Math.asin((height - jointHeight) / Constants.Arm.MANIPULATOR_LENGTH));
     }
-
 
     public boolean isLimitSwitchPressed() {
         return !limitSwitch.get();
@@ -115,7 +101,7 @@ public class Wrist {
         SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(encoder.getPosition()));
         SmartDashboard.putNumber("Wrist Set Point", Arm.State.getTarget().getWristAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
-        SmartDashboard.putNumber("minSafeAngle", (360.0/2.0/Math.PI)*getMinAngle(safeHeight(arm.getShoulderAngle().getDegrees())));
+
         if(isLimitSwitchPressed()) {
             motor.getEncoder().setPosition(getAbsoluteAngle().getRadians());
         }

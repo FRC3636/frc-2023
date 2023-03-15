@@ -74,6 +74,7 @@ public final class Constants {
 
     public static class Arm {
         public static final double HUMERUS_LENGTH = 1.010922;
+        public static final double MANIPULATOR_LENGTH = 0.32;
         public static final double PIVOT_HEIGHT = 1.162025;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
@@ -107,7 +108,7 @@ public final class Constants {
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 
-        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.109670);
+        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.1);
         public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.980396);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.762299);
@@ -128,6 +129,7 @@ public final class Constants {
 
     public static class Wrist {
         public static final int ID = 7;
+        public static final int LIMIT_SWITCH = 0;
 
         public static final double GEAR_RATIO = 1.0 / 75.0;
 
@@ -140,7 +142,8 @@ public final class Constants {
         public static final double KV = 1.4242;
         public static final double KA = 0.052069;
 
-        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(0);
+        public static final Rotation2d STOWED_CUBE_ANGLE = Rotation2d.fromDegrees(40);
+        public static final Rotation2d STOWED_CONE_ANGLE = Rotation2d.fromRadians(0);
         public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.317397);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.655558);
@@ -154,17 +157,12 @@ public final class Constants {
 
         public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
 
-        public static final int LIMIT_SWITCH = 0;
         public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(70);
-        public static final Rotation2d CONE_ANGLE = Rotation2d.fromDegrees(-40);
-        public static final Rotation2d CUBE_ANGLE = Rotation2d.fromDegrees(40);
 
         //Min Angle
         public static final double HORIZONTAL_TO_CORNER_ANGLE = 0.2985176246;
         public static final double JOINT_TO_CORNER_DISTANCE = Units.inchesToMeters(14);
         public static final double CLEARANCE_HEIGHT = 1;
-
-
     }
 
     public static class Rollers {
