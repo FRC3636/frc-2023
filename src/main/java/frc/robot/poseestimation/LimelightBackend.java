@@ -1,7 +1,6 @@
 package frc.robot.poseestimation;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose3d;

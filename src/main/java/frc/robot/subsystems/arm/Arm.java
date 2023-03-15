@@ -14,8 +14,6 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.ArmMoveCommand;
 import frc.robot.utils.Node;
 
-import javax.swing.*;
-
 public class Arm extends SubsystemBase {
 
     private final Shoulder shoulder;

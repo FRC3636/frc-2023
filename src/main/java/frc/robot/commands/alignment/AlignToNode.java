@@ -1,7 +1,6 @@
 package frc.robot.commands.alignment;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.FollowTrajectoryToNode;
 import frc.robot.commands.PIDDriveToPoint;
 import frc.robot.poseestimation.PoseEstimation;
