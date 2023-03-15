@@ -3,25 +3,23 @@ package frc.robot.commands.autonomous;
 import java.util.Set;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.RobotContainer;
 import frc.robot.Constants;
 import frc.robot.subsystems.drivetrain.*;
 
-public class AutoBalance implements Command{
-    
-    int NumOscillation = 0;
-    Rotation2d lastInclineAngle;
-    double lastDistance = 0;
+public class AutoBalance implements Command {
+
+    private int oscillationCount = 0;
+
+    private Translation2d lastAscent;
+
     private final Drivetrain drivetrain;
     //private final PIDController pidController = new PIDController(0, 0, 0);
 
@@ -32,52 +30,52 @@ public class AutoBalance implements Command{
 
     @Override
     public void initialize() {
-        NumOscillation = 0;
-
-        Rotation3d rot = drivetrain.getRotation3d();
-        Translation3d normal = new Translation3d(0, 0, 1).rotateBy(rot);
-        Translation2d inclineDirection = normal.toTranslation2d().rotateBy(drivetrain.getRotation().unaryMinus());
-        lastDistance = inclineDirection.getDistance(new Translation2d(0, 0));
-        lastInclineAngle = inclineDirection.getAngle();
+        oscillationCount = 0;
+        lastAscent = getAscentChassisRelative();
     }
 
     @Override
     public void execute() {
-        Rotation3d rot = drivetrain.getRotation3d();
+        Translation2d ascent = getAscentChassisRelative();
+        Rotation2d incline = new Rotation2d(Math.acos(ascent.getNorm()));
 
-        Translation3d normal = new Translation3d(0, 0, 1).rotateBy(rot);
-        Translation2d inclineDirection = normal.toTranslation2d().rotateBy(drivetrain.getRotation().unaryMinus());
-        
-        double distance = inclineDirection.getDistance(new Translation2d(0, 0));
-        if (distance < Math.sin(Constants.DriveConstants.CHARGE_TOLERANCE)/* || (distance - lastDistance) < -0.01*/) {
+        if (incline.getRadians() <= Constants.DriveConstants.CHARGE_TOLERANCE.getRadians()) {
             drivetrain.setX();
-            //lastDistance = distance;
             return;
         }
-        //lastDistance = distance;
 
-        Rotation2d inclineAngle = inclineDirection.getAngle();
-
-        if (inclineAngle.minus(lastInclineAngle).getRadians() > Math.PI/2) {
-            NumOscillation ++;
+        // for some reason there's no Translation2d::dot method
+        if (ascent.getX() * lastAscent.getX() + ascent.getY() * ascent.getY() < 0) {
+            oscillationCount++;
         }
-        lastInclineAngle = inclineAngle;
+        lastAscent = ascent;
 
-        SmartDashboard.putNumber("InclineAngle: ", inclineAngle.getDegrees());
+        SmartDashboard.putNumber("Incline", incline.getDegrees());
 
-        //double driveSpeed = pidController.calculate(inclineDirection.getDistance(new Translation2d(0, 0)), 0);
-        double driveSpeed = MathUtil.clamp(distance/Math.sin(Math.toRadians(15)), -1, 1 );
-        if (distance < Math.sin(Constants.DriveConstants.CHARGE_TIPPING_ANGLE)) {
-             driveSpeed *= Constants.DriveConstants.CHARGE_REDUCED_SPEED;
+        double driveSpeed = calculateDriveSpeed(incline, oscillationCount);
+        Translation2d driveVelocity = ascent.div(ascent.getNorm()).times(driveSpeed);
+
+        drivetrain.drive(new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), 0));
+    }
+    private Translation2d getAscentChassisRelative() {
+        Rotation3d rot = drivetrain.getRotation3d();
+        Translation3d normal = new Translation3d(0, 0, 1).rotateBy(rot);
+
+        return normal.toTranslation2d().rotateBy(rot.toRotation2d().unaryMinus());
+    }
+
+    private static double calculateDriveSpeed(Rotation2d incline, int oscillationCount) {
+        double driveSpeed = MathUtil.clamp(incline.getRadians() / Rotation2d.fromDegrees(15).getRadians(), -1, 1);
+
+        if (incline.getRadians() < Constants.DriveConstants.CHARGE_TIPPING_ANGLE.getRadians()) {
+            driveSpeed *= Constants.DriveConstants.CHARGE_REDUCED_SPEED;
         } else {
             driveSpeed *= Constants.DriveConstants.CHARGE_MAX_SPEED;
         }
-        driveSpeed /= NumOscillation + 1; // dampen the robot's oscillations by slowing down after oscillating
-        Translation2d driveVelocity = new Translation2d(driveSpeed, inclineAngle);
 
-        ChassisSpeeds speeds = new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), 0);
+        driveSpeed /= oscillationCount + 1; // dampen the robot's oscillations by slowing down after oscillating
 
-        drivetrain.drive(speeds);
+        return driveSpeed;
     }
 
     @Override

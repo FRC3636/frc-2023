@@ -47,8 +47,8 @@ public final class Constants {
         public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
 
         // Charge Station Constants
-        public static final double CHARGE_TIPPING_ANGLE= Math.toRadians(12);
-        public static final double CHARGE_TOLERANCE = Math.toRadians(2.5);
+        public static final Rotation2d CHARGE_TIPPING_ANGLE= Rotation2d.fromDegrees(12);
+        public static final Rotation2d CHARGE_TOLERANCE = Rotation2d.fromDegrees(2.5);
         public static final double CHARGE_MAX_SPEED = 0.6;
         public static final double CHARGE_REDUCED_SPEED = 0.32;
 
