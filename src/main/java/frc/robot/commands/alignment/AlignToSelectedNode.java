@@ -1,7 +1,6 @@
 package frc.robot.commands.alignment;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.commands.alignment.AlignToNode;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.Node;

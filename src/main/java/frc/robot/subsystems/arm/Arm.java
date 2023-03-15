@@ -251,6 +251,18 @@ public class Arm extends SubsystemBase {
             return gamePiece == GamePiece.Cone ? rollerState.coneSpeed : rollerState.cubeSpeed;
         }
 
+        public static Node.Level closestLevel(){
+            switch (State.getTarget()) {
+                case Teller:
+                case High:
+                    return Node.Level.High;
+                case Mid:
+                    return Node.Level.Mid;
+                default:
+                    return Node.Level.Low;
+            }
+        }
+
         public enum GamePiece {
             Cone,
             Cube;

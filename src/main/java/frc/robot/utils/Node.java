@@ -91,6 +91,22 @@ public class Node {
         return getNodePose().transformBy(getRobotOffset());
     }
 
+    public static Node getClosestNode(Pose2d robotPose, Level armLevel, Arm.State.GamePiece currentPiece){
+        if(currentPiece == Arm.State.GamePiece.Cube){
+            return new Node(currentPiece, armLevel, Column.Cube);
+        }else{
+            Node leftNode = new Node(currentPiece, armLevel, Column.LeftCone);
+            Node rightNode = new Node(currentPiece, armLevel, Column.RightCone);
+            double leftDistance = robotPose.getTranslation().getDistance(leftNode.getRobotScoringPose().getTranslation());
+            double rightDistance = robotPose.getTranslation().getDistance(leftNode.getRobotScoringPose().getTranslation());
+            if (leftDistance < rightDistance){
+                return leftNode;
+            }else{
+                return rightNode;
+            }
+        }
+    }
+
     public enum Level {
         High,
         Mid,
