@@ -119,8 +119,8 @@ public class Arm extends SubsystemBase {
                 Constants.Wrist.MID_CUBE_ANGLE),
         Low(Constants.Shoulder.INTAKE_CONE_ANGLE, Constants.Shoulder.LOW_CUBE_ANGLE, Constants.Wrist.INTAKE_CONE_ANGLE,
                 Constants.Wrist.LOW_CUBE_ANGLE),
-        Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.STOWED_ANGLE,
-                Constants.Wrist.CUBE_ANGLE);
+        Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.STOWED_CUBE_ANGLE,
+                Constants.Wrist.STOWED_CUBE_ANGLE);
 
         private final Rotation2d shoulderCubeAngle;
         private final Rotation2d shoulderConeAngle;
@@ -142,14 +142,6 @@ public class Arm extends SubsystemBase {
             this.shoulderConeAngle = shoulderConeAngle;
             this.wristConeAngle = wristConeAngle;
             this.wristCubeAngle = wristCubeAngle;
-        }
-
-        State(Rotation2d shoulderAngle) {
-            this.shoulderCubeAngle = shoulderAngle;
-            this.shoulderConeAngle = shoulderAngle;
-
-            this.wristConeAngle = defaultWristAngle(GamePiece.Cone);
-            this.wristCubeAngle = defaultWristAngle(GamePiece.Cube);
         }
 
         public static void moveShoulderOffset(Rotation2d difference) {
@@ -199,10 +191,6 @@ public class Arm extends SubsystemBase {
             }
             return (gamePiece == GamePiece.Cone) ? wristConeAngle.plus(wristConeOffset)
                     : wristCubeAngle.plus(wristCubeOffset);
-        }
-
-        public Rotation2d defaultWristAngle(GamePiece gamePiece) {
-            return (gamePiece == GamePiece.Cone) ? Constants.Wrist.CONE_ANGLE : Constants.Wrist.CUBE_ANGLE;
         }
 
         public static State getTarget() {

@@ -14,7 +14,7 @@ public class SIMWrist extends Wrist{
             75.0,
             0.043,
             Constants.Wrist.HORIZONTAL_TO_CORNER_ANGLE,
-            Constants.Wrist.CONE_ANGLE.getRadians(),
+            -Math.PI / 2,
             Constants.Wrist.LIMIT_SWITCH_OFFSET.getRadians(),
             2.827,
             true
@@ -32,19 +32,26 @@ public class SIMWrist extends Wrist{
 
     @Override
     public void followShoulderWithVelocity(Rotation2d velocity) {
-        super.followShoulderWithVelocity(new Rotation2d());
+        super.followShoulderWithVelocity(velocity.times(0.001).unaryMinus());
     }
 
     @Override
     public boolean isLimitSwitchPressed() {
-        return wristSim.hasHitUpperLimit();
+        return false;
     }
 
     @Override
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
+        if(velocity.getRadians() != 0) {
+            Rotation2d minAngle = getWristAngleFromHeight(0.4);
+            if(minAngle != null) {
+                position = Rotation2d.fromRadians(Math.max(position.getRadians(), minAngle.getRadians()));
+            }
+        }
+
         velocity = Rotation2d.fromRadians(velocity.getRadians() + pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
 
-        SmartDashboard.putNumber("Wrist Setpoint", position.getRadians());
+        SmartDashboard.putNumber("Wrist Setpoint", position.getDegrees());
 
         if (isLimitSwitchPressed() && velocity.getRadians() >= 0) {
             wristSim.setInputVoltage(0);
