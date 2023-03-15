@@ -14,6 +14,8 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.ArmMoveCommand;
 import frc.robot.utils.Node;
 
+import javax.swing.*;
+
 public class Arm extends SubsystemBase {
 
     private final Shoulder shoulder;
@@ -249,6 +251,18 @@ public class Arm extends SubsystemBase {
 
         public static double getRollerSpeed() {
             return gamePiece == GamePiece.Cone ? rollerState.coneSpeed : rollerState.cubeSpeed;
+        }
+
+        public Node.Level closestLevel(){
+            switch (State.getTarget()) {
+                case Teller:
+                case High:
+                    return Node.Level.High;
+                case Mid:
+                    return Node.Level.Mid;
+                default:
+                    return Node.Level.Low;
+            }
         }
 
         public enum GamePiece {
