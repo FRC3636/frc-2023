@@ -18,32 +18,43 @@ public class Sensitivity extends CommandBase {
 
     PoseEstimation poseEstimation;
 
-    private final double TELLER_ZONE_TO_ALLIANCE = 13.1;
+    private final double TELLER_ZONE_TO_ALLIANCE = 13.15;
     private final double TELLER_ZONE_RANGE = 2.45;
 
-    private GenericEntry knobSensitivityEnabled = RobotContainer.driveSettingsTab
-            .add("Knob Sensitivity Enabled", true)
-            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    private GenericEntry knobSensitivityEnabled;
 
-    private GenericEntry TellerSensitivityEntry = RobotContainer.driveSettingsTab
-            .add("Teller Sensitivity", getTellerSensitivity())
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    private GenericEntry TellerSensitivityEntry;
 
-    private GenericEntry TranslationalSensitivityEntry = RobotContainer.driveSettingsTab
-            .add("Translational Sensitivity", 1)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    private GenericEntry TranslationalSensitivityEntry; 
 
-    private GenericEntry RotationalSensitivityEntry = RobotContainer.driveSettingsTab
-            .add("Rotational Sensitivity", 1)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    private GenericEntry RotationalSensitivityEntry;
 
-    private GenericEntry TellerSensitivityDecreaseRate = RobotContainer.driveSettingsTab
-            .add("Teller Sensitivity Decrease Rate", 2)
-            .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(Map.of("min", 0, "max", 5)).getEntry();
+    private GenericEntry TellerSensitivityDecreaseRate;
 
     public Sensitivity(PoseEstimation poseEstimation) {
         this.poseEstimation = poseEstimation;
+
+        knobSensitivityEnabled = RobotContainer.driveSettingsTab
+        .add("Knob Sensitivity Enabled", true)
+        .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+
+        TellerSensitivityEntry = RobotContainer.driveSettingsTab
+        .add("Teller Sensitivity", getTellerSensitivity())
+        .withWidget(BuiltInWidgets.kTextView).getEntry();
+
+
+        TranslationalSensitivityEntry = RobotContainer.driveSettingsTab
+        .add("Translational Sensitivity", 1)
+        .withWidget(BuiltInWidgets.kTextView).getEntry();
+
+        RotationalSensitivityEntry = RobotContainer.driveSettingsTab
+        .add("Rotational Sensitivity", 1)
+        .withWidget(BuiltInWidgets.kTextView).getEntry();
+
+        TellerSensitivityDecreaseRate  = RobotContainer.driveSettingsTab
+        .add("Teller Sensitivity Decrease Rate", 2)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 5)).getEntry();
     }
 
     @Override
@@ -91,5 +102,6 @@ public class Sensitivity extends CommandBase {
             return true;
         }
         return false;
+        
     }
 }
