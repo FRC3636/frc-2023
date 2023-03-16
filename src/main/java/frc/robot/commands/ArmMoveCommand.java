@@ -21,9 +21,9 @@ public class ArmMoveCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        SmartDashboard.putNumber("Shoulder Goal Position", Arm.State.getTarget().getShoulderAngle().getRadians());
+        SmartDashboard.putNumber("Shoulder Goal Position", arm.getTargetShoulderAngle().getRadians());
 
-        profile = generateProfile(Arm.State.getTarget(), arm);
+        profile = generateProfile(arm.getTarget(), arm);
         SmartDashboard.putNumber("Trajectory Time", profile.totalTime());
 
         timer.reset();
@@ -32,7 +32,7 @@ public class ArmMoveCommand extends CommandBase {
 
     public static TrapezoidProfile generateProfile(Arm.State goal, Arm arm){
         TrapezoidProfile profile = new TrapezoidProfile(Constants.Shoulder.TRAPEZOID_PROFILE_CONSTRAINTS, 
-        new TrapezoidProfile.State(goal.getShoulderAngle().getRadians(), 0),
+        new TrapezoidProfile.State(goal.getShoulderAngleFor(arm.getGamePiece()).getRadians(), 0),
         new TrapezoidProfile.State(arm.getShoulderAngle().getRadians(), arm.getShoulderVelocity().getRadians()));
         return profile;
     }

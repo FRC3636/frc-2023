@@ -15,6 +15,6 @@ public class ArmHoldCommand extends CommandBase {
 
     @Override
     public void execute() {
-        arm.runWithSetpoint(Arm.State.getTarget().getShoulderAngle(), new Rotation2d());
+        arm.runWithSetpoint(arm.getTargetShoulderAngle(), new Rotation2d());
     }
 }

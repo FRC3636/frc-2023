@@ -39,7 +39,7 @@ public class AndReturnToStart implements Command {
     public void initialize() {
         startingPose = poseEstimation.getEstimatedPose();
 
-        startingArmState = Arm.State.getTarget();
+        startingArmState = arm.getTarget();
 
         innerEnded = false;
 
@@ -69,10 +69,10 @@ public class AndReturnToStart implements Command {
             returnToStart.execute();
             if(
                     timer.get() > returnToStart.trajectory.getTotalTimeSeconds() - Constants.Arm.MAX_TIME &&
-                    Arm.State.getTarget() != startingArmState &&
+                    arm.getTarget() != startingArmState &&
                     AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) > Constants.Arm.SAFE_RAISING_DISTANCE - 0.5
             ) {
-                Arm.State.setTarget(startingArmState);
+                arm.setTarget(startingArmState);
             }
         }
     }

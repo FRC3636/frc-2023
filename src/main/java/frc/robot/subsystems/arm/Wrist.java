@@ -6,9 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -53,7 +51,7 @@ public class Wrist {
     }
 
     public void followShoulderWithVelocity(Rotation2d velocity) {
-        if(Arm.State.getTarget() == Arm.State.Stowed && Arm.State.getRollerSpeed() == 0) {
+        if(arm.getTarget() == Arm.State.Stowed && arm.getRollerState() == Rollers.State.Off) {
             velocity = Rotation2d.fromRadians(velocity.getRadians() + 1);
         }
         runWithSetpoint(getSetPosition(), velocity);
@@ -81,7 +79,7 @@ public class Wrist {
     }
 
     public Rotation2d getSetPosition() {
-        return Arm.State.getTarget().getWristAngle();
+        return arm.getTargetWristAngle();
     }
 
     public Rotation2d getWristAngleFromHeight(double height) {
@@ -99,7 +97,7 @@ public class Wrist {
     public void periodic() {
         SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(encoder.getPosition()));
-        SmartDashboard.putNumber("Wrist Set Point", Arm.State.getTarget().getWristAngle().getDegrees());
+        SmartDashboard.putNumber("Wrist Set Point", arm.getTargetWristAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
 
         if(isLimitSwitchPressed()) {

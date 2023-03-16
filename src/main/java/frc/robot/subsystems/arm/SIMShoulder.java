@@ -20,9 +20,7 @@ public class SIMShoulder extends Shoulder {
             true
     );
 
-    public SIMShoulder(Arm arm) {
-        super(arm);
-    }
+    public SIMShoulder() {}
 
     @Override
     public Rotation2d getAngle() {

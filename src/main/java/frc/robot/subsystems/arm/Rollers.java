@@ -2,13 +2,15 @@ package frc.robot.subsystems.arm;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
+import frc.robot.utils.GamePiece;
 
 public class Rollers {
+    private Rollers.State rollerState = Rollers.State.Off;
+    private GamePiece gamePiece = GamePiece.Cone;
 
     private final CANSparkMax motor = new CANSparkMax(Constants.Rollers.ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+
     public Rollers() {
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor.restoreFactoryDefaults();
@@ -17,8 +19,20 @@ public class Rollers {
         //RobotContainer.armTab.addNumber("Roller Compensation Voltage", motor::getVoltageCompensationNominalVoltage).withWidget(BuiltInWidgets.kGraph);
     }
 
+    public void setRollerState(State rollerState) {
+        this.rollerState = rollerState;
+    }
+
+    public void setGamePiece(GamePiece gamePiece) {
+        this.gamePiece = gamePiece;
+    }
+
+    public double getRollerSpeed() {
+        return gamePiece == GamePiece.Cone ? rollerState.coneSpeed : rollerState.cubeSpeed;
+    }
+
     public void periodic() {
-        motor.set(Arm.State.getRollerSpeed());
+        motor.set(getRollerSpeed());
     }
 
     public boolean isHoldingGamePiece() {

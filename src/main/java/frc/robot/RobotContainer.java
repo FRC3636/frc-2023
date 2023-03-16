@@ -7,9 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -32,6 +30,7 @@ import frc.robot.commands.autonomous.AutoScore;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.LightsTable;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.utils.GamePiece;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
@@ -151,13 +150,13 @@ public class RobotContainer {
                                 // new RunCommand(drivetrain::setX, drivetrain)
                                 ),
                                 new InstantCommand(() -> {
-                                    Arm.State.setTargetFromNode(this.targetNode);
+                                    arm.setTargetFromNode(this.targetNode);
                                 })));
 
         new JoystickButton(joystickLeft, 4)
                 .whileTrue(
                         new SequentialCommandGroup(
-                                new AutoScore(drivetrain, poseEstimation, () -> this.targetNode),
+                                new AutoScore(drivetrain, arm, poseEstimation, () -> this.targetNode),
                                 new RunCommand(drivetrain::setX, drivetrain)
                         )
                 );
@@ -176,62 +175,62 @@ public class RobotContainer {
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)
                 .onTrue(new InstantCommand(() -> {
                         if (!joystickRight.getRawButton(1)) {
-                                Arm.State.setRollerState(Rollers.State.Intake);
+                                arm.setRollerState(Rollers.State.Intake);
                         }
                 }))
                 .onFalse(new InstantCommand(() -> {
                         if (!joystickRight.getRawButton(1)) {
-                                Arm.State.setRollerState(Rollers.State.Off);
+                                arm.setRollerState(Rollers.State.Off);
                         }
                 }));
 
         new JoystickButton(joystickRight, 1)
                 .onTrue(new InstantCommand(() -> {
-                    Arm.State.setRollerState(Rollers.State.Outtake);
+                    arm.setRollerState(Rollers.State.Outtake);
                 }))
                 .onFalse(new InstantCommand(() -> {
                         if (controller.getRawButton(XboxController.Button.kRightBumper.value)) {
-                                Arm.State.setRollerState(Rollers.State.Intake);
+                                arm.setRollerState(Rollers.State.Intake);
                         } else {
-                                Arm.State.setRollerState(Rollers.State.Off);
+                                arm.setRollerState(Rollers.State.Off);
                         }
                 }));
 
         // Arm Control
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
-                .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cube)));
+                .whileTrue(new InstantCommand(() -> arm.setGamePiece(GamePiece.Cube)));
         new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
-                .whileTrue(new InstantCommand(() -> Arm.State.setGamePiece(Arm.State.GamePiece.Cone)));
+                .whileTrue(new InstantCommand(() -> arm.setGamePiece(GamePiece.Cone)));
 
         new JoystickButton(controller, XboxController.Button.kRightStick.value)
-                .onTrue(new InstantCommand(Arm.State::resetOffset));
+                .onTrue(new InstantCommand(arm::resetOffset));
 
         new Trigger(() -> controller.getPOV() == 0)
-                .onTrue(new InstantCommand(() -> Arm.State.moveShoulderOffset(Rotation2d.fromDegrees(2))));
+                .onTrue(new InstantCommand(() -> arm.moveShoulderOffset(Rotation2d.fromDegrees(2))));
         new Trigger(() -> controller.getPOV() == 180)
-                .onTrue(new InstantCommand(() -> Arm.State.moveShoulderOffset(Rotation2d.fromDegrees(-2))));
+                .onTrue(new InstantCommand(() -> arm.moveShoulderOffset(Rotation2d.fromDegrees(-2))));
         new Trigger(() -> controller.getPOV() == 90)
-                .onTrue(new InstantCommand(() -> Arm.State.moveWristOffset(Rotation2d.fromDegrees(2))));
+                .onTrue(new InstantCommand(() -> arm.moveWristOffset(Rotation2d.fromDegrees(2))));
         new Trigger(() -> controller.getPOV() == 270)
-                .onTrue(new InstantCommand(() -> Arm.State.moveWristOffset(Rotation2d.fromDegrees(-2))));
+                .onTrue(new InstantCommand(() -> arm.moveWristOffset(Rotation2d.fromDegrees(-2))));
 
         new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {
-            Arm.State.setTarget(Arm.State.Stowed);
+            arm.setTarget(Arm.State.Stowed);
         }));
         new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {
-            Arm.State.setTarget(Arm.State.Low);
+            arm.setTarget(Arm.State.Low);
         }));
         new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {
-            Arm.State.setTarget(Arm.State.Mid);
+            arm.setTarget(Arm.State.Mid);
         }));
         new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {
-            Arm.State.setTarget(Arm.State.High);
+            arm.setTarget(Arm.State.High);
         }));
         new JoystickButton(controller, XboxController.Button.kStart.value).onTrue(new InstantCommand(() -> {
-            Arm.State.setTarget(Arm.State.Slide);
+            arm.setTarget(Arm.State.Slide);
         }));
         new JoystickButton(controller, XboxController.Button.kBack.value).onTrue(new InstantCommand(() -> {
-            Arm.State.setTarget(Arm.State.Teller);
+            arm.setTarget(Arm.State.Teller);
         }));
 
         // Node Selector

@@ -33,14 +33,14 @@ public class AutoCommand {
                     RobotContainer.drivetrain,
                     RobotContainer.poseEstimation,
                     RobotContainer.arm,
-                    new AutoScore(RobotContainer.drivetrain, RobotContainer.poseEstimation, () -> RobotContainer.autoNodeSelector.getSelected())
+                    new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> RobotContainer.autoNodeSelector.getSelected())
             ),
             "intake", new InstantCommand(() -> {
-                Arm.State.setRollerState(Rollers.State.Intake);
+                RobotContainer.arm.setRollerState(Rollers.State.Intake);
             }),
             "stow", new InstantCommand(() -> {
-                Arm.State.setRollerState(Rollers.State.Off);
-                Arm.State.setTarget(Arm.State.Stowed);
+                RobotContainer.arm.setRollerState(Rollers.State.Off);
+                RobotContainer.arm.setTarget(Arm.State.Stowed);
             }),
             "balance", new SequentialCommandGroup(
                     new FollowTrajectoryToPoint(

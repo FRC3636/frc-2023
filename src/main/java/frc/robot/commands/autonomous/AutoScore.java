@@ -14,13 +14,13 @@ import java.util.function.Supplier;
 
 //Move to a node, position the arm and outtake the current game piece
 public class AutoScore extends SequentialCommandGroup {
-    public AutoScore(Drivetrain drivetrain, PoseEstimation poseEstimation, Supplier<Node> targetNode){
+    public AutoScore(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, Supplier<Node> targetNode) {
         super(
-                new InstantCommand(() -> Arm.State.setTargetFromNode(targetNode.get())),
+                new InstantCommand(() -> arm.setTargetFromNode(targetNode.get())),
                 new AlignToSelectedNode(drivetrain, poseEstimation, targetNode),
-                new InstantCommand(() -> Arm.State.setRollerState(Rollers.State.Outtake)),
+                new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake)),
                 new WaitCommand(0.5),
-                new InstantCommand(() -> Arm.State.setRollerState(Rollers.State.Off))
+                new InstantCommand(() -> arm.setRollerState(Rollers.State.Off))
         );
     }
 }

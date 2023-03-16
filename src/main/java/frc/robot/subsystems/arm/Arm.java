@@ -12,9 +12,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmMoveCommand;
+import frc.robot.utils.GamePiece;
 import frc.robot.utils.Node;
 
 public class Arm extends SubsystemBase {
+
+    private State target = State.Stowed;
+    private GamePiece gamePiece = GamePiece.Cube;
+    private Rollers.State rollerState = Rollers.State.Off;
 
     private final Shoulder shoulder;
     private final Wrist wrist;
@@ -33,7 +38,7 @@ public class Arm extends SubsystemBase {
             .append(new MechanismLigament2d("set manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
 
     public Arm() {
-        shoulder = (RobotBase.isSimulation()) ? new SIMShoulder(this) : new Shoulder(this);
+        shoulder = (RobotBase.isSimulation()) ? new SIMShoulder() : new Shoulder();
         wrist = (RobotBase.isSimulation()) ? new SIMWrist(this) : new Wrist(this);
         rollers = new Rollers();
 
@@ -53,9 +58,9 @@ public class Arm extends SubsystemBase {
         humerus.setAngle(getShoulderAngle().minus(Rotation2d.fromDegrees(90)));
         manipulator.setAngle(wrist.getAngle().plus(Rotation2d.fromDegrees(90)));
 
-        setHumerus.setAngle(State.getTarget().getShoulderAngle().minus(Rotation2d.fromDegrees(90)));
-        setManipulator.setAngle(State.target.getWristAngle().plus(Rotation2d.fromDegrees(90))
-                .minus(State.getTarget().getShoulderAngle()));
+        setHumerus.setAngle(getTargetShoulderAngle().minus(Rotation2d.fromDegrees(90)));
+        setManipulator.setAngle(getTargetWristAngle().plus(Rotation2d.fromDegrees(90))
+                .minus(getTargetShoulderAngle()));
     }
 
     public double[] getArm3dPose() {
@@ -108,6 +113,95 @@ public class Arm extends SubsystemBase {
         return getShoulderAngle().plus(wrist.getAngle());
     }
 
+    public void moveShoulderOffset(Rotation2d difference) {
+        switch (gamePiece) {
+            case Cone:
+                target.shoulderConeOffset = Rotation2d
+                        .fromRadians(target.shoulderConeOffset.getRadians() + difference.getRadians());
+                break;
+            case Cube:
+                target.shoulderCubeOffset = Rotation2d
+                        .fromRadians(target.shoulderCubeOffset.getRadians() + difference.getRadians());
+        }
+    }
+
+    public void moveWristOffset(Rotation2d difference) {
+        switch (gamePiece) {
+            case Cone:
+                target.wristConeOffset = Rotation2d
+                        .fromRadians(target.wristConeOffset.getRadians() + difference.getRadians());
+                break;
+            case Cube:
+                target.wristCubeOffset = Rotation2d
+                        .fromRadians(target.wristCubeOffset.getRadians() + difference.getRadians());
+        }
+    }
+
+    public void resetOffset() {
+        switch (gamePiece) {
+            case Cone:
+                target.wristConeOffset = new Rotation2d();
+                target.shoulderConeOffset = new Rotation2d();
+                break;
+            case Cube:
+                target.wristCubeOffset = new Rotation2d();
+                target.shoulderCubeOffset = new Rotation2d();
+        }
+    }
+
+    public State getTarget() {
+        return target;
+    }
+
+    public Rotation2d getTargetWristAngle() {
+        return target.getWristAngleFor(this, gamePiece);
+    }
+
+    public Rotation2d getTargetShoulderAngle() {
+        return target.getShoulderAngleFor(this.gamePiece);
+    }
+
+    public void setTargetFromNode(Node node) {
+        switch (node.getLevel()) {
+            case Low:
+                this.target = State.Low;
+                new ArmMoveCommand(this).schedule();
+                break;
+            case Mid:
+                target = State.Mid;
+                this.setGamePiece(node.getNodeType());
+                break;
+            case High:
+                target = State.High;
+                this.setGamePiece(node.getNodeType());
+        }
+    }
+
+    public void setTarget(State target) {
+        this.target = target;
+        new ArmMoveCommand(this).schedule();
+    }
+
+    public GamePiece getGamePiece() {
+        return gamePiece;
+    }
+
+    public void setGamePiece(GamePiece gamePiece) {
+        this.gamePiece = gamePiece;
+        this.rollers.setGamePiece(gamePiece);
+        new ArmMoveCommand(this).schedule();
+    }
+
+    public void setRollerState(Rollers.State state) {
+        this.rollerState = state;
+        this.rollers.setRollerState(state);
+        new ArmMoveCommand(this).schedule();
+    }
+
+    public Rollers.State getRollerState() {
+        return this.rollerState;
+    }
+
     public enum State {
         Teller(Constants.Shoulder.TELLER_CONE_ANGLE, Constants.Shoulder.TELLER_CUBE_ANGLE,
                 Constants.Wrist.TELLER_CONE_ANGLE, Constants.Wrist.TELLER_CUBE_ANGLE),
@@ -132,86 +226,12 @@ public class Arm extends SubsystemBase {
         private Rotation2d wristConeOffset = new Rotation2d();
         private Rotation2d wristCubeOffset = new Rotation2d();
 
-        private static State target = State.Stowed;
-        private static GamePiece gamePiece = GamePiece.Cube;
-        private static Rollers.State rollerState = Rollers.State.Off;
-
         State(Rotation2d shoulderConeAngle, Rotation2d shoulderCubeAngle, Rotation2d wristConeAngle,
                 Rotation2d wristCubeAngle) {
             this.shoulderCubeAngle = shoulderCubeAngle;
             this.shoulderConeAngle = shoulderConeAngle;
             this.wristConeAngle = wristConeAngle;
             this.wristCubeAngle = wristCubeAngle;
-        }
-
-        public static void moveShoulderOffset(Rotation2d difference) {
-            switch (gamePiece) {
-                case Cone:
-                    State.target.shoulderConeOffset = Rotation2d
-                            .fromRadians(State.target.shoulderConeOffset.getRadians() + difference.getRadians());
-                    break;
-                case Cube:
-                    State.target.shoulderCubeOffset = Rotation2d
-                            .fromRadians(State.target.shoulderCubeOffset.getRadians() + difference.getRadians());
-            }
-        }
-
-        public static void moveWristOffset(Rotation2d difference) {
-            switch (gamePiece) {
-                case Cone:
-                    State.target.wristConeOffset = Rotation2d
-                            .fromRadians(State.target.wristConeOffset.getRadians() + difference.getRadians());
-                    break;
-                case Cube:
-                    State.target.wristCubeOffset = Rotation2d
-                            .fromRadians(State.target.wristCubeOffset.getRadians() + difference.getRadians());
-            }
-        }
-
-        public static void resetOffset() {
-            switch (gamePiece) {
-                case Cone:
-                    State.target.wristConeOffset = new Rotation2d();
-                    State.target.shoulderConeOffset = new Rotation2d();
-                    break;
-                case Cube:
-                    State.target.wristCubeOffset = new Rotation2d();
-                    State.target.shoulderCubeOffset = new Rotation2d();
-            }
-        }
-
-        public Rotation2d getShoulderAngle() {
-            return (gamePiece == GamePiece.Cone) ? shoulderConeAngle.plus(shoulderConeOffset)
-                    : shoulderCubeAngle.plus(shoulderCubeOffset);
-        }
-
-        public Rotation2d getWristAngle() {
-            if (this == State.Stowed && rollerState == Rollers.State.Off) {
-                return Constants.Wrist.LIMIT_SWITCH_OFFSET;
-            }
-            return (gamePiece == GamePiece.Cone) ? wristConeAngle.plus(wristConeOffset)
-                    : wristCubeAngle.plus(wristCubeOffset);
-        }
-
-        public static State getTarget() {
-            return target;
-        }
-
-        public static void setTargetFromNode(Node node) {
-            switch (node.getLevel()) {
-                case Low:
-                    State.target = Low;
-                    break;
-                case Mid:
-                    State.target = Mid;
-                    State.gamePiece = node.getNodeType();
-                    break;
-                case High:
-                    State.target = High;
-                    State.gamePiece = node.getNodeType();
-            }
-
-            new ArmMoveCommand(RobotContainer.arm).schedule();
         }
 
         public static State getTargetFromNode(Node node) {
@@ -227,42 +247,17 @@ public class Arm extends SubsystemBase {
             }
         }
 
-        public static void setTarget(State target) {
-            State.target = target;
-            new ArmMoveCommand(RobotContainer.arm).schedule();
+        public Rotation2d getShoulderAngleFor(GamePiece gamePiece) {
+            return (gamePiece == GamePiece.Cone) ? this.shoulderConeAngle.plus(this.shoulderConeOffset)
+                    : this.shoulderCubeAngle.plus(this.shoulderCubeOffset);
         }
 
-        public static GamePiece getGamePiece() {
-            return gamePiece;
-        }
-
-        public static void setGamePiece(GamePiece gamePiece) {
-            State.gamePiece = gamePiece;
-            new ArmMoveCommand(RobotContainer.arm).schedule();
-        }
-
-        public static void setRollerState(Rollers.State state) {
-            State.rollerState = state;
-//            RobotContainer.lights.setRequestMode(state == Rollers.State.Intake);
-            new ArmMoveCommand(RobotContainer.arm).schedule();
-        }
-
-        public static double getRollerSpeed() {
-            return gamePiece == GamePiece.Cone ? rollerState.coneSpeed : rollerState.cubeSpeed;
-        }
-
-        public enum GamePiece {
-            Cone,
-            Cube;
-
-            public static GamePiece fromNodeId(final int nodeId) {
-                return nodeId % 3 == 1 ? Arm.State.GamePiece.Cube : Arm.State.GamePiece.Cone;
+        public Rotation2d getWristAngleFor(Arm arm, GamePiece gamePiece) {
+            if (this == Stowed && arm.rollerState == Rollers.State.Off) {
+                return Constants.Wrist.LIMIT_SWITCH_OFFSET;
             }
-
-            public static GamePiece fromLevelAndColumn(final int level, final int column) {
-                final int nodeId = level * 3 + column;
-                return fromNodeId(nodeId);
-            }
+            return (gamePiece == GamePiece.Cone) ? this.wristConeAngle.plus(this.wristConeOffset)
+                    : this.wristCubeAngle.plus(this.wristCubeOffset);
         }
 
         public static double[] getPresets(State value) {
