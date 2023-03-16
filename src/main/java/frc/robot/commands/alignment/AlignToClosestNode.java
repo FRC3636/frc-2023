@@ -6,8 +6,8 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.Node;
 
-public class AlignToClosestNode extends AlignToSelectedNode{
-    public AlignToClosestNode(Drivetrain drivetrain, PoseEstimation poseEstimation){
-        super(drivetrain, poseEstimation, () -> Node.getClosestNode(RobotContainer.poseEstimation.getEstimatedPose(), Arm.State.closestLevel(), Arm.State.getGamePiece()));
+public class AlignToClosestNode extends AlignToSelectedNode {
+    public AlignToClosestNode(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation){
+        super(drivetrain, poseEstimation, () -> Node.getClosestNode(RobotContainer.poseEstimation.getEstimatedPose(), arm.getTarget().closestLevel(), arm.getGamePiece()));
     }
 }

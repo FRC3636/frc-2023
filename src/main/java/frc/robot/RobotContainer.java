@@ -197,7 +197,7 @@ public class RobotContainer {
                         }
                 }));
 
-        new JoystickButton(joystickRight, 2).onTrue(new AlignToClosestNode(drivetrain, poseEstimation));
+        new JoystickButton(joystickRight, 2).onTrue(new AlignToClosestNode(drivetrain, arm, poseEstimation));
 
         // Arm Control
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value)

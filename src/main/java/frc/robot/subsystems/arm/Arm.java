@@ -255,6 +255,10 @@ public class Arm extends SubsystemBase {
         public Rotation2d getWristAngleFor(Arm arm, GamePiece gamePiece) {
             if (this == Stowed && arm.rollerState == Rollers.State.Off) {
                 return Constants.Wrist.LIMIT_SWITCH_OFFSET;
+            }
+            return (gamePiece == GamePiece.Cone) ? this.wristConeAngle.plus(this.wristConeOffset)
+                    : this.wristCubeAngle.plus(this.wristCubeOffset);
+        }
 
         public Node.Level closestLevel() {
             switch (this) {
@@ -266,17 +270,6 @@ public class Arm extends SubsystemBase {
                 default:
                     return Node.Level.Low;
             }
-        }
-
-        public enum GamePiece {
-            Cone,
-            Cube;
-
-            public static GamePiece fromNodeId(final int nodeId) {
-                return nodeId % 3 == 1 ? Arm.State.GamePiece.Cube : Arm.State.GamePiece.Cone;
-            }
-            return (gamePiece == GamePiece.Cone) ? this.wristConeAngle.plus(this.wristConeOffset)
-                    : this.wristCubeAngle.plus(this.wristCubeOffset);
         }
 
         public static double[] getPresets(State value) {

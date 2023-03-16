@@ -90,8 +90,8 @@ public class Node {
         return getNodePose().transformBy(getRobotOffset());
     }
 
-    public static Node getClosestNode(Pose2d robotPose, Level armLevel, Arm.State.GamePiece currentPiece){
-        if(currentPiece == Arm.State.GamePiece.Cube){
+    public static Node getClosestNode(Pose2d robotPose, Level armLevel, GamePiece currentPiece){
+        if(currentPiece == GamePiece.Cube){
             return new Node(currentPiece, armLevel, Column.Cube);
         }else{
             Node leftNode = new Node(currentPiece, armLevel, Column.LeftCone);
