@@ -108,7 +108,7 @@ public final class Constants {
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 
-        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.1);
+        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.103);
         public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.980396);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.762299);
@@ -157,7 +157,7 @@ public final class Constants {
 
         public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
 
-        public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(70);
+        public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(56);
 
         //Min Angle
         public static final double HORIZONTAL_TO_CORNER_ANGLE = 0.2985176246;

@@ -65,6 +65,9 @@ public class Wrist {
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
         if(velocity.getRadians() != 0) {
             Rotation2d minAngle = getWristAngleFromHeight(0.4);
+            if(minAngle != null) {
+                position = Rotation2d.fromRadians(Math.max(position.getRadians(), minAngle.getRadians()));
+            }
         }
 
         velocity = Rotation2d.fromRadians(velocity.getRadians() + pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));

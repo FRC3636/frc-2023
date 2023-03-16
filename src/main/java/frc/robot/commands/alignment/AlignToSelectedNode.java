@@ -48,7 +48,8 @@ public class AlignToSelectedNode implements Command {
 
         driveCommand.initialize();
 
-        if(driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME) {
+        if(driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
+                && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)) {
             Pose2d initial = poseEstimation.getEstimatedPose();
             Pose2d waypoint = new Pose2d(
                     AllianceUtils.isBlue()?
@@ -83,7 +84,7 @@ public class AlignToSelectedNode implements Command {
             command = driveCommand.alongWith(new SequentialCommandGroup(
                     new WaitCommand(
                             driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
-                            (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)
+                                    (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)
                     ),
                     new InstantCommand(() -> arm.setTarget(targetArmState))
             ));

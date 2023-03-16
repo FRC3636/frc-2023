@@ -37,6 +37,7 @@ import frc.robot.utils.GamePiece;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
+import frc.robot.utils.GenerateCommand;
 import frc.robot.utils.Node;
 
 public class RobotContainer {
@@ -166,7 +167,9 @@ public class RobotContainer {
 
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
-                        new DriveToNode(drivetrain, poseEstimation, targetNode),
+                        new GenerateCommand(
+                                () -> new DriveToNode(drivetrain, poseEstimation, targetNode)
+                        ),
                         new RunCommand(drivetrain::setX, drivetrain)
                 )
         );

@@ -213,7 +213,7 @@ public class Arm extends SubsystemBase {
                 Constants.Wrist.MID_CUBE_ANGLE),
         Low(Constants.Shoulder.INTAKE_CONE_ANGLE, Constants.Shoulder.LOW_CUBE_ANGLE, Constants.Wrist.INTAKE_CONE_ANGLE,
                 Constants.Wrist.LOW_CUBE_ANGLE),
-        Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.STOWED_CUBE_ANGLE,
+        Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.STOWED_CONE_ANGLE,
                 Constants.Wrist.STOWED_CUBE_ANGLE);
 
         private final Rotation2d shoulderCubeAngle;
@@ -256,6 +256,7 @@ public class Arm extends SubsystemBase {
             if (this == Stowed && arm.rollerState == Rollers.State.Off) {
                 return Constants.Wrist.LIMIT_SWITCH_OFFSET;
             }
+
             return (gamePiece == GamePiece.Cone) ? this.wristConeAngle.plus(this.wristConeOffset)
                     : this.wristCubeAngle.plus(this.wristCubeOffset);
         }
