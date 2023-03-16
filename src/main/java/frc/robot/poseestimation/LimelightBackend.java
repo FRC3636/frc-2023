@@ -1,7 +1,6 @@
 package frc.robot.poseestimation;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -58,8 +57,7 @@ public class LimelightBackend extends VisionBackend {
         return Optional.of(new Measurement(
             timestamp,
             pose,
-            Constants.VisionConstants.LIMELIGHT_STD_DEV,
-            0
+            Constants.VisionConstants.LIMELIGHT_STD_DEV
         ));
     }
 }

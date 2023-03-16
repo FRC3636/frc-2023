@@ -14,8 +14,8 @@ public class PhotonVisionBackend extends VisionBackend {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator poseEstimator;
 
-    public PhotonVisionBackend() throws IOException {
-        camera = new PhotonCamera("arducam");
+    public PhotonVisionBackend(String name) throws IOException {
+        camera = new PhotonCamera(name);
         camera.setDriverMode(false);
         camera.setPipelineIndex(0);
 
@@ -26,11 +26,12 @@ public class PhotonVisionBackend extends VisionBackend {
 
     @Override
     public Optional<Measurement> getMeasurement() {
+        // TODO: do we want an ambiguity filter?
+
         return poseEstimator.update().map((result) -> new Measurement(
                 result.timestampSeconds,
                 result.estimatedPose,
-                Constants.VisionConstants.PHOTONVISION_STD_DEV,
-                result.targetsUsed.get(0).getPoseAmbiguity()
+                Constants.VisionConstants.PHOTONVISION_STD_DEV
         ));
     }
 }

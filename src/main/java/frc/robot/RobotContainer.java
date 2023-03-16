@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
 import frc.robot.commands.MoveNodeSelection.MovementDirection;
+import frc.robot.commands.alignment.AlignToClosestNode;
 import frc.robot.commands.alignment.AlignToSelectedNode;
 import frc.robot.commands.autonomous.AutoBalance;
 import frc.robot.commands.autonomous.AutoCommand;
@@ -196,6 +197,8 @@ public class RobotContainer {
                         }
                 }));
 
+        new JoystickButton(joystickRight, 2).onTrue(new AlignToClosestNode(drivetrain, poseEstimation));
+
         // Arm Control
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
                 .whileTrue(new InstantCommand(() -> arm.setGamePiece(GamePiece.Cube)));
@@ -232,6 +235,7 @@ public class RobotContainer {
         new JoystickButton(controller, XboxController.Button.kBack.value).onTrue(new InstantCommand(() -> {
             arm.setTarget(Arm.State.Teller);
         }));
+
 
         // Node Selector
         for (int i = 0; i < 9; i++) {
