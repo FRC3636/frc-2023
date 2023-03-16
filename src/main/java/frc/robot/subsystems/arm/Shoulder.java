@@ -39,13 +39,13 @@ public class Shoulder {
         motor2.setSmartCurrentLimit(40);
         motor2.follow(motor1, true);
         motor1.getEncoder().setPositionConversionFactor(Units.rotationsToRadians(1) / 151.2);
-        encoder.setPositionConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO);
-        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Shoulder.GEAR_RATIO / 60.0);
+        encoder.setPositionConversionFactor(Units.rotationsToRadians(1));
+        encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) / 60.0);
 
         RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
 
         motor1.setInverted(true);
-        encoder.setInverted(true);
+        encoder.setInverted(false);
 
         pidController.setTolerance(Units.degreesToRadians(1));
         motor1.getEncoder().setPosition(0);
@@ -63,9 +63,8 @@ public class Shoulder {
 
     public Rotation2d getAngle() {
         return Rotation2d.fromRadians(
-                (encoder.getPosition()
-            > Constants.Shoulder.MAX_ANGLE.getRadians() && motor1.getEncoder().getPosition() < Constants.Shoulder.TOLERANCE_ANGLE.getRadians())
-                ? encoder.getPosition() - ((2*Math.PI) * Constants.Shoulder.GEAR_RATIO)
+                encoder.getPosition() > Constants.Shoulder.MAX_ANGLE.getRadians()
+                ? encoder.getPosition() - Math.PI * 2
                 : encoder.getPosition());
     }
 

@@ -21,16 +21,16 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 //Uses PathPlanner to move the robot to the specified Pose2d
-public class FollowTrajectoryToPoint implements Command {
+public class FollowTrajectoryToState implements Command {
     protected final Drivetrain drivetrain;
     protected final PoseEstimation poseEstimation;
 
-    protected final Supplier<Pose2d> target;
+    protected final PathPoint target;
     public PathPlannerTrajectory trajectory;
 
     private PPSwerveControllerCommand swerveControllerCommand;
 
-    public FollowTrajectoryToPoint(Drivetrain drivetrain, PoseEstimation poseEstimation, Supplier<Pose2d> target) {
+    public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target) {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
         this.target = target;
@@ -38,12 +38,11 @@ public class FollowTrajectoryToPoint implements Command {
 
     @Override
     public void initialize() {
-        trajectory = buildTrajectory(target.get());
-
+        trajectory = buildTrajectory(target);
 
         RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
         RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
-        RobotContainer.field.getObject("Target").setPose(target.get());
+        RobotContainer.field.getObject("Target").setPose(new Pose2d(target.position, target.holonomicRotation));
 
         swerveControllerCommand = new PPSwerveControllerCommand(
                 trajectory,
@@ -57,7 +56,7 @@ public class FollowTrajectoryToPoint implements Command {
         swerveControllerCommand.initialize();
     }
 
-    protected PathPlannerTrajectory buildTrajectory(Pose2d target) {
+    protected PathPlannerTrajectory buildTrajectory(PathPoint target) {
         Pose2d initial = poseEstimation.getEstimatedPose();
         Translation2d initialV = poseEstimation.getEstimatedVelocity();
 
@@ -69,14 +68,11 @@ public class FollowTrajectoryToPoint implements Command {
                 new PathPoint(
                         initial.getTranslation(),
                         initialV.getNorm() == 0 ?
-                                target.getTranslation().minus(initial.getTranslation()).getAngle() :
+                                target.position.minus(initial.getTranslation()).getAngle() :
                                 initialV.getAngle(),
                         initial.getRotation(),
                         initialV.getNorm()),
-                new PathPoint(
-                        target.getTranslation(),
-                        target.getTranslation().minus(initial.getTranslation()).getAngle(),
-                        target.getRotation())
+                target
         );
     }
 

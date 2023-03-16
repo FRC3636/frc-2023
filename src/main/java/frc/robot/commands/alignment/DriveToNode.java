@@ -8,12 +8,20 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.Node;
 
 //Navigate to the point in front of the node specified
-public class AlignToNode extends SequentialCommandGroup {
+public class DriveToNode extends SequentialCommandGroup {
 
-    public AlignToNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Node targetNode) {
-        super(
-                new FollowTrajectoryToNode(drivetrain, poseEstimation, targetNode),
+    FollowTrajectoryToNode trajectoryCommand;
+
+    public DriveToNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Node targetNode) {
+        trajectoryCommand = new FollowTrajectoryToNode(drivetrain, poseEstimation, targetNode);
+
+        super.addCommands(
+                trajectoryCommand,
                 new PIDDriveToPoint(drivetrain, poseEstimation, targetNode.getRobotScoringPose())
         );
+    }
+
+    public double getEstimatedTotalTime() {
+        return trajectoryCommand.trajectory.getTotalTimeSeconds();
     }
 }

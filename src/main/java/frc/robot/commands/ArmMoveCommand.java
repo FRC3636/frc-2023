@@ -44,6 +44,16 @@ public class ArmMoveCommand extends CommandBase {
         arm.runWithSetpoint(Rotation2d.fromRadians(state.position), Rotation2d.fromRadians(state.velocity));
     }
 
+    public boolean pathIntersectsChargeStation(Arm.State goal, Arm arm) {
+        return (
+                goal.getShoulderAngleFor(arm.getGamePiece()).getRadians() >= Constants.Shoulder.MID_CUBE_ANGLE.getRadians() &&
+                arm.getShoulderAngle().getRadians() <= Constants.Shoulder.MID_CUBE_ANGLE.getRadians()
+        ) || (
+                goal.getShoulderAngleFor(arm.getGamePiece()).getRadians() <= Constants.Shoulder.MID_CUBE_ANGLE.getRadians() &&
+                arm.getShoulderAngle().getRadians() >= Constants.Shoulder.MID_CUBE_ANGLE.getRadians()
+        );
+    }
+
     @Override
     public boolean isFinished() {
         return profile.isFinished(timer.get());

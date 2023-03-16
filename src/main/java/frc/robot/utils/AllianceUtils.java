@@ -50,6 +50,10 @@ public class AllianceUtils {
         return isBlue()? pose.getX() : FieldConstants.fieldLength - pose.getX();
     }
 
+    public static Rotation2d getAllianceToField(Rotation2d allianceRotation) {
+        return isBlue() ? allianceRotation : allianceRotation.rotateBy(Rotation2d.fromRadians(Math.PI));
+    }
+
     public static Rotation2d getFieldOrientationZero() {
         return Rotation2d.fromRadians(isBlue() ? 0 : Math.PI);
     }

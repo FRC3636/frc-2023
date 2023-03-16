@@ -87,7 +87,7 @@ public final class Constants {
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
 
-        public static final double MAX_TIME = 1.005050;
+        public static final double RAISING_BUFFER_TIME = 0.5;
 
         public static final double SAFE_RAISING_DISTANCE = 2.6;
 
@@ -119,7 +119,7 @@ public final class Constants {
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromRadians(1.037839);
         public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(2.041552);
         public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(1.580170);
-        public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(2.3);
+        public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(Math.PI);
         public static final Rotation2d TOLERANCE_ANGLE = Rotation2d.fromRadians(1);
 
         public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
@@ -179,7 +179,7 @@ public final class Constants {
         // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
         // This changes the drive speed of the module (a pinion gear with more teeth will result in a
         // robot that drives faster).
-        public static final int DRIVING_MOTOR_PINION_TEETH = 13;
+        public static final int DRIVING_MOTOR_PINION_TEETH = 14;
 
         // Invert the turning encoder, since the output shaft rotates in the opposite direction of
         // the steering motor in the MAXSwerve Module.

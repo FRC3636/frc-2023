@@ -38,12 +38,7 @@ public class SIMShoulder extends Shoulder {
     @Override
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity, Rotation2d acceleration) {
         velocity = Rotation2d.fromRadians(velocity.getRadians() +
-                        pidController.calculate(getAngle().getRadians(),
-//                        Math.max(
-                                position.getRadians() + RobotContainer.joystickRight.getZ() / 4
-//                                Arm.State.Stowed.getShoulderAngle().getRadians()
-//                        )
-                        )
+                        pidController.calculate(getAngle().getRadians(), position.getRadians())
         );
 
         double voltage = feedforwardController.calculate(

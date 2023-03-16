@@ -35,7 +35,8 @@ public class Wrist {
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1));
         encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) / 60.0);
         motor.setSmartCurrentLimit(40);
-        motor.setInverted(false);
+        motor.setInverted(true);
+        encoder.setInverted(false);
 
         zeroEncoder();
 

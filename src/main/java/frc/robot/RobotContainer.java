@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,6 +26,7 @@ import frc.robot.commands.*;
 import frc.robot.commands.MoveNodeSelection.MovementDirection;
 import frc.robot.commands.alignment.AlignToClosestNode;
 import frc.robot.commands.alignment.AlignToSelectedNode;
+import frc.robot.commands.alignment.DriveToNode;
 import frc.robot.commands.autonomous.AutoBalance;
 import frc.robot.commands.autonomous.AutoCommand;
 import frc.robot.commands.autonomous.AutoScore;
@@ -56,7 +58,6 @@ public class RobotContainer {
 
     // Pose Estimation
     public static final PoseEstimation poseEstimation = new PoseEstimation();
-
     public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
 
     public static Field2d field = new Field2d();
@@ -66,9 +67,9 @@ public class RobotContainer {
     private final FieldObject2d autoBalanceStartingPosition = field.getObject("Auto Balance Starting Position");
 
     // Commands
-    private DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft,
+    private final DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft,
             joystickRight);
-    private AutoBalance autoBalanceCommand = new AutoBalance(drivetrain);
+    private final AutoBalance autoBalanceCommand = new AutoBalance(drivetrain);
 
     private static SendableChooser<String> autoSelector;
     public static SendableChooser<Node> autoNodeSelector;
@@ -82,7 +83,6 @@ public class RobotContainer {
     public RobotContainer() {
         autoNodeSelector = new SendableChooser<>();
         autoNodeSelector.setDefaultOption("default", new Node(0));
-        configureButtonBindings();
 
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
         armTab.add("Node Selector", nodeSelector).withWidget(BuiltInWidgets.kField).withSize(3, 3);
@@ -125,6 +125,8 @@ public class RobotContainer {
 
         autoTab.add("Auto Selector", autoSelector);
         autoTab.add("Auto Node Selector", autoNodeSelector);
+
+        configureButtonBindings();
     }
 
     private void configureButtonBindings() {
@@ -147,8 +149,8 @@ public class RobotContainer {
                 .whileTrue(
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
-                                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> this.targetNode)
-                                // new RunCommand(drivetrain::setX, drivetrain)
+                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode),
+                                        new RunCommand(drivetrain::setX, drivetrain)
                                 ),
                                 new InstantCommand(() -> {
                                     arm.setTargetFromNode(this.targetNode);
@@ -164,7 +166,7 @@ public class RobotContainer {
 
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
-                        new AlignToSelectedNode(drivetrain, poseEstimation, () -> targetNode),
+                        new DriveToNode(drivetrain, poseEstimation, targetNode),
                         new RunCommand(drivetrain::setX, drivetrain)
                 )
         );

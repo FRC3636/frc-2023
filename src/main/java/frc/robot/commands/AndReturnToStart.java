@@ -24,7 +24,7 @@ public class AndReturnToStart implements Command {
 
     private Pose2d startingPose;
     private Arm.State startingArmState;
-    private FollowTrajectoryToPoint returnToStart;
+    private FollowTrajectoryToState returnToStart;
 
     public AndReturnToStart(Drivetrain drivetrain, PoseEstimation poseEstimation, Arm arm, Command inner) {
         this.poseEstimation = poseEstimation;
@@ -59,7 +59,7 @@ public class AndReturnToStart implements Command {
                 inner.end(false);
                 innerEnded = true;
 
-                returnToStart = new FollowTrajectoryToPoint(drivetrain, poseEstimation, () -> startingPose);
+                returnToStart = new FollowTrajectoryToPose(drivetrain, poseEstimation, startingPose);
                 returnToStart.initialize();
                 returnToStart.execute();
 
@@ -68,7 +68,7 @@ public class AndReturnToStart implements Command {
         } else {
             returnToStart.execute();
             if(
-                    timer.get() > returnToStart.trajectory.getTotalTimeSeconds() - Constants.Arm.MAX_TIME &&
+                    timer.get() > returnToStart.trajectory.getTotalTimeSeconds() - ArmMoveCommand.generateProfile(startingArmState, arm).totalTime() &&
                     arm.getTarget() != startingArmState &&
                     AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) > Constants.Arm.SAFE_RAISING_DISTANCE - 0.5
             ) {

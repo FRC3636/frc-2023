@@ -46,7 +46,7 @@ public class Rollers {
 
     public enum State {
         Intake(Constants.Rollers.INTAKE_CONE, Constants.Rollers.INTAKE_CUBE),
-        Outtake(Constants.Rollers.OUTTAKE_CONE, Constants.Rollers.OUTTAKE_CUBE),
+        Outtake(Constants.Rollers.OUTTAKE_CONE, -1/*Constants.Rollers.OUTTAKE_CUBE*/),
         Off(0, 0);
 
         public final double coneSpeed;
