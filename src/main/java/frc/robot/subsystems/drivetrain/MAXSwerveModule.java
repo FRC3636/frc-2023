@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -131,10 +132,14 @@ public class MAXSwerveModule implements SwerveModule {
 
     @Override
     public void setDesiredState(SwerveModuleState desiredState) {
-        // Apply chassis angular offset to the desired state.
         SwerveModuleState correctedDesiredState = new SwerveModuleState();
         correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-        correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(chassisAngularOffset));
+        correctedDesiredState.angle = desiredState.angle;
+
+        //
+
+        // Apply chassis angular offset to the desired state.
+        correctedDesiredState.angle.plus(Rotation2d.fromRadians(chassisAngularOffset));
 
         // Optimize the reference state to avoid spinning further than 90 degrees.
         SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(correctedDesiredState,

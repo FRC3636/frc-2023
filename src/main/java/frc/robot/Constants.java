@@ -30,15 +30,18 @@ public final class Constants {
         public static final double MAX_ANGULAR_SPEED = 2 * Math.PI; // radians per second
 
         // Chassis configuration
-        public static final double TRACK_WIDTH = Units.inchesToMeters(22.5);
         // Distance between centers of right and left wheels on robot
-        public static final double WHEEL_BASE = Units.inchesToMeters(24.5);
+        public static final double TRACK_WIDTH = Units.inchesToMeters(22.5);
         // Distance between front and back wheels on robot
-        public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
+        public static final double WHEEL_BASE = Units.inchesToMeters(24.5);
+
+        public static final Translation2d[] MODULE_POSITIONS = new Translation2d[]{
                 new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
                 new Translation2d(WHEEL_BASE / 2, -TRACK_WIDTH / 2),
                 new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2),
-                new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2));
+                new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2)
+        };
+        public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(MODULE_POSITIONS);
 
         // Angular offsets of the modules relative to the chassis in radians
         public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -Math.PI / 2;
@@ -47,7 +50,7 @@ public final class Constants {
         public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
 
         // Charge Station Constants
-        public static final Rotation2d CHARGE_TIPPING_ANGLE= Rotation2d.fromDegrees(12);
+        public static final Rotation2d CHARGE_TIPPING_ANGLE = Rotation2d.fromDegrees(12);
         public static final Rotation2d CHARGE_TOLERANCE = Rotation2d.fromDegrees(2.5);
         public static final double CHARGE_MAX_SPEED = 0.6;
         public static final double CHARGE_REDUCED_SPEED = 0.32;
@@ -67,9 +70,11 @@ public final class Constants {
         public static final int REAR_RIGHT_TURNING_CAN_ID = 17;
 
         public static final boolean GYRO_REVERSED = false;
-        public static final Rotation3d GYRO_ROTATION = new Rotation3d(0, 0, - Math.PI / 2);
+        public static final Rotation3d GYRO_ROTATION = new Rotation3d(0, 0, -Math.PI / 2);
 
         public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.01);
+
+        public static final double CARPET_BIAS = 1.05;
     }
 
     public static class Arm {
@@ -79,7 +84,7 @@ public final class Constants {
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
         public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(59);
-        public static final double HIGH_CUBE_SCORING_DIST =  Units.inchesToMeters(60);
+        public static final double HIGH_CUBE_SCORING_DIST = Units.inchesToMeters(60);
 
         public static final double MID_CONE_SCORING_DIST = Units.inchesToMeters(57);
         public static final double MID_CUBE_SCORING_DIST = Units.inchesToMeters(59);
@@ -275,9 +280,10 @@ public final class Constants {
         public static final double fieldWidth = Units.inchesToMeters(315.5);
         public static final double tapeWidth = Units.inchesToMeters(2.0);
         public static final double aprilTagWidth = Units.inchesToMeters(6.0);
+
         public static class Grids {
 
-            public static final double[] GRID_BOUNDARIES = new double[] {0, 1.910, 3.586, 5.446649};
+            public static final double[] GRID_BOUNDARIES = new double[]{0, 1.910, 3.586, 5.446649};
 
             // X layout
             public static final double outerX = Units.inchesToMeters(54.25);

@@ -1,12 +1,16 @@
 package frc.robot.poseestimation;
 
+import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -19,6 +23,8 @@ import frc.robot.Constants.DriveConstants;
 public class PoseEstimation {
     private SwerveDrivePoseEstimator poseEstimator;
 
+    private Translation2d carpetBias = new Translation2d(1, 0).times(DriveConstants.CARPET_BIAS);
+
     private VisionBackend[] backends;
     private GenericEntry[] backendToggles;
 
@@ -28,12 +34,12 @@ public class PoseEstimation {
 
     public PoseEstimation() {
         poseEstimator = new SwerveDrivePoseEstimator(
-            DriveConstants.DRIVE_KINEMATICS,
-            RobotContainer.drivetrain.getRotation(),
-            RobotContainer.drivetrain.getModulePositions(),
-            new Pose2d(),
-            Constants.DriveConstants.ODOMETRY_STD_DEV,
-            VecBuilder.fill(0, 0, 0) // will be overwritten for each measurement
+                DriveConstants.DRIVE_KINEMATICS,
+                RobotContainer.drivetrain.getRotation(),
+                RobotContainer.drivetrain.getModulePositions(),
+                new Pose2d(),
+                Constants.DriveConstants.ODOMETRY_STD_DEV,
+                VecBuilder.fill(0, 0, 0) // will be overwritten for each measurement
         );
 
         backends = new VisionBackend[2];
@@ -64,6 +70,16 @@ public class PoseEstimation {
     }
 
     public void updateOdometry(Rotation2d gyro, SwerveModulePosition[] modulePositions) {
+        // carpet bias correction
+        for (int i = 0; i < DriveConstants.MODULE_POSITIONS.length; i++) {
+            Translation2d velocity = modulePositionToTranslation(modulePositions[i]);
+
+            Translation2d wheelRelativeCarpetBias = carpetBias.rotateBy(gyro.unaryMinus());
+            velocity.times(1 + translationDot(velocity, wheelRelativeCarpetBias));
+
+            modulePositions[i] = translationToModulePosition(velocity);
+        }
+
         poseEstimator.update(gyro, modulePositions);
     }
 
@@ -86,5 +102,23 @@ public class PoseEstimation {
 
     private void addVisionMeasurement(VisionBackend.Measurement measurement) {
         poseEstimator.addVisionMeasurement(measurement.pose.toPose2d(), measurement.timestamp, measurement.stdDeviation);
+    }
+
+    private static Translation2d modulePositionToTranslation(SwerveModulePosition state) {
+        return new Translation2d(
+                state.distanceMeters,
+                state.angle
+        );
+    }
+
+    private static SwerveModulePosition translationToModulePosition(Translation2d translation) {
+        return new SwerveModulePosition(
+                translation.getNorm(),
+                new Rotation2d(translation.getX(), translation.getY())
+        );
+    }
+
+    private static double translationDot(Translation2d a, Translation2d b) {
+        return a.getX() * b.getX() + a.getY() * b.getY();
     }
 }

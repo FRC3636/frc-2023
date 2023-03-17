@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 public class AutoCommand {
-    public static Node node = new Node(0);
-
     static Map<String, Command> eventMap = Map.of(
             "print", new InstantCommand(() -> System.out.println("print event triggered")),
             "score", new AndReturnToStart(
