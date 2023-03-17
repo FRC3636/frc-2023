@@ -7,14 +7,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.arm.Arm;
 
 public class Node {
-    private final Arm.State.GamePiece nodeType;
+    private final GamePiece nodeType;
     private final Level level;
     private final Column column;
 
-    public Node(Arm.State.GamePiece nodeType, Level level, Column column) {
+    public Node(GamePiece nodeType, Level level, Column column) {
         this.nodeType = nodeType;
         this.level = level;
         this.column = column;
@@ -22,7 +21,7 @@ public class Node {
 
     public Node(int node) {
         this(
-                Arm.State.GamePiece.fromNodeId(node),
+                GamePiece.fromNodeId(node),
                 Level.values()[node / 3],
                 Column.values()[node % 3]
         );
@@ -33,7 +32,7 @@ public class Node {
         return level;
     }
 
-    public Arm.State.GamePiece getNodeType() {
+    public GamePiece getNodeType() {
         return nodeType;
     }
 
@@ -45,15 +44,15 @@ public class Node {
         double x = 0;
         switch (level) {
             case High:
-                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.HIGH_CONE_SCORING_DIST
+                x = nodeType == GamePiece.Cone ? Constants.Arm.HIGH_CONE_SCORING_DIST
                         : Constants.Arm.HIGH_CUBE_SCORING_DIST;
                 break;
             case Mid:
-                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.MID_CONE_SCORING_DIST
+                x = nodeType == GamePiece.Cone ? Constants.Arm.MID_CONE_SCORING_DIST
                         : Constants.Arm.MID_CUBE_SCORING_DIST;
                 break;
             case Low:
-                x = nodeType == Arm.State.GamePiece.Cone ? Constants.Arm.LOW_CONE_SCORING_DIST
+                x = nodeType == GamePiece.Cone ? Constants.Arm.LOW_CONE_SCORING_DIST
                         : Constants.Arm.LOW_CUBE_SCORING_DIST;
         }
         return new Transform2d(new Translation2d(-x, 0.0),
@@ -91,8 +90,8 @@ public class Node {
         return getNodePose().transformBy(getRobotOffset());
     }
 
-    public static Node getClosestNode(Pose2d robotPose, Level armLevel, Arm.State.GamePiece currentPiece){
-        if(currentPiece == Arm.State.GamePiece.Cube){
+    public static Node getClosestNode(Pose2d robotPose, Level armLevel, GamePiece currentPiece){
+        if(currentPiece == GamePiece.Cube){
             return new Node(currentPiece, armLevel, Column.Cube);
         }else{
             Node leftNode = new Node(currentPiece, armLevel, Column.LeftCone);

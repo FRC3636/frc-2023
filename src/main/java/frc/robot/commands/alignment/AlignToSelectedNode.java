@@ -1,46 +1,113 @@
 package frc.robot.commands.alignment;
 
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.Constants;
+import frc.robot.commands.ArmMoveCommand;
+import frc.robot.commands.FollowTrajectoryToState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.poseestimation.PoseEstimation;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import frc.robot.utils.AllianceUtils;
 import frc.robot.utils.Node;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 
 //Moves the robot to the node returned by the specified node supplier.
-public class AlignToSelectedNode extends CommandBase {
+public class AlignToSelectedNode implements Command {
 
-    private AlignToNode innerCommand;
+    private Command command;
 
-    private Drivetrain drivetrain;
-    private PoseEstimation poseEstimation;
+    private final Drivetrain drivetrain;
+    private final Arm arm;
+    private final PoseEstimation poseEstimation;
 
-    private Supplier<Node> targetNode;
+    private final Supplier<Node> targetNode;
+    private final Timer timer = new Timer();
 
-    public AlignToSelectedNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Supplier<Node> targetNode){
-        this.innerCommand = new AlignToNode(drivetrain, poseEstimation, new Node(0));
+    public AlignToSelectedNode(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, Supplier<Node> targetNode){
         this.drivetrain = drivetrain;
+        this.arm = arm;
         this.poseEstimation = poseEstimation;
         this.targetNode = targetNode;
-    }
 
-    @Override
-    public void execute(){
-        innerCommand.execute();
     }
 
     @Override
     public void initialize(){
-        this.innerCommand = new AlignToNode(this.drivetrain, this.poseEstimation, targetNode.get());
-        innerCommand.initialize();
+        Arm.State targetArmState = Arm.State.getTargetFromNode(targetNode.get());
+        DriveToNode driveCommand = new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get());
+
+        driveCommand.initialize();
+
+        if(driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
+                && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)) {
+            Pose2d initial = poseEstimation.getEstimatedPose();
+            Pose2d waypoint = new Pose2d(
+                    AllianceUtils.isBlue()?
+                            Constants.Arm.SAFE_RAISING_DISTANCE :
+                            Constants.FieldConstants.fieldLength - Constants.Arm.SAFE_RAISING_DISTANCE,
+                    (initial.getY() + targetNode.get().getRobotScoringPose().getY()) / 2,
+                    AllianceUtils.getAllianceToField(Rotation2d.fromRadians(Math.PI * 5 / 4))
+            );
+
+            FollowTrajectoryToState waypointCommand = new FollowTrajectoryToState(drivetrain, poseEstimation,
+                    new PathPoint(
+                            waypoint.getTranslation(),
+                            Rotation2d.fromDegrees(targetNode.get().getRobotScoringPose().getY() > initial.getY() ? 90 : 270),
+                            waypoint.getRotation(),
+                            0.5
+                    )
+            );
+
+            waypointCommand.initialize();
+
+            command = driveCommand.beforeStarting(waypointCommand).alongWith(
+                    new WaitCommand(
+                            driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
+                                    (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)
+                    ).andThen(
+                            new InstantCommand(() -> arm.setTarget(targetArmState))
+                    )
+            );
+
+        }
+        else {
+            command = driveCommand.alongWith(new SequentialCommandGroup(
+                    new WaitCommand(
+                            driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
+                                    (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)
+                    ),
+                    new InstantCommand(() -> arm.setTarget(targetArmState))
+            ));
+        }
+
+        command.initialize();
     }
 
     @Override
-    public void end(boolean terminated){ innerCommand.end(terminated); }
+    public void execute(){
+        command.execute();
+    }
+
+    @Override
+    public void end(boolean terminated){ command.end(terminated); }
 
     @Override
     public boolean isFinished(){
-        return innerCommand.isFinished();
+        return command.isFinished();
+    }
+
+    @Override
+    public Set<Subsystem> getRequirements() {
+        return Set.of(drivetrain, arm);
     }
 }

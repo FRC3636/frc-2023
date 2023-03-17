@@ -6,8 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.arm.Arm.State.GamePiece;
+import frc.robot.utils.GamePiece;
 import frc.robot.utils.Node;
 
 public class MoveNodeSelection extends InstantCommand {
@@ -59,7 +58,7 @@ public class MoveNodeSelection extends InstantCommand {
             final Node.Level levelObject = Node.Level.values()[level];
             final Node.Column columnObject = Node.Column.values()[column];
 
-            final GamePiece nodeType = Arm.State.GamePiece.fromLevelAndColumn(level, column);
+            final GamePiece nodeType = GamePiece.fromLevelAndColumn(level, column);
             final Node newTarget = new Node(nodeType, levelObject, columnObject);
             robot.setTargetNode(newTarget);
 

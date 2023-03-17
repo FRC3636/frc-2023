@@ -13,12 +13,14 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.AndReturnToStart;
-import frc.robot.commands.FollowTrajectoryToPoint;
+import frc.robot.commands.FollowTrajectoryToPose;
+import frc.robot.commands.FollowTrajectoryToState;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
+import frc.robot.utils.GenerateCommand;
 import frc.robot.utils.Node;
 
 import java.util.List;
@@ -31,20 +33,23 @@ public class AutoCommand {
                     RobotContainer.drivetrain,
                     RobotContainer.poseEstimation,
                     RobotContainer.arm,
-                    new AutoScore(RobotContainer.drivetrain, RobotContainer.poseEstimation, () -> RobotContainer.autoNodeSelector.getSelected())
+                    new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> RobotContainer.autoNodeSelector.getSelected())
             ),
             "intake", new InstantCommand(() -> {
-                Arm.State.setRollerState(Rollers.State.Intake);
+                RobotContainer.arm.setRollerState(Rollers.State.Intake);
             }),
             "stow", new InstantCommand(() -> {
-                Arm.State.setRollerState(Rollers.State.Off);
-                Arm.State.setTarget(Arm.State.Stowed);
+                RobotContainer.arm.setRollerState(Rollers.State.Off);
+                RobotContainer.arm.setTarget(Arm.State.Stowed);
             }),
             "balance", new SequentialCommandGroup(
-                    new FollowTrajectoryToPoint(
-                            RobotContainer.drivetrain,
-                            RobotContainer.poseEstimation,
-                            () -> AllianceUtils.allianceToField(new Pose2d(3.7, 2.9, new Rotation2d(Math.PI)))),
+                    new GenerateCommand( () ->
+                            new FollowTrajectoryToPose(
+                                    RobotContainer.drivetrain,
+                                    RobotContainer.poseEstimation,
+                                    AllianceUtils.allianceToField(new Pose2d(3.7, 2.9, new Rotation2d(Math.PI)))
+                            )
+                    ),
                     new AutoBalance(RobotContainer.drivetrain))
     );
 
@@ -66,7 +71,6 @@ public class AutoCommand {
                 false, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
                 drivetrain // The drive subsystem. Used to properly set the requirements of path following commands
         );
-
 
         return autoBuilder.fullAuto(pathGroup);
     }

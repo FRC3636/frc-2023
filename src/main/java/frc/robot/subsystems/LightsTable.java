@@ -4,7 +4,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.arm.Arm;
+import frc.robot.RobotContainer;
 
 import java.util.Objects;
 
@@ -25,7 +25,7 @@ public class LightsTable extends SubsystemBase {
     @Override
     public void periodic() {
         if(requestMode) {
-            String targetPreset = Arm.State.getGamePiece().name().toLowerCase();
+            String targetPreset = RobotContainer.arm.getGamePiece().name().toLowerCase();
             this.setArmLights(targetPreset);
         } else {
             this.setArmLights("none");
