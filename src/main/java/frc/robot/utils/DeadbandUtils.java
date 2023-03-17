@@ -10,7 +10,7 @@ public class DeadbandUtils {
         double yValue = -joystick.getX() * (joystick.getZ() + 1) / 2;
 
         // if one of the joystick axes are out of the deadzone, ignore it for both
-        boolean force = xValue > deadband || yValue > deadband;
+        boolean force = Math.abs(xValue) > deadband || Math.abs(yValue) > deadband;
 
         xValue = applyDeadband(xValue, deadband, 1.0, force);
         yValue = applyDeadband(yValue, deadband, 1.0, force);
