@@ -80,8 +80,10 @@ public class PoseEstimation {
         for (int i = 0; i < DriveConstants.MODULE_POSITIONS.length; i++) {
             Translation2d velocity = modulePositionToTranslation(modulePositions[i]);
 
-            Translation2d wheelRelativeCarpetBias = carpetBias.rotateBy(gyro.unaryMinus());
-            velocity.times(1 + translationDot(velocity, wheelRelativeCarpetBias));
+            Translation2d wheelRelativeCarpetBias = carpetBias
+                    .rotateBy(gyro.unaryMinus())
+                    .rotateBy(DriveConstants.MODULE_ROTATIONS[i].unaryMinus());
+            velocity = velocity.times(1 + translationDot(velocity, wheelRelativeCarpetBias));
 
             modulePositions[i] = translationToModulePosition(velocity);
         }
