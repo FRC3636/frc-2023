@@ -37,10 +37,10 @@ public class DriveWithJoysticks implements Command {
 
     @Override
     public void execute() {
-        double[] translationValues = DeadbandUtils.getXYWithDeadband(translation, 0.1);
+        double[] translationValues = DeadbandUtils.getXYWithDeadband(translation, DriveConstants.DEADZONE);
         double translationx = translationValues[0];
         double translationy = translationValues[1];
-        double r = DeadbandUtils.getXYWithDeadband(rotation, 0.1)[1];
+        double r = DeadbandUtils.getXYWithDeadband(rotation, DriveConstants.DEADZONE)[1];
 
         boolean withinDeadband = translationx == 0 && translationy == 0 && r == 0;
 
