@@ -46,8 +46,8 @@ public final class Constants {
         public static final Rotation2d[] MODULE_ROTATIONS = new Rotation2d[]{
                 Rotation2d.fromDegrees(-90),
                 Rotation2d.fromDegrees(0),
-                Rotation2d.fromDegrees(90),
-                Rotation2d.fromDegrees(180)
+                Rotation2d.fromDegrees(180),
+                Rotation2d.fromDegrees(90)
         };
 
         // Charge Station Constants
