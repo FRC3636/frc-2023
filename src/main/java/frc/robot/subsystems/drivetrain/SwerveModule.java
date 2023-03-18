@@ -12,6 +12,7 @@ public interface SwerveModule {
 
     SwerveModuleState getSetState();
 
+    // TODO: use Rotation2d
     double getSwerveEncoderPosition();
 
     void resetEncoders();

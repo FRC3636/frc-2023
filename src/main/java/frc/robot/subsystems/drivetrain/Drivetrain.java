@@ -35,32 +35,32 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain() {
         if (RobotBase.isSimulation()) {
             this.swerveModules = new SwerveModules(
-                    new SIMSwerveModule(DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET),
-                    new SIMSwerveModule(DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET),
-                    new SIMSwerveModule(DriveConstants.REAR_LEFT_CHASSIS_ANGULAR_OFFSET),
-                    new SIMSwerveModule(DriveConstants.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET)
+                    new SIMSwerveModule(DriveConstants.MODULE_ROTATIONS[0]),
+                    new SIMSwerveModule(DriveConstants.MODULE_ROTATIONS[1]),
+                    new SIMSwerveModule(DriveConstants.MODULE_ROTATIONS[2]),
+                    new SIMSwerveModule(DriveConstants.MODULE_ROTATIONS[3])
             );
         } else {
             this.swerveModules = new SwerveModules(
                     new MAXSwerveModule(
                             DriveConstants.FRONT_LEFT_DRIVING_CAN_ID,
                             DriveConstants.FRONT_LEFT_TURNING_CAN_ID,
-                            DriveConstants.FRONT_LEFT_CHASSIS_ANGULAR_OFFSET
+                            DriveConstants.MODULE_ROTATIONS[0]
                     ),
                     new MAXSwerveModule(
                             DriveConstants.FRONT_RIGHT_DRIVING_CAN_ID,
                             DriveConstants.FRONT_RIGHT_TURNING_CAN_ID,
-                            DriveConstants.FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET
+                            DriveConstants.MODULE_ROTATIONS[1]
                     ),
                     new MAXSwerveModule(
                             DriveConstants.REAR_LEFT_DRIVING_CAN_ID,
                             DriveConstants.REAR_LEFT_TURNING_CAN_ID,
-                            DriveConstants.REAR_LEFT_CHASSIS_ANGULAR_OFFSET
+                            DriveConstants.MODULE_ROTATIONS[2]
                     ),
                     new MAXSwerveModule(
                             DriveConstants.REAR_RIGHT_DRIVING_CAN_ID,
                             DriveConstants.REAR_RIGHT_TURNING_CAN_ID,
-                            DriveConstants.REAR_RIGHT_CHASSIS_ANGULAR_OFFSET
+                            DriveConstants.MODULE_ROTATIONS[3]
                     )
             );
         }

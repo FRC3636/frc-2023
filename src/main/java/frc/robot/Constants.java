@@ -43,11 +43,12 @@ public final class Constants {
         };
         public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(MODULE_POSITIONS);
 
-        // Angular offsets of the modules relative to the chassis in radians
-        public static final double FRONT_LEFT_CHASSIS_ANGULAR_OFFSET = -Math.PI / 2;
-        public static final double FRONT_RIGHT_CHASSIS_ANGULAR_OFFSET = 0;
-        public static final double REAR_LEFT_CHASSIS_ANGULAR_OFFSET = Math.PI;
-        public static final double REAR_RIGHT_CHASSIS_ANGULAR_OFFSET = Math.PI / 2;
+        public static final Rotation2d[] MODULE_ROTATIONS = new Rotation2d[]{
+                Rotation2d.fromDegrees(-90),
+                Rotation2d.fromDegrees(0),
+                Rotation2d.fromDegrees(90),
+                Rotation2d.fromDegrees(180)
+        };
 
         // Charge Station Constants
         public static final Rotation2d CHARGE_TIPPING_ANGLE = Rotation2d.fromDegrees(12);
@@ -75,6 +76,8 @@ public final class Constants {
         public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.01);
 
         public static final double CARPET_BIAS = 1.05;
+
+        public static final double DEADZONE = 0.1;
     }
 
     public static class Arm {
