@@ -32,7 +32,7 @@ import frc.robot.commands.autonomous.AutoBalance;
 import frc.robot.commands.autonomous.AutoCommand;
 import frc.robot.commands.autonomous.AutoScore;
 import frc.robot.poseestimation.PoseEstimation;
-import frc.robot.subsystems.LightsTable;
+import frc.robot.subsystems.GameInfoTable;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.utils.GamePiece;
 import frc.robot.subsystems.arm.Rollers;
@@ -76,8 +76,8 @@ public class RobotContainer {
     private static SendableChooser<String> autoSelector;
     public static SendableChooser<Node> autoNodeSelector;
 
-    // RGB
-    public static final LightsTable lights = new LightsTable();
+    // for RGB
+    public static final GameInfoTable gameInfo = new GameInfoTable();
 
     // Movement Command
     public Node targetNode = new Node(0);
