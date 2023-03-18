@@ -75,6 +75,8 @@ public final class Constants {
         public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.01);
 
         public static final double CARPET_BIAS = 1.05;
+
+        public static final double DEADZONE = 0.1;
     }
 
     public static class Arm {
