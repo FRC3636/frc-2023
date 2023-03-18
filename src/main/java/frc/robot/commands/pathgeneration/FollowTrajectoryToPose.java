@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.pathgeneration;
 
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;

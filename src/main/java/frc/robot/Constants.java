@@ -78,7 +78,7 @@ public final class Constants {
     }
 
     public static class Arm {
-        public static final double HUMERUS_LENGTH = 1.010922;
+        public static final double HUMERUS_LENGTH = 0.969432;
         public static final double MANIPULATOR_LENGTH = 0.32;
         public static final double PIVOT_HEIGHT = 1.162025;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
@@ -114,7 +114,7 @@ public final class Constants {
         public static final double KD = 0.03;
 
         public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.103);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.980396);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.945489);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.762299);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(1.282185);
@@ -149,7 +149,7 @@ public final class Constants {
 
         public static final Rotation2d STOWED_CUBE_ANGLE = Rotation2d.fromDegrees(40);
         public static final Rotation2d STOWED_CONE_ANGLE = Rotation2d.fromRadians(0);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.317397);
+        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.422117);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.655558);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
@@ -232,8 +232,8 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double MAX_SPEED_METERS_PER_SECOND = 3;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
+        public static final double MAX_SPEED_METERS_PER_SECOND = 7;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 4;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
@@ -264,20 +264,20 @@ public final class Constants {
         // FIXME: actually measure these constants
 
         public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(
-                new Translation3d(0.205697, -0.244475, 0.267365),
+                new Translation3d(.243, -0.229, 0.241),
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 
-        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.7, 0.7, 0.5);
+        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.2, 0.1, 0.3);
 
         public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
 
-        public static final double AMBIGUITY_FILTER = 0.05;
+        public static final double AMBIGUITY_FILTER = 0.5;
     }
 
     public static class FieldConstants {
-        public static final double fieldLength = Units.inchesToMeters(651.25);
-        public static final double fieldWidth = Units.inchesToMeters(315.5);
+        public static final double fieldLength = 16.542;
+        public static final double fieldWidth = 8.0137;
         public static final double tapeWidth = Units.inchesToMeters(2.0);
         public static final double aprilTagWidth = Units.inchesToMeters(6.0);
 

@@ -42,19 +42,25 @@ public class PoseEstimation {
                 VecBuilder.fill(0, 0, 0) // will be overwritten for each measurement
         );
 
-        backends = new VisionBackend[2];
-        backendToggles = new GenericEntry[2];
+        if(Robot.isReal()) {
+            backends = new VisionBackend[2];
+            backendToggles = new GenericEntry[2];
 
-        try {
-            backends[0] = new PhotonVisionBackend("arducam");
-            backendToggles[0] = RobotContainer.autoTab.add("VisionBackend/PV", true).getEntry();
-        } catch (Exception e) {
-            System.out.println("Failed to initialize PhotonVision");
-            e.printStackTrace();
+            try {
+                backends[0] = new PhotonVisionBackend("arducam");
+                backendToggles[0] = RobotContainer.autoTab.add("VisionBackend/PV", true).getEntry();
+            } catch (Exception e) {
+                System.out.println("Failed to initialize PhotonVision");
+                e.printStackTrace();
+            }
+
+            backends[1] = new LimelightBackend();
+            backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/LL", true).getEntry();
         }
-
-        backends[1] = new LimelightBackend();
-        backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/LL", true).getEntry();
+        else {
+            backends = new VisionBackend[0];
+            backendToggles = new GenericEntry[0];
+        }
     }
 
     public void periodic() {
@@ -90,8 +96,8 @@ public class PoseEstimation {
     public Translation2d getEstimatedVelocity() {
         double now = Timer.getFPGATimestamp();
 
-        Translation2d current = poseHistory.getSample(now).get().getTranslation();
-        Translation2d previous = poseHistory.getSample(now - DIFFERENTIATION_TIME).get().getTranslation();
+        Translation2d current = poseHistory.getSample(now).orElseGet(Pose2d::new).getTranslation();
+        Translation2d previous = poseHistory.getSample(now - DIFFERENTIATION_TIME).orElseGet(Pose2d::new).getTranslation();
 
         return current.minus(previous).div(DIFFERENTIATION_TIME);
     }

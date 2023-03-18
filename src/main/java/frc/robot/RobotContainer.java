@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -128,6 +129,8 @@ public class RobotContainer {
         autoTab.add("Auto Node Selector", autoNodeSelector);
 
         configureButtonBindings();
+
+        DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
     }
 
     private void configureButtonBindings() {
@@ -152,10 +155,9 @@ public class RobotContainer {
                                 new SequentialCommandGroup(
                                         new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode),
                                         new RunCommand(drivetrain::setX, drivetrain)
-                                ),
-                                new InstantCommand(() -> {
-                                    arm.setTargetFromNode(this.targetNode);
-                                })));
+                                )
+                        )
+                );
 
         new JoystickButton(joystickLeft, 4)
                 .whileTrue(
@@ -202,7 +204,7 @@ public class RobotContainer {
                         }
                 }));
 
-        new JoystickButton(joystickRight, 2).onTrue(new AlignToClosestNode(drivetrain, arm, poseEstimation));
+        new JoystickButton(joystickRight, 2).whileTrue(new AlignToClosestNode(drivetrain, arm, poseEstimation));
 
         // Arm Control
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value)

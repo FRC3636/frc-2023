@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.pathgeneration;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -34,6 +34,8 @@ public class FollowTrajectoryToState implements Command {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
         this.target = target;
+
+        trajectory = buildTrajectory(target);
     }
 
     @Override
