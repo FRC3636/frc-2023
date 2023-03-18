@@ -76,7 +76,7 @@ public final class Constants {
 
         public static final double CARPET_BIAS = 1.05;
 
-        public static final double DEADZONE = 0.5;
+        public static final double DEADZONE = 0.1;
     }
 
     public static class Arm {
