@@ -77,16 +77,16 @@ public class PoseEstimation {
 
     public void updateOdometry(Rotation2d gyro, SwerveModulePosition[] modulePositions) {
         // carpet bias correction
-        for (int i = 0; i < DriveConstants.MODULE_POSITIONS.length; i++) {
-            Translation2d velocity = modulePositionToTranslation(modulePositions[i]);
-
-            Translation2d wheelRelativeCarpetBias = carpetBias
-                    .rotateBy(gyro.unaryMinus())
-                    .rotateBy(DriveConstants.MODULE_ROTATIONS[i].unaryMinus());
-            velocity = velocity.times(1 + translationDot(velocity, wheelRelativeCarpetBias));
-
-            modulePositions[i] = translationToModulePosition(velocity);
-        }
+//        for (int i = 0; i < DriveConstants.MODULE_POSITIONS.length; i++) {
+//            Translation2d velocity = modulePositionToTranslation(modulePositions[i]);
+//
+//            Translation2d wheelRelativeCarpetBias = carpetBias
+//                    .rotateBy(gyro.unaryMinus())
+//                    .rotateBy(DriveConstants.MODULE_ROTATIONS[i].unaryMinus());
+//            velocity = velocity.times(1 + translationDot(velocity, wheelRelativeCarpetBias));
+//
+//            modulePositions[i] = translationToModulePosition(velocity);
+//        }
 
         poseEstimator.update(gyro, modulePositions);
     }

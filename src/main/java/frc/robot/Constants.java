@@ -73,7 +73,7 @@ public final class Constants {
         public static final boolean GYRO_REVERSED = false;
         public static final Rotation3d GYRO_ROTATION = new Rotation3d(0, 0, -Math.PI / 2);
 
-        public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.01);
+        public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.001);
 
         public static final double CARPET_BIAS = 0.05;
 
@@ -267,7 +267,8 @@ public final class Constants {
         // FIXME: actually measure these constants
 
         public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(
-                new Translation3d(.243, -0.229, 0.241),
+//                new Translation3d(0, 0, 0),
+                new Translation3d(.243, -0.229, -0.241),
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 
