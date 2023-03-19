@@ -51,10 +51,12 @@ public final class Constants {
         };
 
         // Charge Station Constants
-        public static final Rotation2d CHARGE_TIPPING_ANGLE = Rotation2d.fromDegrees(12);
-        public static final Rotation2d CHARGE_TOLERANCE = Rotation2d.fromDegrees(2.5);
-        public static final double CHARGE_MAX_SPEED = 0.6;
-        public static final double CHARGE_REDUCED_SPEED = 0.32;
+        public static final Rotation2d CHARGE_TIPPING_ANGLE = Rotation2d.fromDegrees(11);
+        public static final Rotation2d CHARGE_TOLERANCE = Rotation2d.fromDegrees(2);
+        public static final Rotation2d CHARGE_ANGULAR_VELOCITY_TOLERANCE = Rotation2d.fromDegrees(-5 * Robot.kDefaultPeriod);
+        public static final double CHARGE_MAX_SPEED = 0.65;
+        public static final double CHARGE_REDUCED_SPEED = 0.3;
+        public static final double CHARGE_OSCILLATION_COEFFICIENT = 0.6;
 
         // Delay between reading the gyro and using the value used to aproximate exact angle while spinning (0.02 is one loop)
         public static final double GYRO_READ_DELAY = 0.02;
