@@ -1,27 +1,23 @@
 package frc.robot.poseestimation;
 
-import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.DriveConstants;
 
 public class PoseEstimation {
     private SwerveDrivePoseEstimator poseEstimator;
+    private SwerveModulePosition[] lastModulePositions;
 
     private Translation2d carpetBias = new Translation2d(1, 0).times(DriveConstants.CARPET_BIAS);
 
@@ -42,7 +38,9 @@ public class PoseEstimation {
                 VecBuilder.fill(0, 0, 0) // will be overwritten for each measurement
         );
 
-        if(Robot.isReal()) {
+        lastModulePositions = RobotContainer.drivetrain.getModulePositions();
+
+        if (Robot.isReal()) {
             backends = new VisionBackend[2];
             backendToggles = new GenericEntry[2];
 
@@ -56,8 +54,7 @@ public class PoseEstimation {
 
             backends[1] = new LimelightBackend();
             backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/LL", true).getEntry();
-        }
-        else {
+        } else {
             backends = new VisionBackend[0];
             backendToggles = new GenericEntry[0];
         }
@@ -78,18 +75,28 @@ public class PoseEstimation {
     public void updateOdometry(Rotation2d gyro, SwerveModulePosition[] modulePositions) {
         // carpet bias correction
         for (int i = 0; i < DriveConstants.MODULE_POSITIONS.length; i++) {
-            Translation2d velocity = modulePositionToTranslation(modulePositions[i]);
+            double distanceDelta = modulePositions[i].distanceMeters - lastModulePositions[i].distanceMeters;
+            Translation2d positionDelta = new Translation2d(
+                    distanceDelta,
+                    modulePositions[i].angle
+            );
 
             Translation2d wheelRelativeCarpetBias = carpetBias
                     .rotateBy(gyro.unaryMinus())
                     .rotateBy(DriveConstants.MODULE_ROTATIONS[i].unaryMinus());
-            velocity = velocity.times(1 + translationDot(velocity, wheelRelativeCarpetBias));
+            positionDelta = positionDelta.times(1 + translationDot(positionDelta, wheelRelativeCarpetBias));
 
-            modulePositions[i] = translationToModulePosition(velocity);
+            modulePositions[i] = new SwerveModulePosition(
+                    lastModulePositions[i].distanceMeters + positionDelta.getNorm() * Math.signum(distanceDelta),
+                    positionDelta.getAngle()
+            );
         }
+
+        lastModulePositions = modulePositions;
 
         poseEstimator.update(gyro, modulePositions);
     }
+
 
     public Pose2d getEstimatedPose() {
         return poseEstimator.getEstimatedPosition();
@@ -110,20 +117,6 @@ public class PoseEstimation {
 
     private void addVisionMeasurement(VisionBackend.Measurement measurement) {
         poseEstimator.addVisionMeasurement(measurement.pose.toPose2d(), measurement.timestamp, measurement.stdDeviation);
-    }
-
-    private static Translation2d modulePositionToTranslation(SwerveModulePosition state) {
-        return new Translation2d(
-                state.distanceMeters,
-                state.angle
-        );
-    }
-
-    private static SwerveModulePosition translationToModulePosition(Translation2d translation) {
-        return new SwerveModulePosition(
-                translation.getNorm(),
-                new Rotation2d(translation.getX(), translation.getY())
-        );
     }
 
     private static double translationDot(Translation2d a, Translation2d b) {
