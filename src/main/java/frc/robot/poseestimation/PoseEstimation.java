@@ -74,23 +74,23 @@ public class PoseEstimation {
 
     public void updateOdometry(Rotation2d gyro, SwerveModulePosition[] modulePositions) {
         // carpet bias correction
-        for (int i = 0; i < DriveConstants.MODULE_POSITIONS.length; i++) {
-            double distanceDelta = modulePositions[i].distanceMeters - lastModulePositions[i].distanceMeters;
-            Translation2d positionDelta = new Translation2d(
-                    distanceDelta,
-                    modulePositions[i].angle
-            );
-
-            Translation2d wheelRelativeCarpetBias = carpetBias
-                    .rotateBy(gyro.unaryMinus())
-                    .rotateBy(DriveConstants.MODULE_ROTATIONS[i].unaryMinus());
-            positionDelta = positionDelta.times(1 + translationDot(positionDelta, wheelRelativeCarpetBias));
-
-            modulePositions[i] = new SwerveModulePosition(
-                    lastModulePositions[i].distanceMeters + positionDelta.getNorm() * Math.signum(distanceDelta),
-                    positionDelta.getAngle()
-            );
-        }
+//        for (int i = 0; i < DriveConstants.MODULE_POSITIONS.length; i++) {
+//            double distanceDelta = modulePositions[i].distanceMeters - lastModulePositions[i].distanceMeters;
+//            Translation2d positionDelta = new Translation2d(
+//                    distanceDelta,
+//                    modulePositions[i].angle
+//            );
+//
+//            Translation2d wheelRelativeCarpetBias = carpetBias
+//                    .rotateBy(gyro.unaryMinus())
+//                    .rotateBy(DriveConstants.MODULE_ROTATIONS[i].unaryMinus());
+//            positionDelta = positionDelta.times(1 + translationDot(positionDelta, wheelRelativeCarpetBias));
+//
+//            modulePositions[i] = new SwerveModulePosition(
+//                    lastModulePositions[i].distanceMeters + positionDelta.getNorm() * Math.signum(distanceDelta),
+//                    positionDelta.getAngle()
+//            );
+//        }
 
         lastModulePositions = modulePositions;
 

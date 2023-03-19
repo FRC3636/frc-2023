@@ -131,6 +131,8 @@ public class RobotContainer {
         configureButtonBindings();
 
         DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
+
+        autoTab.addDouble("Velocity", () -> poseEstimation.getEstimatedVelocity().getNorm());
     }
 
     private void configureButtonBindings() {

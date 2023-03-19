@@ -89,8 +89,8 @@ public final class Constants {
         public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(59);
         public static final double HIGH_CUBE_SCORING_DIST = Units.inchesToMeters(60);
 
-        public static final double MID_CONE_SCORING_DIST = Units.inchesToMeters(57);
-        public static final double MID_CUBE_SCORING_DIST = Units.inchesToMeters(59);
+        public static final double MID_CONE_SCORING_DIST = 1.49;
+        public static final double MID_CUBE_SCORING_DIST = Units.inchesToMeters(61);
 
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
@@ -246,8 +246,8 @@ public final class Constants {
         public static final double P_TRANSLATION_POINT_CONTROLLER = 4;
         public static final double P_THETA_POINT_CONTROLLER = 6;
 
-        public static final double TRANSLATION_TOLERANCE = 0.02;
-        public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
+        public static final double TRANSLATION_TOLERANCE = 0.01;
+        public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(0.5);
 
         // Constraint for the motion profiled robot angle controller
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
@@ -275,7 +275,8 @@ public final class Constants {
 
         public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
 
-        public static final double AMBIGUITY_FILTER = 0.5;
+        public static final double AMBIGUITY_FILTER = 0.05;
+        public static final double DISTANCE_FILTER = 2;
     }
 
     public static class FieldConstants {
