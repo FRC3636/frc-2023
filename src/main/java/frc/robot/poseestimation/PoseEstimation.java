@@ -58,6 +58,8 @@ public class PoseEstimation {
             backends = new VisionBackend[0];
             backendToggles = new GenericEntry[0];
         }
+
+        RobotContainer.autoTab.addDouble("Velocity", () -> this.getEstimatedVelocity().getNorm());
     }
 
     public void periodic() {

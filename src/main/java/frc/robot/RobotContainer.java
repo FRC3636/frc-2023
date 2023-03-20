@@ -5,10 +5,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -19,7 +17,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -29,7 +26,7 @@ import frc.robot.commands.alignment.AlignToClosestNode;
 import frc.robot.commands.alignment.AlignToSelectedNode;
 import frc.robot.commands.alignment.DriveToNode;
 import frc.robot.commands.autonomous.AutoBalance;
-import frc.robot.commands.autonomous.AutoCommand;
+import frc.robot.utils.AutoSelector;
 import frc.robot.commands.autonomous.AutoScore;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.GameInfoTable;
@@ -37,7 +34,6 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.utils.GamePiece;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
-import frc.robot.utils.AllianceUtils;
 import frc.robot.utils.GenerateCommand;
 import frc.robot.utils.Node;
 
@@ -60,13 +56,7 @@ public class RobotContainer {
 
     // Pose Estimation
     public static final PoseEstimation poseEstimation = new PoseEstimation();
-    public static final SendableChooser<String> drivePresetsChooser = new SendableChooser<>();
-
     public static Field2d field = new Field2d();
-    public static Field2d nodeSelector = new Field2d();
-
-    private final FieldObject2d startingPosition = field.getObject("Starting Position");
-    private final FieldObject2d autoBalanceStartingPosition = field.getObject("Auto Balance Starting Position");
 
     // Commands
     private final DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft,
@@ -76,11 +66,15 @@ public class RobotContainer {
     private static SendableChooser<String> autoSelector;
     public static SendableChooser<Node> autoNodeSelector;
 
-    // for RGB
+    // RGB
     public static final GameInfoTable gameInfo = new GameInfoTable();
 
-    // Movement Command
+    // Node
     public Node targetNode = new Node(0);
+
+    // Auto Selection
+    public static Field2d nodeSelector = new Field2d();
+    private final FieldObject2d startingPosition = field.getObject("Starting Position");
 
     public RobotContainer() {
         autoNodeSelector = new SendableChooser<>();
@@ -93,6 +87,7 @@ public class RobotContainer {
         driveSettingsTab.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
 
         LiveWindow.enableTelemetry(arm);
+        LiveWindow.enableTelemetry(drivetrain);
 
         if (!DriverStation.isFMSAttached()) {
             PathPlannerServer.startServer(5811);
@@ -101,18 +96,6 @@ public class RobotContainer {
         arm.setDefaultCommand(new ArmHoldCommand(arm));
 
         drivetrain.setDefaultCommand(driveCommand);
-
-        if (autoBalanceStartingPosition.getPoses().isEmpty()) {
-            autoBalanceStartingPosition.setPose(
-                    AllianceUtils.allianceToField(
-                            new Pose2d(
-                                    new Translation2d(
-                                            0,
-                                            0),
-                                    new Rotation2d())));
-        }
-
-        autoSelector = new SendableChooser<>();
 
         autoSelector.setDefaultOption("Grid 1", "grid1");
         autoSelector.addOption("Grid 2", "grid2");
@@ -131,8 +114,6 @@ public class RobotContainer {
         configureButtonBindings();
 
         DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
-
-        autoTab.addDouble("Velocity", () -> poseEstimation.getEstimatedVelocity().getNorm());
     }
 
     private void configureButtonBindings() {
@@ -151,6 +132,7 @@ public class RobotContainer {
                         drivetrain::setX,
                         drivetrain));
 
+        // Auto Alignment
         new JoystickButton(joystickRight, 4)
                 .whileTrue(
                         new ParallelCommandGroup(
@@ -245,7 +227,6 @@ public class RobotContainer {
             arm.setTarget(Arm.State.Teller);
         }));
 
-
         // Node Selector
         for (int i = 0; i < 9; i++) {
             int finalI = i;
@@ -253,12 +234,14 @@ public class RobotContainer {
                     .onTrue(new InstantCommand(() -> this.setTargetNode(new Node(finalI))));
         }
 
-        new Trigger(() -> controller.getLeftX() >= 0.5)
+        new Trigger(() -> controller.getLeftX() >= 0.75)
                 .onTrue(new MoveNodeSelection(this, MovementDirection.Left));
-        new Trigger(() -> controller.getLeftX() <= -0.5)
+        new Trigger(() -> controller.getLeftX() <= -0.75)
                 .onTrue(new MoveNodeSelection(this, MovementDirection.Right));
-        new Trigger(() -> controller.getLeftY() >= 0.5).onTrue(new MoveNodeSelection(this, MovementDirection.Up));
-        new Trigger(() -> controller.getLeftY() <= -0.5).onTrue(new MoveNodeSelection(this, MovementDirection.Down));
+        new Trigger(() -> controller.getLeftY() >= 0.75)
+                .onTrue(new MoveNodeSelection(this, MovementDirection.Up));
+        new Trigger(() -> controller.getLeftY() <= -0.75)
+                .onTrue(new MoveNodeSelection(this, MovementDirection.Down));
     }
 
     public Command getAutonomousCommand() {
@@ -268,7 +251,7 @@ public class RobotContainer {
 
         command.addCommands(new InstantCommand(() -> poseEstimation.resetPose(startingPose)));
 
-        return AutoCommand.makeAutoCommand(drivetrain, poseEstimation, autoSelector.getSelected());
+        return AutoSelector.makeAutoCommand(drivetrain, poseEstimation, autoSelector.getSelected());
     }
 
     public void setTargetNode(Node targetNode) {

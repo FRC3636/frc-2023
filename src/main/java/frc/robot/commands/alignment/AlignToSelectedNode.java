@@ -28,7 +28,6 @@ public class AlignToSelectedNode implements Command {
     private final PoseEstimation poseEstimation;
 
     private final Supplier<Node> targetNode;
-    private final Timer timer = new Timer();
 
     public AlignToSelectedNode(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, Supplier<Node> targetNode){
         this.drivetrain = drivetrain;
