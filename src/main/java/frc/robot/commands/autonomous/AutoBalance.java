@@ -19,6 +19,7 @@ public class AutoBalance implements Command {
     private int oscillationCount = 0;
 
     private Translation2d lastAscent;
+    private Translation2d lastAscentWithDeadZone;
 
     private final Drivetrain drivetrain;
     //private final PIDController pidController = new PIDController(0, 0, 0);
@@ -32,31 +33,41 @@ public class AutoBalance implements Command {
     public void initialize() {
         oscillationCount = 0;
         lastAscent = getAscentChassisRelative();
+        lastAscentWithDeadZone = lastAscent;
     }
 
     @Override
     public void execute() {
         Translation2d ascent = getAscentChassisRelative();
-        Rotation2d incline = new Rotation2d(Math.acos(ascent.getNorm()));
+        Rotation2d incline = new Rotation2d(Math.asin(ascent.getNorm()));
+        Rotation2d deltaIncline = incline.minus(new Rotation2d(Math.asin(lastAscent.getNorm())));
+        lastAscent = ascent;
+        SmartDashboard.putNumber("Incline", incline.getDegrees());
+        SmartDashboard.putNumber("Delta Incline", deltaIncline.getDegrees());
 
-        if (incline.getRadians() <= Constants.DriveConstants.CHARGE_TOLERANCE.getRadians()) {
+        if (incline.getRadians() <= Constants.DriveConstants.CHARGE_TOLERANCE.getRadians() ||
+        ( incline.getRadians() < Rotation2d.fromDegrees(15).getRadians() 
+        && deltaIncline.getRadians() < Constants.DriveConstants.CHARGE_ANGULAR_VELOCITY_TOLERANCE.getRadians())) {
+            
             drivetrain.setX();
             return;
         }
 
         // for some reason there's no Translation2d::dot method
-        if (ascent.getX() * lastAscent.getX() + ascent.getY() * ascent.getY() < 0) {
+        if (oscillationCount < 4 && ascent.getX() * lastAscentWithDeadZone.getX() + ascent.getY() * lastAscentWithDeadZone.getY() < 0) {
             oscillationCount++;
+            lastAscentWithDeadZone = ascent;
         }
-        lastAscent = ascent;
-
-        SmartDashboard.putNumber("Incline", incline.getDegrees());
+        if (incline.getRadians() <= Constants.DriveConstants.CHARGE_TOLERANCE.getRadians()) {
+            lastAscentWithDeadZone = ascent;
+        }
 
         double driveSpeed = calculateDriveSpeed(incline, oscillationCount);
         Translation2d driveVelocity = ascent.div(ascent.getNorm()).times(driveSpeed);
 
         drivetrain.drive(new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), 0));
     }
+    
     private Translation2d getAscentChassisRelative() {
         Rotation3d rot = drivetrain.getRotation3d();
         Translation3d normal = new Translation3d(0, 0, 1).rotateBy(rot);
@@ -65,15 +76,15 @@ public class AutoBalance implements Command {
     }
 
     private static double calculateDriveSpeed(Rotation2d incline, int oscillationCount) {
-        double driveSpeed = MathUtil.clamp(incline.getRadians() / Rotation2d.fromDegrees(15).getRadians(), -1, 1);
+        double driveSpeed;
 
         if (incline.getRadians() < Constants.DriveConstants.CHARGE_TIPPING_ANGLE.getRadians()) {
-            driveSpeed *= Constants.DriveConstants.CHARGE_REDUCED_SPEED;
+            driveSpeed = Constants.DriveConstants.CHARGE_REDUCED_SPEED;
         } else {
-            driveSpeed *= Constants.DriveConstants.CHARGE_MAX_SPEED;
+            driveSpeed = Constants.DriveConstants.CHARGE_MAX_SPEED * MathUtil.clamp(incline.getRadians() / Rotation2d.fromDegrees(15).getRadians(), -1, 1);;
         }
 
-        driveSpeed /= oscillationCount + 1; // dampen the robot's oscillations by slowing down after oscillating
+        driveSpeed /= Constants.DriveConstants.CHARGE_OSCILLATION_COEFFICIENT * (oscillationCount + 1); // dampen the robot's oscillations by slowing down after oscillating
 
         return driveSpeed;
     }
