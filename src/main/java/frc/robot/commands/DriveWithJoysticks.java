@@ -18,12 +18,19 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
 import frc.robot.utils.DeadbandUtils;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 public class DriveWithJoysticks implements Command {
     private final Drivetrain drivetrain;
     private final PoseEstimation poseEstimation;
 
     private final Joystick translation;
     private final Joystick rotation;
+
+    private Timestamp prevTimestamp;
+
+    private int xModeCooldown = 0;
 
     private Rotation2d fieldOrientationZeroOffset = new Rotation2d();
     private Sensitivity sensitivity;
@@ -51,6 +58,10 @@ public class DriveWithJoysticks implements Command {
 
     @Override
     public void execute() {
+        if(xModeCooldown > 0){
+            xModeCooldown -= prevTimestamp.compareTo(new Date());
+        }
+        
         double[] translationValues = DeadbandUtils.getXYWithDeadband(translation, DriveConstants.DEADZONE);
         double translationx = translationValues[0];
         double translationy = translationValues[1];
@@ -72,10 +83,13 @@ public class DriveWithJoysticks implements Command {
                 poseEstimation.getEstimatedPose().getRotation()
                         .minus(AllianceUtils.getFieldOrientationZero().plus(fieldOrientationZeroOffset)));
 
-        if (!withinDeadband) {
-            drivetrain.drive(robotRelSpeeds);
-        } else {
+        if (withinDeadband && xModeCooldown ==0) {
             drivetrain.setX();
+            xModeCooldown = 1000;
+            prevTimestamp = new Timestamp(new Date().getTime());
+
+        } else {
+            drivetrain.drive(robotRelSpeeds);
         }
     }
 
