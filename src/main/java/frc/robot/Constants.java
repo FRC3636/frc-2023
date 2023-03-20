@@ -99,7 +99,7 @@ public final class Constants {
 
         public static final double RAISING_BUFFER_TIME = 0.5;
 
-        public static final double SAFE_RAISING_DISTANCE = 2.6;
+        public static final double SAFE_RAISING_DISTANCE = 2.4;
 
         public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
     }

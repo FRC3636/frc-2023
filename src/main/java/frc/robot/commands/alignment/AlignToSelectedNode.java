@@ -47,15 +47,18 @@ public class AlignToSelectedNode implements Command {
         System.out.println(ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm));
 
         if(driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
-                /*&& ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)*/) {
-            System.out.println("test");
+                && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)) {
             Pose2d initial = poseEstimation.getEstimatedPose();
             Pose2d waypoint = new Pose2d(
                     AllianceUtils.isBlue()?
                             Constants.Arm.SAFE_RAISING_DISTANCE :
                             Constants.FieldConstants.fieldLength - Constants.Arm.SAFE_RAISING_DISTANCE,
                     (initial.getY() + targetNode.get().getRobotScoringPose().getY()) / 2,
-                    AllianceUtils.getAllianceToField(Rotation2d.fromRadians(Math.PI * 5 / 4))
+                    AllianceUtils.getAllianceToField(Rotation2d.fromRadians(Math.PI)).plus(
+                            Rotation2d.fromDegrees(
+                                    Math.copySign(45, initial.getRotation().getRadians())
+                            )
+                    )
             );
 
             FollowTrajectoryToState waypointCommand = new FollowTrajectoryToState(drivetrain, poseEstimation,
@@ -80,14 +83,16 @@ public class AlignToSelectedNode implements Command {
         }
         else {
             command = new ParallelCommandGroup(driveCommand,
-                    (new SequentialCommandGroup(
-                    new WaitCommand(
-                            driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
-                                    (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)
-                    ),
-                    new InstantCommand(() -> arm.setTarget(targetArmState))
-                    )
-            ));
+//                    (
+                                    new WaitCommand(
+                                            driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
+                                                    (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)
+                                    ).andThen(new InstantCommand(() -> arm.setTarget(targetArmState)))
+//                            new SequentialCommandGroup(
+//
+//                            )
+//                    )
+            );
         }
 
         command.initialize();
@@ -108,6 +113,6 @@ public class AlignToSelectedNode implements Command {
 
     @Override
     public Set<Subsystem> getRequirements() {
-        return Set.of(drivetrain, arm);
+        return Set.of(drivetrain);
     }
 }
