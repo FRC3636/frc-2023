@@ -97,7 +97,7 @@ public class Node {
             Node leftNode = new Node(currentPiece, armLevel, Column.LeftCone);
             Node rightNode = new Node(currentPiece, armLevel, Column.RightCone);
             double leftDistance = robotPose.getTranslation().getDistance(leftNode.getRobotScoringPose().getTranslation());
-            double rightDistance = robotPose.getTranslation().getDistance(leftNode.getRobotScoringPose().getTranslation());
+            double rightDistance = robotPose.getTranslation().getDistance(rightNode.getRobotScoringPose().getTranslation());
             if (leftDistance < rightDistance){
                 return leftNode;
             }else{

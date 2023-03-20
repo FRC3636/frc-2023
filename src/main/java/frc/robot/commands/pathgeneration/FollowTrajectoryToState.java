@@ -42,8 +42,6 @@ public class FollowTrajectoryToState implements Command {
     public void initialize() {
         trajectory = buildTrajectory(target);
 
-        System.out.println(trajectory.getInitialState().velocityMetersPerSecond);
-
         RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
         RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
         RobotContainer.field.getObject("Target").setPose(new Pose2d(target.position, target.holonomicRotation));
@@ -63,8 +61,6 @@ public class FollowTrajectoryToState implements Command {
     protected PathPlannerTrajectory buildTrajectory(PathPoint target) {
         Pose2d initial = poseEstimation.getEstimatedPose();
         Translation2d initialV = poseEstimation.getEstimatedVelocity();
-
-        System.out.println(initialV.getNorm());
 
         return PathPlanner.generatePath(
                 new PathConstraints(
