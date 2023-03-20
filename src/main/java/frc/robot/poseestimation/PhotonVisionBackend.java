@@ -31,9 +31,10 @@ public class PhotonVisionBackend extends VisionBackend {
     @Override
     public Optional<Measurement> getMeasurement() {
         return poseEstimator.update().flatMap((result) -> {
-            if (result.targetsUsed.get(0).getBestCameraToTarget().getTranslation().getNorm() > Constants.VisionConstants.DISTANCE_FILTER) {
+            if (result.targetsUsed.get(0).getBestCameraToTarget().getTranslation().getNorm() > Constants.VisionConstants.DISTANCE_FILTER || result.targetsUsed.get(0).getPoseAmbiguity() > Constants.VisionConstants.AMBIGUITY_FILTER) {
                 return Optional.empty();
             }
+
 
             RobotContainer.field.getObject("Vision Measurement").setPose(result.estimatedPose.toPose2d());
 

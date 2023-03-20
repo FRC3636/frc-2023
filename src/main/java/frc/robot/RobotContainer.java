@@ -52,7 +52,6 @@ public class RobotContainer {
     public static final Joystick joystickLeft = new Joystick(Constants.ControlConstants.JOYSTICK_RIGHT_PORT);
     public static final Joystick joystickRight = new Joystick(Constants.ControlConstants.JOYSTICK_LEFT_PORT);
     public static final XboxController controller = new XboxController(Constants.ControlConstants.CONTROLLER_PORT);
-    public static final Joystick buttonPanel = new Joystick(Constants.ControlConstants.BUTTON_PANEL_PORT);
 
     // Pose Estimation
     public static final PoseEstimation poseEstimation = new PoseEstimation();
@@ -96,20 +95,6 @@ public class RobotContainer {
         arm.setDefaultCommand(new ArmHoldCommand(arm));
 
         drivetrain.setDefaultCommand(driveCommand);
-
-        autoSelector.setDefaultOption("Grid 1", "grid1");
-        autoSelector.addOption("Grid 2", "grid2");
-        autoSelector.addOption("Grid 3", "grid3");
-        autoSelector.addOption("Grid 3 2 ball", "grid3_2");
-
-
-        for (int i = 0; i < 9; i++) {
-            Node node = new Node(i);
-            autoNodeSelector.addOption(node.getColumn() + " " + node.getLevel(), node);
-        }
-
-        autoTab.add("Auto Selector", autoSelector);
-        autoTab.add("Auto Node Selector", autoNodeSelector);
 
         configureButtonBindings();
 
@@ -228,12 +213,6 @@ public class RobotContainer {
         }));
 
         // Node Selector
-        for (int i = 0; i < 9; i++) {
-            int finalI = i;
-            new JoystickButton(buttonPanel, i+1)
-                    .onTrue(new InstantCommand(() -> this.setTargetNode(new Node(finalI))));
-        }
-
         new Trigger(() -> controller.getLeftX() >= 0.75)
                 .onTrue(new MoveNodeSelection(this, MovementDirection.Left));
         new Trigger(() -> controller.getLeftX() <= -0.75)

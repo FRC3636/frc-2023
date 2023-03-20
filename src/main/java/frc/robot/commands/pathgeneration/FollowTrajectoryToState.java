@@ -62,20 +62,30 @@ public class FollowTrajectoryToState implements Command {
         Pose2d initial = poseEstimation.getEstimatedPose();
         Translation2d initialV = poseEstimation.getEstimatedVelocity();
 
+        double speed = initialV.getNorm();
+        double speedCopy = (double) (float) speed;
+
+        PathPoint point = new PathPoint(
+                initial.getTranslation(),
+                speed == 0 ?
+                        target.position.minus(initial.getTranslation()).getAngle() :
+                        initialV.getAngle(),
+                initial.getRotation(),
+                speedCopy);
+
+        System.out.println(speed);
+        System.out.println(point.velocityOverride);
+
         return PathPlanner.generatePath(
                 new PathConstraints(
                         AutoConstants.MAX_SPEED_METERS_PER_SECOND,
                         AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
                 ),
-                new PathPoint(
-                        initial.getTranslation(),
-                        initialV.getNorm() == 0 ?
-                                target.position.minus(initial.getTranslation()).getAngle() :
-                                initialV.getAngle(),
-                        initial.getRotation(),
-                        initialV.getNorm()),
+                point,
                 target
         );
+
+
     }
 
     @Override
