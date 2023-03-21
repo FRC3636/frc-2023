@@ -111,12 +111,6 @@ public class RobotContainer {
                                 poseEstimation.getEstimatedPose().getTranslation(),
                                 new Rotation2d()))));
 
-        // Driving
-        new JoystickButton(joystickLeft, 1)
-                .whileTrue(new RunCommand(
-                        drivetrain::setX,
-                        drivetrain));
-
         // Auto Alignment
         new JoystickButton(joystickRight, 4)
                 .whileTrue(

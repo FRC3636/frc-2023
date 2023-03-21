@@ -73,7 +73,7 @@ public class Sensitivity extends CommandBase {
     }
 
     public double getTellerSensitivity() {
-        if (inTellerZone() && RobotContainer.joystickRight.getTrigger()) {
+        if (inTellerZone() && RobotContainer.joystickLeft.getTrigger()) {
             double distanceInTellerZone = Math.min((TELLER_ZONE_RANGE + TELLER_ZONE_TO_ALLIANCE),
                     AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose())) - TELLER_ZONE_TO_ALLIANCE;
 
