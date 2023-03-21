@@ -63,7 +63,7 @@ public class FollowTrajectoryToState implements Command {
         Translation2d initialV = poseEstimation.getEstimatedVelocity();
 
         double speed = initialV.getNorm();
-        double speedCopy = (double) (float) speed;
+//        double speedCopy = (double) (float) speed;
 
         PathPoint point = new PathPoint(
                 initial.getTranslation(),
@@ -71,7 +71,7 @@ public class FollowTrajectoryToState implements Command {
                         target.position.minus(initial.getTranslation()).getAngle() :
                         initialV.getAngle(),
                 initial.getRotation(),
-                speedCopy);
+                speed);
 
         System.out.println(speed);
         System.out.println(point.velocityOverride);

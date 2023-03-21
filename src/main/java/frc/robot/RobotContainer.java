@@ -230,7 +230,7 @@ public class RobotContainer {
 
         command.addCommands(new InstantCommand(() -> poseEstimation.resetPose(startingPose)));
 
-        return AutoSelector.makeAutoCommand(drivetrain, poseEstimation, autoSelector.getSelected());
+        return AutoSelector.makeAutoCommand(drivetrain, poseEstimation, "");
     }
 
     public void setTargetNode(Node targetNode) {
