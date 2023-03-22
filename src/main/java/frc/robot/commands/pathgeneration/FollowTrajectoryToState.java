@@ -16,9 +16,9 @@ import frc.robot.RobotContainer;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
+import java.sql.SQLOutput;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 
 //Uses PathPlanner to move the robot to the specified Pose2d
 public class FollowTrajectoryToState implements Command {
@@ -40,8 +40,6 @@ public class FollowTrajectoryToState implements Command {
 
     @Override
     public void initialize() {
-        trajectory = buildTrajectory(target);
-
         RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
         RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
         RobotContainer.field.getObject("Target").setPose(new Pose2d(target.position, target.holonomicRotation));
@@ -62,19 +60,18 @@ public class FollowTrajectoryToState implements Command {
         Pose2d initial = poseEstimation.getEstimatedPose();
         Translation2d initialV = poseEstimation.getEstimatedVelocity();
 
-        double speed = initialV.getNorm();
-//        double speedCopy = (double) (float) speed;
-
         PathPoint point = new PathPoint(
                 initial.getTranslation(),
-                speed == 0 ?
+                initialV.getNorm() == 0 ?
                         target.position.minus(initial.getTranslation()).getAngle() :
                         initialV.getAngle(),
                 initial.getRotation(),
-                speed);
+                initialV.getNorm());
 
-        System.out.println(speed);
-        System.out.println(point.velocityOverride);
+        System.out.println("Building Trajectory...");
+        System.out.println("Speed = " + initialV.getNorm());
+        System.out.println("Point Velocity = " + point.velocityOverride);
+        System.out.println("Done");
 
         return PathPlanner.generatePath(
                 new PathConstraints(
@@ -84,8 +81,6 @@ public class FollowTrajectoryToState implements Command {
                 point,
                 target
         );
-
-
     }
 
     @Override

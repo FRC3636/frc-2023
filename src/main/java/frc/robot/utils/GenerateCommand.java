@@ -11,9 +11,11 @@ public class GenerateCommand implements Command {
 
     Command inner;
     Supplier<Command> commandSupplier;
+    Set<Subsystem> requirements;
 
-    public GenerateCommand(Supplier<Command> commandSupplier) {
+    public GenerateCommand(Supplier<Command> commandSupplier, Set<Subsystem> requirements) {
         this.commandSupplier = commandSupplier;
+        this.requirements = requirements;
     }
 
     @Override
@@ -39,6 +41,6 @@ public class GenerateCommand implements Command {
 
     @Override
     public Set<Subsystem> getRequirements() {
-        return commandSupplier.get().getRequirements();
+        return requirements;
     }
 }

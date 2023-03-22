@@ -6,8 +6,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.commands.ArmMoveCommand;
-import frc.robot.commands.pathgeneration.FollowTrajectoryToPose;
-import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.Drivetrain;
