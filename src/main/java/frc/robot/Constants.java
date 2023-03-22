@@ -254,11 +254,6 @@ public final class Constants {
         // Constraint for the motion profiled robot angle controller
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
                 MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
-
-        public static final Transform2d NODE_HIGH_TRANSFORM = new Transform2d(
-                new Translation2d(-1, 0),
-                Rotation2d.fromRadians(Math.PI)
-        );
     }
 
     public static final class NeoMotorConstants {

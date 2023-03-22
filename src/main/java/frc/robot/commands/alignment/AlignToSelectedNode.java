@@ -49,7 +49,7 @@ public class AlignToSelectedNode implements Command {
                             Constants.Arm.SAFE_RAISING_DISTANCE :
                             Constants.FieldConstants.fieldLength - Constants.Arm.SAFE_RAISING_DISTANCE,
                     (initial.getY() + targetNode.get().getRobotScoringPose().getY()) / 2,
-                    AllianceUtils.getAllianceToField(Rotation2d.fromRadians(Math.PI)).plus(
+                    AllianceUtils.allianceToField(Rotation2d.fromRadians(Math.PI)).plus(
                             Rotation2d.fromDegrees(
                                     Math.copySign(45, initial.getRotation().getRadians())
                             )
@@ -62,7 +62,8 @@ public class AlignToSelectedNode implements Command {
                             Rotation2d.fromDegrees(targetNode.get().getRobotScoringPose().getY() > initial.getY() ? 90 : 270),
                             waypoint.getRotation(),
                             0.5
-                    )
+                    ),
+                    true
             );
 
             command = waypointCommand.andThen(

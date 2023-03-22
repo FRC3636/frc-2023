@@ -60,7 +60,7 @@ public class AndReturnToStart implements Command {
                 inner.end(false);
                 innerEnded = true;
 
-                returnToStart = new FollowTrajectoryToPose(drivetrain, poseEstimation, startingPose);
+                returnToStart = new FollowTrajectoryToPose(drivetrain, poseEstimation, startingPose, true);
                 returnToStart.initialize();
                 returnToStart.execute();
 
