@@ -103,6 +103,8 @@ public class Drivetrain extends SubsystemBase {
                 swerveModules.frontRight.getPosition().distanceMeters,
                 swerveModules.rearLeft.getPosition().distanceMeters,
                 swerveModules.rearRight.getPosition().distanceMeters});
+
+        SmartDashboard.putNumber("Pitch", gyro.getRotation3d().getY());
     }
 
     private void logModuleStates(String key, SwerveModuleState[] swerveModuleStates) {
