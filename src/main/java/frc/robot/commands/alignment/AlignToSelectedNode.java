@@ -14,6 +14,7 @@ import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
+import frc.robot.utils.GamePiece;
 import frc.robot.utils.GenerateCommand;
 import frc.robot.utils.Node;
 
@@ -45,6 +46,10 @@ public class AlignToSelectedNode implements Command {
         Arm.State targetArmState = Arm.State.getTargetFromNode(targetNode.get());
         DriveToNode driveCommand = new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get());
 
+        System.out.println("we r now auto aligning 🥺 >.< UwU");
+
+        double coneOffset = arm.getGamePiece() == GamePiece.Cone ? arm.getConeY() - Constants.Rollers.CONE_CENTER_DISTANCE : 0;
+
         if(driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
                 && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)) {
             Pose2d initial = poseEstimation.getEstimatedPose();
@@ -54,7 +59,7 @@ public class AlignToSelectedNode implements Command {
                             Constants.FieldConstants.fieldLength - Constants.Arm.SAFE_RAISING_DISTANCE, 
 
                     ((initial.getY() + targetNode.get().getRobotScoringPose().getY()) / 2)
-                     + (arm.getConeY() - Constants.Rollers.CONE_CENTER_DISTANCE), 
+                     + coneOffset, 
 
                     AllianceUtils.allianceToField(Rotation2d.fromRadians(Math.PI)).plus(
                             Rotation2d.fromDegrees(
