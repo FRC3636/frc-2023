@@ -89,9 +89,12 @@ public final class Constants {
         public static final double PIVOT_HEIGHT = 1.162025;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
+        public static final double HIGH_RIM_SCORING_DIST = Units.inchesToMeters(Double.POSITIVE_INFINITY); //measure
         public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(59);
         public static final double HIGH_CUBE_SCORING_DIST = Units.inchesToMeters(60);
 
+
+        public static final double MID_RIM_SCORING_DIST = Units.inchesToMeters(Double.NEGATIVE_INFINITY); //measure
         public static final double MID_CONE_SCORING_DIST = 1.49;
         public static final double MID_CUBE_SCORING_DIST = Units.inchesToMeters(61);
 
@@ -120,16 +123,25 @@ public final class Constants {
         public static final double KD = 0.03;
 
         public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.103);
+
+        public static final Rotation2d HIGH_RIM_ANGLE = Rotation2d.fromRadians(360000); //measure
         public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.945489);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
+
+        public static final Rotation2d MID_RIM_ANGLE = Rotation2d.fromRadians(36000); //measure
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.762299);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(1.282185);
+
+        public static final Rotation2d INTAKE_RIM_ANGLE = Rotation2d.fromRadians(0.8); //measure
         public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(1.082943);
         public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromRadians(0.6);
+
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.873581);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromRadians(1.037839);
+
         public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(2.041552);
         public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(1.580170);
+
         public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(Math.PI);
         public static final Rotation2d TOLERANCE_ANGLE = Rotation2d.fromRadians(1);
 
@@ -155,19 +167,28 @@ public final class Constants {
 
         public static final Rotation2d STOWED_CUBE_ANGLE = Rotation2d.fromDegrees(40);
         public static final Rotation2d STOWED_CONE_ANGLE = Rotation2d.fromRadians(0);
+
+
+        public static final Rotation2d HIGH_RIM_ANGLE = Rotation2d.fromRadians(0.9); //measure
         public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.422117);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
+
+        public static final Rotation2d MID_RIM_ANGLE = Rotation2d.fromRadians(36000); //measure
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.655558);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
+
+
+        public static final Rotation2d INTAKE_RIM_ANGLE = Rotation2d.fromDegrees(36000); //measure
         public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromDegrees(-56.414788);
         public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromDegrees(41.957416);
+
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.960988);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
+
         public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(-0.760278);
         public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(0.827085);
 
         public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
-
         public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(56);
 
         //Min Angle
@@ -179,16 +200,19 @@ public final class Constants {
     public static class Rollers {
         public static final int ID = 4;
         public static final double INTAKE_CONE = -.6;
+        public static final double INTAKE_RIM = -.6;
         public static final double INTAKE_CUBE = 0.5;
         public static final double OUTTAKE_CONE = 0.5;
+        public static final double OUTTAKE_RIM = 0.5;
         public static final double OUTTAKE_CUBE = -.6;
         public static final double HOLDING_PIECE_VOLTAGE = 11;
 
         public static final int ECHO_CHANNEL = 1;
         public static final int PING_CHANNEL = 2;
 
-        public static final double CONE_OFFSET = 0.00;
-        public static final double CONE_CENTER_DISTANCE = 0.00;
+        public static final double ULTRASONIC_MAX_DISTANCE = 0.00; //measure
+        public static final double CONE_OFFSET = 0.00; //measure
+        public static final double CONE_CENTER_DISTANCE = 0.00; // measure
 
     }
 

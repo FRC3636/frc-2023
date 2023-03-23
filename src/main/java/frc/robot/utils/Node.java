@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.Arm;
 
 public class Node {
     private final GamePiece nodeType;
@@ -23,8 +24,7 @@ public class Node {
         this(
                 GamePiece.fromNodeId(node),
                 Level.values()[node / 3],
-                Column.values()[node % 3]
-        );
+                Column.values()[node % 3]);
 
     }
 
@@ -44,12 +44,14 @@ public class Node {
         double x = 0;
         switch (level) {
             case High:
-                x = nodeType == GamePiece.Cone ? Constants.Arm.HIGH_CONE_SCORING_DIST
-                        : Constants.Arm.HIGH_CUBE_SCORING_DIST;
+                x = nodeType == GamePiece.Cube ? Constants.Arm.HIGH_CUBE_SCORING_DIST
+                        : nodeType == GamePiece.Cone ?
+                        Arm.HIGH_CONE_SCORING_DIST : Arm.HIGH_RIM_SCORING_DIST;
                 break;
             case Mid:
-                x = nodeType == GamePiece.Cone ? Constants.Arm.MID_CONE_SCORING_DIST
-                        : Constants.Arm.MID_CUBE_SCORING_DIST;
+                x = nodeType == GamePiece.Cube ? Constants.Arm.MID_CUBE_SCORING_DIST
+                        : nodeType == GamePiece.Cone ?
+                        Arm.MID_CONE_SCORING_DIST : Arm.MID_RIM_SCORING_DIST;
                 break;
             case Low:
                 x = nodeType == GamePiece.Cone ? Constants.Arm.LOW_CONE_SCORING_DIST
@@ -90,17 +92,19 @@ public class Node {
         return getNodePose().transformBy(getRobotOffset());
     }
 
-    public static Node getClosestNode(Pose2d robotPose, Level armLevel, GamePiece currentPiece){
-        if(currentPiece == GamePiece.Cube){
+    public static Node getClosestNode(Pose2d robotPose, Level armLevel, GamePiece currentPiece) {
+        if (currentPiece == GamePiece.Cube) {
             return new Node(currentPiece, armLevel, Column.Cube);
-        }else{
+        } else {
             Node leftNode = new Node(currentPiece, armLevel, Column.LeftCone);
             Node rightNode = new Node(currentPiece, armLevel, Column.RightCone);
-            double leftDistance = robotPose.getTranslation().getDistance(leftNode.getRobotScoringPose().getTranslation());
-            double rightDistance = robotPose.getTranslation().getDistance(rightNode.getRobotScoringPose().getTranslation());
-            if (leftDistance < rightDistance){
+            double leftDistance = robotPose.getTranslation()
+                    .getDistance(leftNode.getRobotScoringPose().getTranslation());
+            double rightDistance = robotPose.getTranslation()
+                    .getDistance(rightNode.getRobotScoringPose().getTranslation());
+            if (leftDistance < rightDistance) {
                 return leftNode;
-            }else{
+            } else {
                 return rightNode;
             }
         }

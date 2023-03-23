@@ -2,6 +2,7 @@ package frc.robot.utils;
 
 public enum GamePiece {
     Cone,
+    RimCone,
     Cube;
 
     public static GamePiece fromNodeId(final int nodeId) {

@@ -11,14 +11,14 @@ public class Rollers {
     private Rollers.State rollerState = Rollers.State.Off;
     private GamePiece gamePiece = GamePiece.Cone;
 
-    // private Ultrasonic ultrasonic = new Ultrasonic(Constants.Rollers.PING_CHANNEL, Constants.Rollers.ECHO_CHANNEL);
+    private Ultrasonic ultrasonic = new Ultrasonic(Constants.Rollers.PING_CHANNEL, Constants.Rollers.ECHO_CHANNEL);
 
     private final CANSparkMax motor = new CANSparkMax(Constants.Rollers.ID, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     public Rollers() {
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor.restoreFactoryDefaults();
-        // ultrasonic.setEnabled(true);
+         ultrasonic.setEnabled(true);
         //RobotContainer.armTab.addNumber("Roller Bus Voltage", motor::getBusVoltage).withWidget(BuiltInWidgets.kGraph);
         //RobotContainer.armTab.addNumber("Roller Applied Voltage", motor::getAppliedOutput).withWidget(BuiltInWidgets.kGraph);
         //RobotContainer.armTab.addNumber("Roller Compensation Voltage", motor::getVoltageCompensationNominalVoltage).withWidget(BuiltInWidgets.kGraph);
@@ -28,9 +28,10 @@ public class Rollers {
         this.rollerState = rollerState;
     }
 
-    // public double getConeY(){
-    //     return (ultrasonic.getRangeMM()/1000) + Constants.Rollers.CONE_OFFSET;
-    // }
+    public double getObjectY(){
+        return (ultrasonic.getRangeMM()/1000) + Constants.Rollers.CONE_OFFSET;
+     
+    }
 
     public void setGamePiece(GamePiece gamePiece) {
         this.gamePiece = gamePiece;
@@ -54,16 +55,18 @@ public class Rollers {
     }
 
     public enum State {
-        Intake(Constants.Rollers.INTAKE_CONE, Constants.Rollers.INTAKE_CUBE),
-        Outtake(Constants.Rollers.OUTTAKE_CONE, Constants.Rollers.OUTTAKE_CUBE),
-        Off(0, 0);
+        Intake(Constants.Rollers.INTAKE_CONE, Constants.Rollers.INTAKE_CUBE, Constants.Rollers.INTAKE_RIM),
+        Outtake(Constants.Rollers.OUTTAKE_CONE, Constants.Rollers.OUTTAKE_CUBE, Constants.Rollers.OUTTAKE_RIM),
+        Off(0, 0, 0);
 
         public final double coneSpeed;
         public final double cubeSpeed;
+        public final double rimSpeed;
 
-        State(double coneSpeed, double cubeSpeed) {
+        State(double coneSpeed, double cubeSpeed, double rimSpeed) {
             this.coneSpeed = coneSpeed;
             this.cubeSpeed = cubeSpeed;
+            this.rimSpeed = rimSpeed;
         }
 
     }

@@ -178,7 +178,9 @@ public class RobotContainer {
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
                 .whileTrue(new InstantCommand(() -> arm.setGamePiece(GamePiece.Cube)));
         new Trigger(() -> controller.getLeftTriggerAxis() > 0.05)
-                .whileTrue(new InstantCommand(() -> arm.setGamePiece(GamePiece.Cone)));
+                .whileTrue(new InstantCommand(() -> arm.setGamePiece(GamePiece.Cone)));     
+        new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
+                .whileTrue(new InstantCommand(() -> arm.setGamePiece(GamePiece.RimCone)));
 
         new JoystickButton(controller, XboxController.Button.kRightStick.value)
                 .onTrue(new InstantCommand(arm::resetOffset));
