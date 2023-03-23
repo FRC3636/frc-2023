@@ -53,7 +53,7 @@ public class AlignToSelectedNode implements Command {
                     ((initial.getY() + targetNode.get().getRobotScoringPose().getY()) / 2)
                      + (arm.getConeY() - Constants.Rollers.CONE_CENTER_DISTANCE), 
 
-                    AllianceUtils.getAllianceToField(Rotation2d.fromRadians(Math.PI)).plus(
+                    AllianceUtils.allianceToField(Rotation2d.fromRadians(Math.PI)).plus(
                             Rotation2d.fromDegrees(
                                     Math.copySign(45, initial.getRotation().getRadians())
                             )
