@@ -188,7 +188,7 @@ public final class Constants {
         public static final int PING_CHANNEL = 2;
 
         public static final double CONE_OFFSET = 0.00;
-        public static final double CONE_CENTER_DISTANCE = 0.00;
+        public static final double CONE_CENTER_DISTANCE = Units.inchesToMeters(5.5);
 
     }
 
