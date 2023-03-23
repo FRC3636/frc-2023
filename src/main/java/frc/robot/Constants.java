@@ -151,18 +151,18 @@ public final class Constants {
         public static final double KV = 1.4242;
         public static final double KA = 0.052069;
 
-        public static final double STOWED_CUBE_HEIGHT = -1; // fixme fixme fixme NOT right fixme will cause a crash (!!!!)
-        public static final double STOWED_CONE_HEIGHT = -1;
-        public static final double HIGH_CONE_HEIGHT = -1;
-        public static final double HIGH_CUBE_HEIGHT = -1;
-        public static final double MID_CONE_HEIGHT = -1;
-        public static final double MID_CUBE_HEIGHT = -1;
+        public static final double STOWED_CUBE_HEIGHT = 0.31;
+        public static final double STOWED_CONE_HEIGHT = 0.07;
+        public static final double HIGH_CONE_HEIGHT = 1.21;
+        public static final double HIGH_CUBE_HEIGHT = 1.31;
+        public static final double MID_CONE_HEIGHT = 1.04;
+        public static final double MID_CUBE_HEIGHT = 1.04;
         public static final double LOW_CONE_HEIGHT = 0.33;
-        public static final double LOW_CUBE_HEIGHT = -1;
-        public static final double SLIDE_CONE_HEIGHT = -1;
-        public static final double SLIDE_CUBE_HEIGHT = -1;
-        public static final double TELLER_CONE_HEIGHT = -1;
-        public static final double TELLER_CUBE_HEIGHT = -1;
+        public static final double LOW_CUBE_HEIGHT = 0.5;
+        public static final double SLIDE_CONE_HEIGHT = 0.71;
+        public static final double SLIDE_CUBE_HEIGHT = 0.90;
+        public static final double TELLER_CONE_HEIGHT = 1.25;
+        public static final double TELLER_CUBE_HEIGHT = 1.27;
 
         public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(56);
 

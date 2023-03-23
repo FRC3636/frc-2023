@@ -82,15 +82,12 @@ public class Wrist {
     }
 
     public Rotation2d getSetPosition() {
-        return Wrist.getWristAngleFromHeight(arm.getTargetWristHeight(), arm.getShoulderAngle());
+        return Wrist.getWristAngleFromHeight(arm.getTargetWristHeight(), arm.getTargetShoulderAngle());
     }
 
     public static Rotation2d getWristAngleFromHeight(double height, Rotation2d shoulderAngle) {
         double jointHeight = Constants.Arm.PIVOT_HEIGHT - Constants.Arm.HUMERUS_LENGTH * shoulderAngle.getCos();
-        double sinAngle = (height - jointHeight) / Constants.Arm.MANIPULATOR_LENGTH;
-        if(Math.abs(sinAngle) > 1) {
-            return null;
-        }
+        double sinAngle = Math.max(Math.min((height - jointHeight) / Constants.Arm.MANIPULATOR_LENGTH, 1), -1);
         return Rotation2d.fromRadians(Math.asin(sinAngle));
     }
 

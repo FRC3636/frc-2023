@@ -135,21 +135,21 @@ public class Arm extends SubsystemBase {
     public void moveWristOffset(double difference) {
         switch (gamePiece) {
             case Cone:
-                target.wristConeOffset += difference;
+                target.heightConeOffset += difference;
                 break;
             case Cube:
-                target.wristCubeOffset += difference;
+                target.heightCubeOffset += difference;
         }
     }
 
     public void resetOffset() {
         switch (gamePiece) {
             case Cone:
-                target.wristConeOffset = 0;
+                target.heightConeOffset = 0;
                 target.shoulderConeOffset = new Rotation2d();
                 break;
             case Cube:
-                target.wristCubeOffset = 0;
+                target.heightCubeOffset = 0;
                 target.shoulderCubeOffset = new Rotation2d();
         }
     }
@@ -228,8 +228,8 @@ public class Arm extends SubsystemBase {
 
         private Rotation2d shoulderConeOffset = new Rotation2d();
         private Rotation2d shoulderCubeOffset = new Rotation2d();
-        private double wristConeOffset = 0;
-        private double wristCubeOffset = 0;
+        private double heightConeOffset = 0;
+        private double heightCubeOffset = 0;
 
         State(Rotation2d shoulderConeAngle, Rotation2d shoulderCubeAngle, double wristConeHeight,
               double wristCubeHeight) {
@@ -253,7 +253,7 @@ public class Arm extends SubsystemBase {
         }
 
         public double getWristHeightFor(GamePiece piece) {
-            return piece == GamePiece.Cone ? this.wristConeHeight + this.wristConeOffset : this.wristCubeHeight + this.wristCubeOffset;
+            return piece == GamePiece.Cone ? this.wristConeHeight + this.heightConeOffset : this.wristCubeHeight + this.heightCubeOffset;
         }
 
         public Rotation2d getShoulderAngleFor(GamePiece gamePiece) {
@@ -278,8 +278,8 @@ public class Arm extends SubsystemBase {
             return new double[] {
                     value.shoulderConeAngle.plus(value.shoulderConeOffset).getRadians(),
                     value.shoulderCubeAngle.plus(value.shoulderCubeOffset).getRadians(),
-                    value.wristConeHeight + value.wristConeOffset,
-                    value.wristCubeHeight + value.wristCubeOffset,
+                    value.wristConeHeight + value.heightConeOffset,
+                    value.wristCubeHeight + value.heightCubeOffset,
             };
         }
     }
