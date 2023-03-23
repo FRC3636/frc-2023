@@ -130,10 +130,8 @@ public final class Constants {
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromRadians(1.037839);
         public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(2.041552);
         public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(1.580170);
-        public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(Math.PI);
-        public static final Rotation2d TOLERANCE_ANGLE = Rotation2d.fromRadians(1);
 
-        public static final double FINISH_TOLERANCE = Units.degreesToRadians(0);
+        public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(Math.PI);
 
         public static final TrapezoidProfile.Constraints TRAPEZOID_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(8, 8);
     }
@@ -153,27 +151,24 @@ public final class Constants {
         public static final double KV = 1.4242;
         public static final double KA = 0.052069;
 
-        public static final Rotation2d STOWED_CUBE_ANGLE = Rotation2d.fromDegrees(40);
-        public static final Rotation2d STOWED_CONE_ANGLE = Rotation2d.fromRadians(0);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.422117);
-        public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
-        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.655558);
-        public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
-        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromDegrees(-56.414788);
-        public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromDegrees(41.957416);
-        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.960988);
-        public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
-        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(-0.760278);
-        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(0.827085);
-
-        public static final Rotation2d MIN_SHOULDER_ANGLE = Rotation2d.fromRadians(0.709869);
+        public static final double STOWED_CUBE_HEIGHT = -1; // fixme fixme fixme NOT right fixme will cause a crash (!!!!)
+        public static final double STOWED_CONE_HEIGHT = -1;
+        public static final double HIGH_CONE_HEIGHT = -1;
+        public static final double HIGH_CUBE_HEIGHT = -1;
+        public static final double MID_CONE_HEIGHT = -1;
+        public static final double MID_CUBE_HEIGHT = -1;
+        public static final double LOW_CONE_HEIGHT = 0.33;
+        public static final double LOW_CUBE_HEIGHT = -1;
+        public static final double SLIDE_CONE_HEIGHT = -1;
+        public static final double SLIDE_CUBE_HEIGHT = -1;
+        public static final double TELLER_CONE_HEIGHT = -1;
+        public static final double TELLER_CUBE_HEIGHT = -1;
 
         public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(56);
 
         //Min Angle
         public static final double HORIZONTAL_TO_CORNER_ANGLE = 0.2985176246;
         public static final double JOINT_TO_CORNER_DISTANCE = Units.inchesToMeters(14);
-        public static final double CLEARANCE_HEIGHT = 1;
     }
 
     public static class Rollers {

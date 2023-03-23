@@ -188,9 +188,9 @@ public class RobotContainer {
         new Trigger(() -> controller.getPOV() == 180)
                 .onTrue(new InstantCommand(() -> arm.moveShoulderOffset(Rotation2d.fromDegrees(-2))));
         new Trigger(() -> controller.getPOV() == 90)
-                .onTrue(new InstantCommand(() -> arm.moveWristOffset(Rotation2d.fromDegrees(2))));
+                .onTrue(new InstantCommand(() -> arm.moveWristOffset(0.01)));
         new Trigger(() -> controller.getPOV() == 270)
-                .onTrue(new InstantCommand(() -> arm.moveWristOffset(Rotation2d.fromDegrees(-2))));
+                .onTrue(new InstantCommand(() -> arm.moveWristOffset(-0.01)));
 
         new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {
             arm.setTarget(Arm.State.Stowed);

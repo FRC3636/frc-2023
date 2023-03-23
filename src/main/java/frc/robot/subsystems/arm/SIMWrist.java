@@ -43,7 +43,7 @@ public class SIMWrist extends Wrist{
     @Override
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
         if(velocity.getRadians() != 0) {
-            Rotation2d minAngle = getWristAngleFromHeight(0.4);
+            Rotation2d minAngle = Wrist.getWristAngleFromHeight(0.4, arm.getShoulderAngle());
             if(minAngle != null) {
                 position = Rotation2d.fromRadians(Math.max(position.getRadians(), minAngle.getRadians()));
             }

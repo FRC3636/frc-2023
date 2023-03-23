@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.utils.GamePiece;
 import frc.robot.subsystems.arm.Arm;
 
 public class ArmMoveCommand extends CommandBase {
@@ -45,12 +46,13 @@ public class ArmMoveCommand extends CommandBase {
     }
 
     public static boolean pathIntersectsChargeStation(Arm.State goal, Arm arm) {
+        double midCubeAngle = Arm.State.Mid.getShoulderAngleFor(GamePiece.Cube).getRadians();
         return (
-                goal.getShoulderAngleFor(arm.getGamePiece()).getRadians() >= Constants.Shoulder.MID_CUBE_ANGLE.getRadians() &&
-                arm.getShoulderAngle().getRadians() <= Constants.Shoulder.MID_CUBE_ANGLE.getRadians()
+                goal.getShoulderAngleFor(arm.getGamePiece()).getRadians() >= midCubeAngle &&
+                arm.getShoulderAngle().getRadians() <= midCubeAngle
         ) || (
-                goal.getShoulderAngleFor(arm.getGamePiece()).getRadians() <= Constants.Shoulder.MID_CUBE_ANGLE.getRadians() &&
-                arm.getShoulderAngle().getRadians() >= Constants.Shoulder.MID_CUBE_ANGLE.getRadians()
+                goal.getShoulderAngleFor(arm.getGamePiece()).getRadians() <= midCubeAngle &&
+                arm.getShoulderAngle().getRadians() >= midCubeAngle
         );
     }
 

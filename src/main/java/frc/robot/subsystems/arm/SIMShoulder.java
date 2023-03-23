@@ -5,6 +5,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.utils.GamePiece;
 
 public class SIMShoulder extends Shoulder {
 
@@ -13,8 +14,8 @@ public class SIMShoulder extends Shoulder {
             115.2,
             0.663,
             Constants.Arm.HUMERUS_LENGTH,
-            Constants.Shoulder.STOWED_ANGLE.getRadians() - Math.PI / 2,
-            Constants.Shoulder.HIGH_CONE_ANGLE.getRadians() - Math.PI / 2,
+            Arm.State.Stowed.getShoulderAngleFor(GamePiece.Cone).getRadians() - Math.PI / 2,
+            Arm.State.High.getShoulderAngleFor(GamePiece.Cone).getRadians() - Math.PI / 2,
             5.715,
             true
     );
