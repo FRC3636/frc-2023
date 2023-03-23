@@ -9,18 +9,22 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.autonomous.AutoScore;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 
 public class AutoSelector implements Sendable {
     static Map<String, Function<String[], Command>> eventMap = Map.of(
-            "print", (string) -> new InstantCommand(() -> System.out.println("print event triggered: " + string[0])),
-            "score", (string) -> new AutoScore(
+            "print", (arguments) -> new InstantCommand(() -> System.out.println("print event triggered: " + arguments[0])),
+            "score", (arguments) -> new AutoScore(
                     RobotContainer.drivetrain,
                     RobotContainer.arm,
                     RobotContainer.poseEstimation,
-                    () -> new Node(GamePiece.valueOf(string[0]), Node.Level.valueOf(string[1]), Node.Column.valueOf(string[2]))
+                    () -> new Node(GamePiece.valueOf(arguments[0]), Node.Level.valueOf(arguments[1]), Node.Column.valueOf(arguments[2]))
             )
 //            "intake", new InstantCommand(() -> {
 //                RobotContainer.arm.setRollerState(Rollers.State.Intake);
@@ -43,10 +47,11 @@ public class AutoSelector implements Sendable {
     public static Command makeAutoCommand(Drivetrain drivetrain, PoseEstimation poseEstimation, String auto) {
         SequentialCommandGroup autoCommand = new SequentialCommandGroup();
 
-        String[] autoEvents = auto.toLowerCase().trim().split(",");
+        new JSONArray(auto)
 
         for (String autoEvent : autoEvents) {
-            String event = autoEvent.split(":")[0].replaceAll("\"", "");
+            String event = autoEvent.split(":")[0].replaceAll("\"", "").trim();
+            String arguments = autoEvent.split(":")[1].trim().
             autoCommand.addCommands();
         }
 

@@ -25,20 +25,21 @@ public class Arm extends SubsystemBase {
 
     private final Shoulder shoulder;
     private final Wrist wrist;
+
     private final Rollers rollers;
 
     private final Mechanism2d arm = new Mechanism2d(Units.inchesToMeters(28), Constants.Arm.PIVOT_HEIGHT + 0.5);
+
     private final MechanismRoot2d pivot = arm.getRoot("pivot", Units.inchesToMeters(22), Constants.Arm.PIVOT_HEIGHT);
     private final MechanismLigament2d humerus = pivot
             .append(new MechanismLigament2d("humerus", Constants.Arm.HUMERUS_LENGTH , 0));
     private final MechanismLigament2d manipulator = humerus
             .append(new MechanismLigament2d("manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
-
     private final MechanismLigament2d setHumerus = pivot
             .append(new MechanismLigament2d("set humerus", Constants.Arm.HUMERUS_LENGTH, 0));
+
     private final MechanismLigament2d setManipulator = setHumerus
             .append(new MechanismLigament2d("set manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
-
     public Arm() {
         shoulder = (RobotBase.isSimulation()) ? new SIMShoulder() : new Shoulder();
         wrist = (RobotBase.isSimulation()) ? new SIMWrist(this) : new Wrist(this);
@@ -65,10 +66,6 @@ public class Arm extends SubsystemBase {
         setManipulator.setAngle(getTargetWristAngle().plus(Rotation2d.fromDegrees(90))
                 .minus(getTargetShoulderAngle()));
     }
-
-    // public double getConeY(){
-    //     return rollers.getConeY() ;
-    // }
 
     public double[] getArm3dPose() {
         Pose3d shoulderPose = new Pose3d(
@@ -109,6 +106,10 @@ public class Arm extends SubsystemBase {
 
     public Rotation2d getShoulderVelocity() {
         return shoulder.getVelocity();
+    }
+
+    public Rollers getRollers() {
+        return rollers;
     }
 
     public void runWithSetpoint(Rotation2d shoulderPosition, Rotation2d velocity) {
@@ -203,6 +204,11 @@ public class Arm extends SubsystemBase {
         this.rollerState = state;
         this.rollers.setRollerState(state);
         new ArmMoveCommand(this).schedule();
+    }
+
+    public double getEndHeight() {
+        double jointHeight = Constants.Arm.PIVOT_HEIGHT - Constants.Arm.HUMERUS_LENGTH * getShoulderAngle().getCos();
+        return Constants.Arm.MANIPULATOR_LENGTH * wrist.getAngle().getSin();
     }
 
     public Rollers.State getRollerState() {

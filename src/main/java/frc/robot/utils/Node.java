@@ -8,16 +8,25 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
+import java.util.Optional;
+
 public class Node {
     private final GamePiece nodeType;
     private final Level level;
     private final Column column;
+    private final Optional<Integer> gridOverride;
 
-    public Node(GamePiece nodeType, Level level, Column column) {
+    public Node(GamePiece nodeType, Level level, Column column, Optional<Integer> gridOverride) {
         this.nodeType = nodeType;
         this.level = level;
         this.column = column;
+        this.gridOverride = gridOverride;
     }
+
+    public Node(GamePiece nodeType, Level level, Column column) {
+        this(nodeType, level, column, Optional.empty());
+    }
+
 
     public Node(int node) {
         this(
@@ -25,7 +34,14 @@ public class Node {
                 Level.values()[node / 3],
                 Column.values()[node % 3]
         );
+    }
 
+    public Node setLevel(Level level) {
+        return new Node(this.nodeType, level, this.column, this.gridOverride);
+    }
+
+    public Node setColumn(Column column) {
+        return new Node(this.nodeType, this.level, column, this.gridOverride);
     }
 
     public Level getLevel() {
