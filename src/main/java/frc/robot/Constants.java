@@ -89,12 +89,12 @@ public final class Constants {
         public static final double PIVOT_HEIGHT = 1.162025;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
-        public static final double HIGH_RIM_SCORING_DIST = Units.inchesToMeters(Double.POSITIVE_INFINITY); //measure
+        public static final double HIGH_RIM_SCORING_DIST = Units.inchesToMeters(62); //measure
         public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(59);
         public static final double HIGH_CUBE_SCORING_DIST = Units.inchesToMeters(60);
 
 
-        public static final double MID_RIM_SCORING_DIST = Units.inchesToMeters(Double.NEGATIVE_INFINITY); //measure
+        public static final double MID_RIM_SCORING_DIST = Units.inchesToMeters(62); //measure
         public static final double MID_CONE_SCORING_DIST = 1.49;
         public static final double MID_CUBE_SCORING_DIST = Units.inchesToMeters(61);
 
@@ -124,15 +124,15 @@ public final class Constants {
 
         public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.103);
 
-        public static final Rotation2d HIGH_RIM_ANGLE = Rotation2d.fromRadians(360000); //measure
+        public static final Rotation2d HIGH_RIM_ANGLE = Rotation2d.fromRadians(1.4); //measure
         public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.945489);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
 
-        public static final Rotation2d MID_RIM_ANGLE = Rotation2d.fromRadians(36000); //measure
+        public static final Rotation2d MID_RIM_ANGLE = Rotation2d.fromRadians(1.75); //measure
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.762299);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(1.282185);
 
-        public static final Rotation2d INTAKE_RIM_ANGLE = Rotation2d.fromRadians(0.8); //measure
+        public static final Rotation2d INTAKE_RIM_ANGLE = Rotation2d.fromRadians(1); //measure
         public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(1.082943);
         public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromRadians(0.6);
 
@@ -169,16 +169,15 @@ public final class Constants {
         public static final Rotation2d STOWED_CONE_ANGLE = Rotation2d.fromRadians(0);
 
 
-        public static final Rotation2d HIGH_RIM_ANGLE = Rotation2d.fromRadians(0.9); //measure
+        public static final Rotation2d HIGH_RIM_ANGLE = Rotation2d.fromRadians(-0.55); //measure
         public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(-0.422117);
         public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
 
-        public static final Rotation2d MID_RIM_ANGLE = Rotation2d.fromRadians(36000); //measure
+        public static final Rotation2d MID_RIM_ANGLE = Rotation2d.fromRadians(-0.5); //measure
         public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(-0.655558);
         public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(0.966711);
 
-
-        public static final Rotation2d INTAKE_RIM_ANGLE = Rotation2d.fromDegrees(36000); //measure
+        public static final Rotation2d INTAKE_RIM_ANGLE = Rotation2d.fromDegrees(-25); //measure
         public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromDegrees(-56.414788);
         public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromDegrees(41.957416);
 
