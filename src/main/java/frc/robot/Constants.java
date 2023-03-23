@@ -21,6 +21,7 @@ public final class Constants {
         public static final int JOYSTICK_LEFT_PORT = 1;
         public static final int CONTROLLER_PORT = 2;
         public static final int BUTTON_PANEL_PORT = 3;
+
     }
 
     public static final class DriveConstants {
@@ -182,6 +183,12 @@ public final class Constants {
         public static final double OUTTAKE_CONE = 0.5;
         public static final double OUTTAKE_CUBE = -.6;
         public static final double HOLDING_PIECE_VOLTAGE = 11;
+
+        public static final int ECHO_CHANNEL = 1001;
+        public static final int PING_CHANNEL = 1002;
+
+        public static final double CONE_OFFSET = 0.05;
+        public static final double CONE_CENTER_DISTANCE = 0.15;
 
     }
 

@@ -34,6 +34,7 @@ public class AlignToSelectedNode implements Command {
         this.arm = arm;
         this.poseEstimation = poseEstimation;
         this.targetNode = targetNode;
+
     }
 
     @Override
@@ -51,8 +52,11 @@ public class AlignToSelectedNode implements Command {
             Pose2d waypoint = new Pose2d(
                     AllianceUtils.isBlue()?
                             Constants.Arm.SAFE_RAISING_DISTANCE :
-                            Constants.FieldConstants.fieldLength - Constants.Arm.SAFE_RAISING_DISTANCE,
-                    (initial.getY() + targetNode.get().getRobotScoringPose().getY()) / 2,
+                            Constants.FieldConstants.fieldLength - Constants.Arm.SAFE_RAISING_DISTANCE, 
+
+                    ((initial.getY() + targetNode.get().getRobotScoringPose().getY()) / 2)
+                     + (arm.getConeY() - Constants.Rollers.CONE_CENTER_DISTANCE), 
+
                     AllianceUtils.getAllianceToField(Rotation2d.fromRadians(Math.PI)).plus(
                             Rotation2d.fromDegrees(
                                     Math.copySign(45, initial.getRotation().getRadians())
@@ -82,7 +86,7 @@ public class AlignToSelectedNode implements Command {
         }
         else {
             command = new ParallelCommandGroup(driveCommand,
-//                    (
+//                   (
                                     new WaitCommand(
                                             driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
                                                     (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)

@@ -28,7 +28,7 @@ public class Arm extends SubsystemBase {
     private final Mechanism2d arm = new Mechanism2d(Units.inchesToMeters(28), Constants.Arm.PIVOT_HEIGHT + 0.5);
     private final MechanismRoot2d pivot = arm.getRoot("pivot", Units.inchesToMeters(22), Constants.Arm.PIVOT_HEIGHT);
     private final MechanismLigament2d humerus = pivot
-            .append(new MechanismLigament2d("humerus", Constants.Arm.HUMERUS_LENGTH, 0));
+            .append(new MechanismLigament2d("humerus", Constants.Arm.HUMERUS_LENGTH , 0));
     private final MechanismLigament2d manipulator = humerus
             .append(new MechanismLigament2d("manipulator", Constants.Wrist.JOINT_TO_CORNER_DISTANCE, 0));
 
@@ -41,6 +41,7 @@ public class Arm extends SubsystemBase {
         shoulder = (RobotBase.isSimulation()) ? new SIMShoulder() : new Shoulder();
         wrist = (RobotBase.isSimulation()) ? new SIMWrist(this) : new Wrist(this);
         rollers = new Rollers();
+
 
         setHumerus.setColor(new Color8Bit(0, 255, 255));
         setManipulator.setColor(new Color8Bit(0, 100, 255));
@@ -61,6 +62,10 @@ public class Arm extends SubsystemBase {
         setHumerus.setAngle(getTargetShoulderAngle().minus(Rotation2d.fromDegrees(90)));
         setManipulator.setAngle(getTargetWristAngle().plus(Rotation2d.fromDegrees(90))
                 .minus(getTargetShoulderAngle()));
+    }
+
+    public double getConeY(){
+        return rollers.getConeY() ;
     }
 
     public double[] getArm3dPose() {
