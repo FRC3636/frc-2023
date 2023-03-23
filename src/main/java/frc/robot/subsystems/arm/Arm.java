@@ -66,9 +66,9 @@ public class Arm extends SubsystemBase {
                 .minus(getTargetShoulderAngle()));
     }
 
-    public double getConeY(){
-        return rollers.getConeY() ;
-    }
+    // public double getConeY(){
+    //     return rollers.getConeY() ;
+    // }
 
     public double[] getArm3dPose() {
         Pose3d shoulderPose = new Pose3d(

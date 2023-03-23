@@ -48,7 +48,7 @@ public class AlignToSelectedNode implements Command {
 
         System.out.println("we r now auto awigning 🥺 >.< UwU");
 
-        double coneOffset = arm.getGamePiece() == GamePiece.Cone ? arm.getConeY() - Constants.Rollers.CONE_CENTER_DISTANCE : 0;
+        // double coneOffset = arm.getGamePiece() == GamePiece.Cone ? arm.getConeY() - Constants.Rollers.CONE_CENTER_DISTANCE : 0;
 
         if(driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
                 && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)) {
@@ -59,7 +59,8 @@ public class AlignToSelectedNode implements Command {
                             Constants.FieldConstants.fieldLength - Constants.Arm.SAFE_RAISING_DISTANCE, 
 
                     ((initial.getY() + targetNode.get().getRobotScoringPose().getY()) / 2)
-                     + coneOffset, 
+                //      + coneOffset
+                     , 
 
                     AllianceUtils.allianceToField(Rotation2d.fromRadians(Math.PI)).plus(
                             Rotation2d.fromDegrees(
