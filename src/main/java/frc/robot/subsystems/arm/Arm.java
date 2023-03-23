@@ -66,9 +66,13 @@ public class Arm extends SubsystemBase {
                 .minus(getTargetShoulderAngle()));
     }
 
-    // public double getConeY(){
-    //     return rollers.getConeY() ;
-    // }
+     public double getObjectY(){
+        double y = rollers.getObjectY();
+        if( y > Constants.Rollers.ULTRASONIC_MAX_DISTANCE){
+            return rollers.getObjectY();
+        }
+        return y + (gamePiece == GamePiece.Cube ? Constants.Rollers.CUBE_OFFSET : Constants.Rollers.CONE_OFFSET);
+    }
 
     public double[] getArm3dPose() {
         Pose3d shoulderPose = new Pose3d(
@@ -212,7 +216,7 @@ public class Arm extends SubsystemBase {
 
 
     public boolean hasRimCone(){
-        return rollers.isHoldingGamePiece() && rollers.getObjectY() >= Constants.Rollers.ULTRASONIC_MAX_DISTANCE-5;
+        return rollers.holdingGamePiece() && rollers.getObjectY() >= Constants.Rollers.ULTRASONIC_MAX_DISTANCE - 5;
     }
 
     public void setGamePiece(GamePiece gamePiece) {

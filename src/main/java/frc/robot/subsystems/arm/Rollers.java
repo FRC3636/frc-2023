@@ -38,21 +38,24 @@ public class Rollers {
     }
 
     public double getRollerSpeed() {
-        return gamePiece == GamePiece.Cone ? rollerState.coneSpeed : rollerState.cubeSpeed;
+        return gamePiece == GamePiece.Cone ? rollerState.coneSpeed : 
+               gamePiece == GamePiece.Cube ? rollerState.cubeSpeed : rollerState.rimSpeed;
     }
 
     public void periodic() {
         motor.set(getRollerSpeed());
-    }
+    } 
 
-    public boolean isHoldingGamePiece() {
-        if (motor.getBusVoltage() < Constants.Rollers.HOLDING_PIECE_VOLTAGE) {
+    public boolean holdingGamePiece() {
+        if (motor.getBusVoltage() > Constants.Rollers.HOLDING_PIECE_VOLTAGE) {
             return true;
             //motor.getAppliedOutput();
             //motor.getVoltageCompensationNominalVoltage();
         }
         return false;
     }
+
+
 
     public enum State {
         Intake(Constants.Rollers.INTAKE_CONE, Constants.Rollers.INTAKE_CUBE, Constants.Rollers.INTAKE_RIM),

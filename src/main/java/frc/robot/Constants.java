@@ -210,9 +210,10 @@ public final class Constants {
         public static final int ECHO_CHANNEL = 1;
         public static final int PING_CHANNEL = 2;
 
-        public static final double ULTRASONIC_MAX_DISTANCE = 0.00; //measure
-        public static final double CONE_OFFSET = 0.00; //measure
-        public static final double CONE_CENTER_DISTANCE = 0.00; // measure
+        public static final double ULTRASONIC_MAX_DISTANCE = 0.27; //meters
+        public static final double CONE_OFFSET = 0.045;
+        public static final double CUBE_OFFSET = 0.115;
+        public static final double CONE_CENTER_DISTANCE = 0.07;
 
     }
 
