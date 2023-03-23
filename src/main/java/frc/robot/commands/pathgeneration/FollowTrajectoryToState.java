@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.AutoConstants;
@@ -29,10 +30,9 @@ public class FollowTrajectoryToState implements Command {
     public PathPlannerTrajectory trajectory;
 
     private PPSwerveControllerCommand swerveControllerCommand;
-    private final boolean avoidFieldElements;
 
     private static final FieldPartition chargingPadPartition = new FieldPartition(
-            3.9,
+            4.2,
             5,
             new PathPoint[] {
                     new PathPoint(
@@ -51,7 +51,6 @@ public class FollowTrajectoryToState implements Command {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
         this.target = target;
-        this.avoidFieldElements = avoidFieldElements;
 
         trajectory = buildTrajectory(target, avoidFieldElements);
     }
@@ -71,7 +70,7 @@ public class FollowTrajectoryToState implements Command {
         Pose2d initial = poseEstimation.getEstimatedPose();
         Translation2d initialV = poseEstimation.getEstimatedVelocity();
 
-        PathPoint point = new PathPoint(
+        PathPoint start = new PathPoint(
                 initial.getTranslation(),
                 initialV.getNorm() == 0 ?
                         target.position.minus(initial.getTranslation()).getAngle() :
@@ -81,7 +80,7 @@ public class FollowTrajectoryToState implements Command {
 
         System.out.println("Building Trajectory...");
         System.out.println("Speed = " + initialV.getNorm());
-        System.out.println("Point Velocity = " + point.velocityOverride);
+        System.out.println("Point Velocity = " + start.velocityOverride);
         System.out.println("Done");
 
         if(avoidFieldElements) {
@@ -92,7 +91,7 @@ public class FollowTrajectoryToState implements Command {
                                 AutoConstants.MAX_SPEED_METERS_PER_SECOND,
                                 AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
                         ),
-                        point,
+                        start,
                         waypoint.get(),
                         target
                 );
@@ -103,7 +102,7 @@ public class FollowTrajectoryToState implements Command {
                         AutoConstants.MAX_SPEED_METERS_PER_SECOND,
                         AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
                 ),
-                point,
+                start,
                 target
         );
     }

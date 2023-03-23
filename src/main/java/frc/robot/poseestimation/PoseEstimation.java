@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,7 +26,7 @@ public class PoseEstimation {
 
     private TimeInterpolatableBuffer<Pose2d> poseHistory = TimeInterpolatableBuffer.createBuffer(1.5);
 
-    private static final double DIFFERENTIATION_TIME = Robot.kDefaultPeriod;
+    private static final double DIFFERENTIATION_TIME = Robot.kDefaultPeriod * 4;
 
     public PoseEstimation() {
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -113,7 +114,6 @@ public class PoseEstimation {
 
         return current.minus(previous).div(DIFFERENTIATION_TIME);
     }
-
     public void resetPose(Pose2d pose) {
         poseEstimator.resetPosition(RobotContainer.drivetrain.getRotation(), RobotContainer.drivetrain.getModulePositions(), pose);
     }

@@ -34,7 +34,7 @@ public class Sensitivity extends CommandBase {
         this.poseEstimation = poseEstimation;
 
         knobSensitivityEnabled = RobotContainer.driveSettingsTab
-        .add("Knob Sensitivity Enabled", true)
+        .add("Knob Sensitivity Enabled", false)
         .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
         TellerSensitivityEntry = RobotContainer.driveSettingsTab

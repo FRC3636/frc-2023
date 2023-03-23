@@ -27,9 +27,6 @@ public class DriveWithJoysticks implements Command {
     private Rotation2d fieldOrientationZeroOffset = new Rotation2d();
     private Sensitivity sensitivity;
 
-    private final Field2d leftJoystickGraph = new Field2d();
-    private final Field2d rightJoystickGraph = new Field2d();
-
     public DriveWithJoysticks(Drivetrain drivetrain, PoseEstimation poseEstimation, Joystick translation,
             Joystick rotation) {
         this.drivetrain = drivetrain;
@@ -39,30 +36,19 @@ public class DriveWithJoysticks implements Command {
         this.rotation = rotation;
         drivetrain.resetEncoders();
         sensitivity = new Sensitivity(poseEstimation);
-
-        RobotContainer.swerveTab.add("Left Joystick", leftJoystickGraph).withWidget(BuiltInWidgets.kField).withSize(3, 2);
-        RobotContainer.swerveTab.add("Right Joystick", rightJoystickGraph).withWidget(BuiltInWidgets.kField).withSize(3, 2);
-    }
-
-    private static void updateJoystickGraph(Field2d graph, double[] joystickValues) {
-        graph.setRobotPose(joystickValues[0] + FieldConstants.fieldLength / 2, joystickValues[1] + FieldConstants.fieldWidth / 2, new Rotation2d());
     }
 
     @Override
     public void execute() {
         double[] translationValues = DeadbandUtils.getXYWithDeadband(translation, DriveConstants.DEADZONE);
-        double translationx = translationValues[0];
-        double translationy = translationValues[1];
-        updateJoystickGraph(leftJoystickGraph, translationValues);
+        double translationX = translationValues[0];
+        double translationY = translationValues[1];
         double[] rotationValues = DeadbandUtils.getXYWithDeadband(rotation, DriveConstants.DEADZONE);
         double r = rotationValues[1];
-        updateJoystickGraph(rightJoystickGraph, rotationValues);
 
-        boolean withinDeadband = translationx == 0 && translationy == 0 && r == 0;
-
-        double vx = translationx * DriveConstants.MAX_SPEED_METERS_PER_SECOND
+        double vx = translationX * DriveConstants.MAX_SPEED_METERS_PER_SECOND
                 * sensitivity.getTranslationalSensitivity();
-        double vy = translationy * DriveConstants.MAX_SPEED_METERS_PER_SECOND
+        double vy = translationY * DriveConstants.MAX_SPEED_METERS_PER_SECOND
                 * sensitivity.getTranslationalSensitivity();
         double omega = r * DriveConstants.MAX_ANGULAR_SPEED * sensitivity.getRotationalSensitivity();
 
@@ -71,7 +57,7 @@ public class DriveWithJoysticks implements Command {
                 poseEstimation.getEstimatedPose().getRotation()
                         .minus(AllianceUtils.getFieldOrientationZero().plus(fieldOrientationZeroOffset)));
 
-        if (!withinDeadband) {
+        if (!(translationX == 0 && translationY == 0 && r == 0)) {
             drivetrain.drive(robotRelSpeeds);
         } else {
             drivetrain.setX();

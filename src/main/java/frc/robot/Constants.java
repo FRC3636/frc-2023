@@ -89,7 +89,7 @@ public final class Constants {
         public static final double PIVOT_HEIGHT = 1.162025;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
-        public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(59);
+        public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(63);
         public static final double HIGH_CUBE_SCORING_DIST = Units.inchesToMeters(60);
 
         public static final double MID_CONE_SCORING_DIST = 1.49;
@@ -245,12 +245,12 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final double MAX_SPEED_METERS_PER_SECOND = 7;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 4;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
-        public static final double P_TRANSLATION_PATH_CONTROLLER = 1;
-        public static final double P_THETA_PATH_CONTROLLER = 1;
+        public static final double P_TRANSLATION_PATH_CONTROLLER = 2;
+        public static final double P_THETA_PATH_CONTROLLER = 2;
 
         public static final double P_TRANSLATION_POINT_CONTROLLER = 4;
         public static final double P_THETA_POINT_CONTROLLER = 6;
