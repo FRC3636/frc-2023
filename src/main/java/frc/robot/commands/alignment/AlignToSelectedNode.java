@@ -46,7 +46,7 @@ public class AlignToSelectedNode implements Command {
         Arm.State targetArmState = Arm.State.getTargetFromNode(targetNode.get());
         DriveToNode driveCommand = new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get());
 
-        System.out.println("we r now auto aligning 🥺 >.< UwU");
+        System.out.println("we r now auto awigning 🥺 >.< UwU");
 
         double coneOffset = arm.getGamePiece() == GamePiece.Cone ? arm.getConeY() - Constants.Rollers.CONE_CENTER_DISTANCE : 0;
 
@@ -111,7 +111,10 @@ public class AlignToSelectedNode implements Command {
     }
 
     @Override
-    public void end(boolean terminated){ command.end(terminated); }
+    public void end(boolean terminated){
+        System.out.println("i finished auto awigning :3 aw u pwoud? 🥹");
+        command.end(terminated);
+    }
 
     @Override
     public boolean isFinished(){
