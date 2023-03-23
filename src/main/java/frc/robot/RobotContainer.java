@@ -37,6 +37,8 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.GenerateCommand;
 import frc.robot.utils.Node;
 
+import java.util.Set;
+
 public class RobotContainer {
     // Dashboard
     public static final ShuffleboardTab driveSettingsTab = Shuffleboard.getTab("Drive Settings");
@@ -133,7 +135,8 @@ public class RobotContainer {
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
                         new GenerateCommand(
-                                () -> new DriveToNode(drivetrain, poseEstimation, targetNode)
+                                () -> new DriveToNode(drivetrain, poseEstimation, targetNode),
+                                Set.of(drivetrain)
                         ),
                         new RunCommand(drivetrain::setX, drivetrain)
                 )

@@ -106,8 +106,8 @@ public final class Constants {
     }
 
     public static class Shoulder {
-        public static final int MOTOR_1_ID = 5;
-        public static final int MOTOR_2_ID = 6;
+        public static final int MOTOR_1_ID = 1;
+        public static final int MOTOR_2_ID = 2;
         public static final double GEAR_RATIO = 15.0 / 36.0;
 
         public static final double KS = 0.23446;
@@ -139,7 +139,7 @@ public final class Constants {
     }
 
     public static class Wrist {
-        public static final int ID = 7;
+        public static final int ID = 3;
         public static final int LIMIT_SWITCH = 0;
 
         public static final double GEAR_RATIO = 1.0 / 75.0;
@@ -177,7 +177,7 @@ public final class Constants {
     }
 
     public static class Rollers {
-        public static final int ID = 8;
+        public static final int ID = 4;
         public static final double INTAKE_CONE = -.6;
         public static final double INTAKE_CUBE = 0.5;
         public static final double OUTTAKE_CONE = 0.5;
@@ -261,11 +261,6 @@ public final class Constants {
         // Constraint for the motion profiled robot angle controller
         public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
                 MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
-
-        public static final Transform2d NODE_HIGH_TRANSFORM = new Transform2d(
-                new Translation2d(-1, 0),
-                Rotation2d.fromRadians(Math.PI)
-        );
     }
 
     public static final class NeoMotorConstants {
