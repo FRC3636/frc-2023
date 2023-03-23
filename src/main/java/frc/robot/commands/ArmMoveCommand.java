@@ -5,8 +5,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.arm.Arm;
 import frc.robot.Constants;
+import frc.robot.subsystems.arm.Arm;
 
 public class ArmMoveCommand extends CommandBase {
     private final Arm arm;

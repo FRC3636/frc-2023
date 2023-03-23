@@ -2,11 +2,9 @@ package frc.robot.poseestimation;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -18,14 +16,14 @@ public class PhotonVisionBackend extends VisionBackend {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator poseEstimator;
 
-    public PhotonVisionBackend(String name) throws IOException {
+    public PhotonVisionBackend(String name, Transform3d camera_transform) throws IOException {
         camera = new PhotonCamera(name);
         camera.setDriverMode(false);
         camera.setPipelineIndex(0);
 
         AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
 
-        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP, camera, Constants.VisionConstants.PHOTONVISION_TRANSFORM);
+        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP, camera, camera_transform);
     }
 
     @Override
@@ -36,12 +34,12 @@ public class PhotonVisionBackend extends VisionBackend {
             }
 
 
-            RobotContainer.field.getObject("Vision Measurement").setPose(result.estimatedPose.toPose2d());
+            RobotContainer.field.getObject("Vision Measurement " + camera.getName()).setPose(result.estimatedPose.toPose2d());
 
             return Optional.of(new Measurement(
                     result.timestampSeconds,
                     result.estimatedPose,
-                    Constants.VisionConstants.PHOTONVISION_STD_DEV
+                    Constants.VisionConstants.PHOTON_VISION_STD_DEV
             ));
         });
     }

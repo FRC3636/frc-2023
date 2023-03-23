@@ -263,12 +263,16 @@ public final class Constants {
     public static class VisionConstants {
         // FIXME: actually measure these constants
 
-        public static final Transform3d PHOTONVISION_TRANSFORM = new Transform3d(
+        public static final Transform3d RIGHT_CAM_TRANSFORM = new Transform3d(
                 new Translation3d(.243, -0.229, -0.241),
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
+        public static final Transform3d LEFT_CAM_TRANSFORM = new Transform3d(
+                new Translation3d(.243, 0.229, -0.241),
+                new Rotation3d(0, Units.degreesToRadians(15), 0)
+        );
 
-        public static final Vector<N3> PHOTONVISION_STD_DEV = VecBuilder.fill(0.2, 0.1, 0.3);
+        public static final Vector<N3> PHOTON_VISION_STD_DEV = VecBuilder.fill(0.2, 0.1, 0.3);
 
         public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
 

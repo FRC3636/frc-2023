@@ -1,7 +1,5 @@
 package frc.robot.commands.autonomous;
 
-import java.util.Set;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -12,7 +10,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
-import frc.robot.subsystems.drivetrain.*;
+import frc.robot.subsystems.drivetrain.Drivetrain;
+
+import java.util.Set;
 
 public class AutoBalance implements Command {
 

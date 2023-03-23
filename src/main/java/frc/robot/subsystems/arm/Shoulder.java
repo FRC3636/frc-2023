@@ -1,9 +1,9 @@
 package frc.robot.subsystems.arm;
 
-import com.revrobotics.*;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;

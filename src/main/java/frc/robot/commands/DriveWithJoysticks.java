@@ -1,8 +1,5 @@
 package frc.robot.commands;
 
-import java.util.Set;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Joystick;
@@ -10,9 +7,9 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.RobotContainer;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
@@ -20,6 +17,7 @@ import frc.robot.utils.DeadbandUtils;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Set;
 
 public class DriveWithJoysticks implements Command {
     private final Drivetrain drivetrain;

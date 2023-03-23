@@ -4,15 +4,14 @@
 
 package frc.robot.commands;
 
-import java.util.Map;
-
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
-import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.RobotContainer;
+import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.utils.AllianceUtils;
+
+import java.util.Map;
 
 public class Sensitivity extends CommandBase {
 
