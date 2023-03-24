@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -33,10 +35,7 @@ import frc.robot.subsystems.GameInfoTable;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
-import frc.robot.utils.AutoLanguage;
-import frc.robot.utils.GamePiece;
-import frc.robot.utils.GenerateCommand;
-import frc.robot.utils.Node;
+import frc.robot.utils.*;
 
 import java.util.Set;
 
@@ -74,6 +73,7 @@ public class RobotContainer {
 
     // Auto Selection
     private final FieldObject2d startingPosition = field.getObject("Starting Position");
+    private final GenericEntry autoProgram = autoTab.add("Auto Program", "score cone closest high cone_left; intake cube 0").getEntry();
 
     public RobotContainer() {
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
@@ -96,6 +96,8 @@ public class RobotContainer {
         configureButtonBindings();
 
         DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
+
+        startingPosition.setPose(AllianceUtils.allianceToField(new Pose2d(new Translation2d(3.47, 0.73), Rotation2d.fromRadians(Math.PI))));
     }
 
     private void configureButtonBindings() {
@@ -143,14 +145,14 @@ public class RobotContainer {
         // Rollers
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)
                 .onTrue(new InstantCommand(() -> {
-                        if (!joystickRight.getRawButton(1)) {
-                                arm.setRollerState(Rollers.State.Intake);
-                        }
+                    if (!joystickRight.getRawButton(1)) {
+                        arm.setRollerState(Rollers.State.Intake);
+                    }
                 }))
                 .onFalse(new InstantCommand(() -> {
-                        if (!joystickRight.getRawButton(1)) {
-                                arm.setRollerState(Rollers.State.Off);
-                        }
+                    if (!joystickRight.getRawButton(1)) {
+                        arm.setRollerState(Rollers.State.Off);
+                    }
                 }));
 
         new JoystickButton(joystickRight, 1)
@@ -158,11 +160,11 @@ public class RobotContainer {
                     arm.setRollerState(Rollers.State.Outtake);
                 }))
                 .onFalse(new InstantCommand(() -> {
-                        if (controller.getRawButton(XboxController.Button.kRightBumper.value)) {
-                                arm.setRollerState(Rollers.State.Intake);
-                        } else {
-                                arm.setRollerState(Rollers.State.Off);
-                        }
+                    if (controller.getRawButton(XboxController.Button.kRightBumper.value)) {
+                        arm.setRollerState(Rollers.State.Intake);
+                    } else {
+                        arm.setRollerState(Rollers.State.Off);
+                    }
                 }));
 
         new JoystickButton(joystickRight, 2).whileTrue(new AlignToClosestNode(drivetrain, arm, poseEstimation));
@@ -216,7 +218,15 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return AutoLanguage.compile("intake cube 0; score cone left high cone_right; intake cone 1; balance avoid_obstacles");
+        poseEstimation.resetPose(startingPosition.getPose());
+
+        try {
+            return AutoLanguage.compile(autoProgram.getString(""));
+        } catch (Exception e) {
+            System.out.println("Failed to compile auto program: " + autoProgram.getString(""));
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void setTargetNode(Node targetNode) {

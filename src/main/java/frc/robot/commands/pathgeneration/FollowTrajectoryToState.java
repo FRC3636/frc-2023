@@ -178,5 +178,4 @@ public class FollowTrajectoryToState implements Command {
             ).withControlLengths(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX)), partitionWidth / 2));
         }
     }
-
 }
