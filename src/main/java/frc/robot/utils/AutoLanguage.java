@@ -61,7 +61,7 @@ public class AutoLanguage {
 
                 return new SequentialCommandGroup(
                         new GenerateCommand(
-                                () -> new FollowTrajectoryToState(RobotContainer.drivetrain, RobotContainer.poseEstimation, balanceStartPoint, avoidObstacles),
+                                () -> new FollowTrajectoryToState(RobotContainer.drivetrain, RobotContainer.poseEstimation, avoidObstacles, balanceStartPoint),
                                 Set.of(RobotContainer.drivetrain)
                         ),
                         new AutoBalance(RobotContainer.drivetrain)

@@ -62,13 +62,13 @@ public class AlignToSelectedNode implements Command {
             );
 
             FollowTrajectoryToState waypointCommand = new FollowTrajectoryToState(drivetrain, poseEstimation,
+                    true,
                     new PathPoint(
                             waypoint.getTranslation(),
                             Rotation2d.fromDegrees(targetNode.get().getRobotScoringPose().getY() > initial.getY() ? 90 : 270),
                             waypoint.getRotation(),
                             0.5
-                    ),
-                    true
+                    )
             );
 
             command = waypointCommand.andThen(

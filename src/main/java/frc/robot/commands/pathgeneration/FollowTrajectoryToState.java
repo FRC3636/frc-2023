@@ -18,6 +18,9 @@ import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
 
+import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,81 +29,82 @@ public class FollowTrajectoryToState implements Command {
     protected final Drivetrain drivetrain;
     protected final PoseEstimation poseEstimation;
 
-    protected final PathPoint target;
+    protected final PathPoint[] targets;
     public PathPlannerTrajectory trajectory;
 
     private PPSwerveControllerCommand swerveControllerCommand;
 
-    private static final FieldPartition chargingPadPartition = new FieldPartition(
-            3.8,
-            5,
-            new PathPoint[] {
-                    new PathPoint(
-                        new Translation2d(0, 0.75),
-                        new Rotation2d(),
-                        Rotation2d.fromDegrees(150)
-                ),
-                new PathPoint(
-                        new Translation2d(0, 4.75),
-                        new Rotation2d(),
-                        Rotation2d.fromDegrees(180)
-                ),
-            });
+    private static final FieldPartition[] PARTITIONS = new FieldPartition[]{
+            new FieldPartition(
+                    3.8,
+                    5,
+                    new PathPoint[]{
+                            new PathPoint(
+                                    new Translation2d(0, 0.75),
+                                    new Rotation2d(),
+                                    Rotation2d.fromDegrees(150)
+                            ),
+                            new PathPoint(
+                                    new Translation2d(0, 4.75),
+                                    new Rotation2d(),
+                                    Rotation2d.fromDegrees(180)
+                            ),
+                    }
+            )
+    };
 
-    public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target, boolean avoidFieldElements) {
+    public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, boolean avoidFieldElements, PathPoint... targets) {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
-        this.target = target;
+        this.targets = targets;
 
-        trajectory = buildTrajectory(target, avoidFieldElements);
+        trajectory = buildTrajectory(avoidFieldElements, targets);
     }
 
     @Override
     public void initialize() {
         RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
         RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
-        RobotContainer.field.getObject("Target").setPose(new Pose2d(target.position, target.holonomicRotation));
 
         swerveControllerCommand = new PPSwerveControllerCommand(trajectory, poseEstimation::getEstimatedPose, new PIDController(AutoConstants.P_TRANSLATION_PATH_CONTROLLER, 0.0, 0.0), new PIDController(AutoConstants.P_TRANSLATION_PATH_CONTROLLER, 0.0, 0.0), new PIDController(AutoConstants.P_THETA_PATH_CONTROLLER, 0.0, 0.0), drivetrain::drive);
 
         swerveControllerCommand.initialize();
     }
 
-    protected PathPlannerTrajectory buildTrajectory(PathPoint target, boolean avoidFieldElements) {
+    protected PathPlannerTrajectory buildTrajectory(boolean avoidFieldElements, PathPoint[] targets) {
         Pose2d initial = poseEstimation.getEstimatedPose();
         Translation2d initialV = poseEstimation.getEstimatedVelocity();
 
         PathPoint start = new PathPoint(
                 initial.getTranslation(),
                 initialV.getNorm() == 0 ?
-                        target.position.minus(initial.getTranslation()).getAngle() :
+                        targets[targets.length - 1].position.minus(initial.getTranslation()).getAngle() :
                         initialV.getAngle(),
                 initial.getRotation(),
                 initialV.getNorm());
 
         RobotContainer.field.getObject("Alignment Start").setPose(new Pose2d(start.position, start.heading));
 
-        if(avoidFieldElements) {
-            Optional<PathPoint> waypoint = chargingPadPartition.queryWaypoint(initial.getTranslation(), target.position);
-            if (waypoint.isPresent()) {
-                return PathPlanner.generatePath(
-                        new PathConstraints(
-                                AutoConstants.MAX_SPEED_METERS_PER_SECOND,
-                                AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
-                        ),
-                        start,
-                        waypoint.get(),
-                        target
-                );
+        LinkedList<PathPoint> pathPoints = new LinkedList<>();
+
+        pathPoints.add(start);
+
+        // FIXME: this is very wrong but i don't care
+        if (avoidFieldElements) {
+            for (PathPoint target : targets) {
+                for (FieldPartition partition : PARTITIONS) {
+                    partition.queryWaypoint(pathPoints.getLast().position, target.position).ifPresent(pathPoints::add);
+                }
+                pathPoints.add(target);
             }
         }
+
         return PathPlanner.generatePath(
                 new PathConstraints(
                         AutoConstants.MAX_SPEED_METERS_PER_SECOND,
                         AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
                 ),
-                start,
-                target
+                pathPoints
         );
     }
 
@@ -129,7 +133,7 @@ public class FollowTrajectoryToState implements Command {
         private PathPoint[] waypoints;
         private double partitionWidth;
 
-        public FieldPartition(double x,  double partitionWidth, PathPoint[] waypoints) {
+        public FieldPartition(double x, double partitionWidth, PathPoint[] waypoints) {
             this.x = x;
             this.waypoints = waypoints;
             this.partitionWidth = partitionWidth;
