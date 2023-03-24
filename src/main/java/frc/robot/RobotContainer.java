@@ -73,7 +73,7 @@ public class RobotContainer {
 
     // Auto Selection
     private final FieldObject2d startingPosition = field.getObject("Starting Position");
-    private final GenericEntry autoProgram = autoTab.add("Auto Program", "score cone closest high cone_left; intake cube 0").getEntry();
+    private final GenericEntry autoProgram = autoTab.add("Auto Program", "score cube closest low cube;").getEntry();
 
     public RobotContainer() {
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);

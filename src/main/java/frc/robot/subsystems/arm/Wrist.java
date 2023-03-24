@@ -54,7 +54,16 @@ public class Wrist {
         if(arm.getTarget() == Arm.State.Stowed && arm.getRollerState() == Rollers.State.Off) {
             velocity = Rotation2d.fromRadians(velocity.getRadians() + 1);
         }
-        runWithSetpoint(arm.getTargetWristAngle(), velocity);
+        Rotation2d position = arm.getTargetWristAngle();
+        if(velocity.getRadians() != 0) {
+            Rotation2d minAngle = getWristAngleFromHeight(0.4, arm.getShoulderAngle());
+            position = Rotation2d.fromRadians(Math.max(position.getRadians(), minAngle.getRadians()));
+        }
+        runWithSetpoint(position, velocity);
+    }
+
+    public void followShoulder() {
+        runWithSetpoint(arm.getTargetWristAngle(), arm.getShoulderVelocity().unaryMinus());
     }
 
     public void runWithVelocity(Rotation2d velocity) {
@@ -62,11 +71,6 @@ public class Wrist {
     }
 
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
-        if(velocity.getRadians() != 0) {
-            Rotation2d minAngle = getWristAngleFromHeight(0.4, arm.getShoulderAngle());
-            position = Rotation2d.fromRadians(Math.max(position.getRadians(), minAngle.getRadians()));
-        }
-
         velocity = Rotation2d.fromRadians(velocity.getRadians() + pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
 
         SmartDashboard.putNumber("Wrist Setpoint", position.getRadians());
