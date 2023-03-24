@@ -41,8 +41,8 @@ public class PoseEstimation {
         lastModulePositions = RobotContainer.drivetrain.getModulePositions();
 
         if (Robot.isReal()) {
-            backends = new VisionBackend[3];
-            backendToggles = new GenericEntry[3];
+            backends = new VisionBackend[2];
+            backendToggles = new GenericEntry[2];
 
             try {
                 backends[0] = new PhotonVisionBackend("right-camera", Constants.VisionConstants.RIGHT_CAM_TRANSFORM);
@@ -54,8 +54,8 @@ public class PoseEstimation {
                 e.printStackTrace();
             }
 
-            backends[2] = new LimelightBackend();
-            backendToggles[2] = RobotContainer.autoTab.add("VisionBackend/LL", false).getEntry();
+            backends[1] = new LimelightBackend();
+            backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/LL", false).getEntry();
         } else {
             backends = new VisionBackend[0];
             backendToggles = new GenericEntry[0];
@@ -69,7 +69,14 @@ public class PoseEstimation {
 
         for (int i = 0; i < backends.length; i++) {
             if (backendToggles[i].getBoolean(false)) {
-                backends[i].getMeasurement().ifPresent(this::addVisionMeasurement);
+                // this is a hack to get around an issue in `SwerveDrivePoseEstimator`
+                // where two measurements cannot share the same timestamp
+                double timestampOffset = 1e-9 * i;
+
+                backends[i].getMeasurement().map((measurement) -> {
+                    measurement.timestamp += timestampOffset;
+                    return measurement;
+                }).ifPresent(this::addVisionMeasurement);
             }
         }
 
@@ -114,6 +121,7 @@ public class PoseEstimation {
 
         return current.minus(previous).div(DIFFERENTIATION_TIME);
     }
+
     public void resetPose(Pose2d pose) {
         poseEstimator.resetPosition(RobotContainer.drivetrain.getRotation(), RobotContainer.drivetrain.getModulePositions(), pose);
     }
