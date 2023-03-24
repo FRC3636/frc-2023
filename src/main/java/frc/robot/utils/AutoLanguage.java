@@ -4,6 +4,7 @@ import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.autonomous.AutoBalance;
@@ -13,6 +14,7 @@ import frc.robot.commands.pathgeneration.FollowTrajectoryToPose;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,13 +23,19 @@ public class AutoLanguage {
         SequentialCommandGroup output = new SequentialCommandGroup();
 
         for (String statementSource : source.split(";")) {
-            output.addCommands(compileStatement(statementSource.strip()));
+            Command command = compileStatement(statementSource.strip());
+
+            if (command != null) {
+                output.addCommands(command);
+            }
         }
 
         return output;
     }
 
     private static Command compileStatement(String source) {
+        if (source.isEmpty()) return null;
+
         String[] tokens = source.split("\\s");
 
         switch (tokens[0]) {
@@ -55,6 +63,9 @@ public class AutoLanguage {
                         ),
                         new AutoBalance(RobotContainer.drivetrain)
                 );
+            case "wait":
+                double time = Double.parseDouble(tokens[1]);
+                return new WaitCommand(time);
             default:
                 throw new RuntimeException("Attempted to compile invalid statement of type: '" + tokens[0] + "'");
         }
