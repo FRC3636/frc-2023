@@ -82,6 +82,7 @@ public class RobotContainer {
     public RobotContainer() {
         autoNodeSelector = new SendableChooser<>();
         autoNodeSelector.setDefaultOption("default", new Node(0));
+        DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
 
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
         armTab.add("Node Selector", nodeSelector).withWidget(BuiltInWidgets.kField).withSize(3, 3);
@@ -102,7 +103,6 @@ public class RobotContainer {
 
         configureButtonBindings();
 
-        DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
     }
 
     private void configureButtonBindings() {
@@ -184,13 +184,18 @@ public class RobotContainer {
                 .onTrue(new InstantCommand(arm::resetOffset));
 
         new Trigger(() -> controller.getPOV() == 0)
-                .onTrue(new InstantCommand(() -> arm.moveShoulderOffset(Rotation2d.fromDegrees(2))));
+                .onTrue(new InstantCommand(() -> arm.moveHeightOffset(0.01)));
         new Trigger(() -> controller.getPOV() == 180)
-                .onTrue(new InstantCommand(() -> arm.moveShoulderOffset(Rotation2d.fromDegrees(-2))));
+                .onTrue(new InstantCommand(() -> arm.moveHeightOffset(-0.01)));
         new Trigger(() -> controller.getPOV() == 90)
-                .onTrue(new InstantCommand(() -> arm.moveWristOffset(0.01)));
+                .onTrue(new InstantCommand(() -> arm.moveShoulderOffset(Rotation2d.fromDegrees(2))));
         new Trigger(() -> controller.getPOV() == 270)
-                .onTrue(new InstantCommand(() -> arm.moveWristOffset(-0.01)));
+                .onTrue(new InstantCommand(() -> arm.moveShoulderOffset(Rotation2d.fromDegrees(-2))));
+
+        new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
+                .whileTrue(
+                        new RunCommand(() -> arm.setTemporaryAngleOffset(Rotation2d.fromRadians(controller.getRightTriggerAxis() / 2))))
+                .onFalse(new InstantCommand(() -> arm.setTemporaryAngleOffset(new Rotation2d())));
 
         new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {
             arm.setTarget(Arm.State.Stowed);

@@ -54,7 +54,7 @@ public class Wrist {
         if(arm.getTarget() == Arm.State.Stowed && arm.getRollerState() == Rollers.State.Off) {
             velocity = Rotation2d.fromRadians(velocity.getRadians() + 1);
         }
-        runWithSetpoint(getSetPosition(), velocity);
+        runWithSetpoint(arm.getTargetWristAngle(), velocity);
     }
 
     public void runWithVelocity(Rotation2d velocity) {
@@ -64,9 +64,7 @@ public class Wrist {
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
         if(velocity.getRadians() != 0) {
             Rotation2d minAngle = getWristAngleFromHeight(0.4, arm.getShoulderAngle());
-            if(minAngle != null) {
-                position = Rotation2d.fromRadians(Math.max(position.getRadians(), minAngle.getRadians()));
-            }
+            position = Rotation2d.fromRadians(Math.max(position.getRadians(), minAngle.getRadians()));
         }
 
         velocity = Rotation2d.fromRadians(velocity.getRadians() + pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
@@ -79,10 +77,6 @@ public class Wrist {
         }
 
         motor.setVoltage(feedforward.calculate(arm.getWristAngle().getRadians(), velocity.getRadians()));
-    }
-
-    public Rotation2d getSetPosition() {
-        return Wrist.getWristAngleFromHeight(arm.getTargetWristHeight(), arm.getTargetShoulderAngle());
     }
 
     public static Rotation2d getWristAngleFromHeight(double height, Rotation2d shoulderAngle) {
@@ -98,8 +92,8 @@ public class Wrist {
     public void periodic() {
         SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(encoder.getPosition()));
-        SmartDashboard.putNumber("Wrist Set Point", getSetPosition().getDegrees());
-        SmartDashboard.putNumber("Wrist Target Height", arm.getTargetWristHeight());
+        SmartDashboard.putNumber("Wrist Set Point", arm.getTargetWristAngle().getDegrees());
+        SmartDashboard.putNumber("Wrist Target Height", arm.getTargetHeight());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
 
         if(isLimitSwitchPressed()) {

@@ -15,7 +15,7 @@ public class SIMWrist extends Wrist{
             0.043,
             Constants.Wrist.HORIZONTAL_TO_CORNER_ANGLE,
             -Math.PI / 2,
-            Constants.Wrist.LIMIT_SWITCH_OFFSET.getRadians(),
+            Math.PI * 2 / 3,
             2.827,
             true
     );

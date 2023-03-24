@@ -17,6 +17,8 @@ import frc.robot.commands.ArmMoveCommand;
 import frc.robot.utils.GamePiece;
 import frc.robot.utils.Node;
 
+import java.util.Optional;
+
 public class Arm extends SubsystemBase {
 
     private State target = State.Stowed;
@@ -25,6 +27,8 @@ public class Arm extends SubsystemBase {
 
     private final Shoulder shoulder;
     private final Wrist wrist;
+
+    private Rotation2d temporaryAngleOffset = new Rotation2d();
 
     private final Rollers rollers;
 
@@ -51,6 +55,8 @@ public class Arm extends SubsystemBase {
 
         RobotContainer.armTab.addDoubleArray("Arm Position", this::getArm3dPose);
         RobotContainer.armTab.add("Arm", arm);
+        RobotContainer.armTab.addDouble("Manipulator Height", this::getManipulatorHeight);
+        RobotContainer.armTab.addDouble("Wrist Height", this::getWristHeight);
     }
 
     @Override
@@ -63,7 +69,7 @@ public class Arm extends SubsystemBase {
         manipulator.setAngle(wrist.getAngle().plus(Rotation2d.fromDegrees(90)));
 
         setHumerus.setAngle(getTargetShoulderAngle().minus(Rotation2d.fromDegrees(90)));
-        setManipulator.setAngle(wrist.getSetPosition().plus(Rotation2d.fromDegrees(90))
+        setManipulator.setAngle(getTargetWristAngle().plus(Rotation2d.fromDegrees(90))
                 .minus(getTargetShoulderAngle()));
     }
 
@@ -133,7 +139,7 @@ public class Arm extends SubsystemBase {
         }
     }
 
-    public void moveWristOffset(double difference) {
+    public void moveHeightOffset(double difference) {
         switch (gamePiece) {
             case Cone:
                 target.heightConeOffset += difference;
@@ -141,6 +147,11 @@ public class Arm extends SubsystemBase {
             case Cube:
                 target.heightCubeOffset += difference;
         }
+    }
+
+    public void setTemporaryAngleOffset(Rotation2d temporaryAngleOffset) {
+        System.out.println("temp angle offset");
+        this.temporaryAngleOffset = temporaryAngleOffset;
     }
 
     public void resetOffset() {
@@ -159,12 +170,34 @@ public class Arm extends SubsystemBase {
         return target;
     }
 
-    public Rotation2d getTargetShoulderAngle() {
-        return target.getShoulderAngleFor(this.gamePiece);
+    public Rotation2d getShoulderAngleFromState(State state) {
+        if(state.getShoulderOverride().isPresent()) {
+            return state.getShoulderOverride().get().plus(temporaryAngleOffset);
+        }
+        return Shoulder.getShoulderAngleFromHeight(
+                state.getHeightFor(this.gamePiece),
+                state.getWristAngleFor(this.gamePiece).minus(temporaryAngleOffset)
+        );
     }
 
-    public double getTargetWristHeight() {
-        return target.getWristHeightFor(gamePiece);
+    public Rotation2d getWristAngleFromState(State state) {
+        if(target.getShoulderOverride().isPresent()) {
+            return Wrist.getWristAngleFromHeight(state.getHeightFor(gamePiece), state.getShoulderOverride().get().plus(temporaryAngleOffset));
+        }
+        return target.getWristAngleFor(gamePiece).minus(temporaryAngleOffset);
+    }
+
+    public Rotation2d getTargetWristAngle() {
+        return getWristAngleFromState(target);
+    }
+
+
+    public Rotation2d getTargetShoulderAngle() {
+        return getShoulderAngleFromState(target);
+    }
+
+    public double getTargetHeight() {
+        return target.getHeightFor(gamePiece);
     }
 
     public void setTargetFromNode(Node node) {
@@ -204,9 +237,12 @@ public class Arm extends SubsystemBase {
         new ArmMoveCommand(this).schedule();
     }
 
-    public double getEndHeight() {
-        double jointHeight = Constants.Arm.PIVOT_HEIGHT - Constants.Arm.HUMERUS_LENGTH * getShoulderAngle().getCos();
-        return Constants.Arm.MANIPULATOR_LENGTH * wrist.getAngle().getSin();
+    public double getManipulatorHeight() {
+        return Constants.Arm.PIVOT_HEIGHT - (Constants.Arm.HUMERUS_LENGTH * getShoulderAngle().getCos() - Constants.Arm.MANIPULATOR_LENGTH * getWristAngle().getSin());
+    }
+
+    public double getWristHeight() {
+        return Constants.Arm.PIVOT_HEIGHT - (Constants.Arm.HUMERUS_LENGTH * getShoulderAngle().getCos());
     }
 
     public Rollers.State getRollerState() {
@@ -214,35 +250,54 @@ public class Arm extends SubsystemBase {
     }
 
     public enum State {
-        Teller(Constants.Shoulder.TELLER_CONE_ANGLE, Constants.Shoulder.TELLER_CUBE_ANGLE,
-                Constants.Wrist.TELLER_CONE_HEIGHT, Constants.Wrist.TELLER_CUBE_HEIGHT),
-        Slide(Constants.Shoulder.SLIDE_CONE_ANGLE, Constants.Shoulder.SLIDE_CUBE_ANGLE,
-                Constants.Wrist.SLIDE_CONE_HEIGHT, Constants.Wrist.SLIDE_CUBE_HEIGHT),
-        High(Constants.Shoulder.HIGH_CONE_ANGLE, Constants.Shoulder.HIGH_CUBE_ANGLE,
-                Constants.Wrist.HIGH_CONE_HEIGHT, Constants.Wrist.HIGH_CUBE_HEIGHT),
-        Mid(Constants.Shoulder.MID_CONE_ANGLE, Constants.Shoulder.MID_CUBE_ANGLE,
-                Constants.Wrist.MID_CONE_HEIGHT, Constants.Wrist.MID_CUBE_HEIGHT),
-        Low(Constants.Shoulder.INTAKE_CONE_ANGLE, Constants.Shoulder.LOW_CUBE_ANGLE,
-                Constants.Wrist.LOW_CONE_HEIGHT, Constants.Wrist.LOW_CUBE_HEIGHT),
-        Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Shoulder.STOWED_ANGLE,
-                Constants.Wrist.STOWED_CONE_HEIGHT, Constants.Wrist.STOWED_CUBE_HEIGHT);
+        Teller(Constants.Wrist.STANDING_CONE_INTAKE_ANGLE, Constants.Wrist.CUBE_INTAKE_ANGLE,
+                Constants.Arm.TELLER_CONE_HEIGHT, Constants.Arm.TELLER_CUBE_HEIGHT),
 
-        private final double wristConeHeight;
-        private final double wristCubeHeight;
-        private final Rotation2d shoulderCubeAngle;
-        private final Rotation2d shoulderConeAngle;
+        Slide(Constants.Wrist.SLIDE_CONE_ANGLE, Constants.Wrist.SLIDE_CUBE_ANGLE,
+                Constants.Arm.SLIDE_CONE_HEIGHT, Constants.Arm.SLIDE_CUBE_HEIGHT),
+
+        High(Constants.Wrist.SCORING_CONE_ANGLE, Constants.Wrist.SCORING_CUBE_ANGLE,
+                Constants.Arm.HIGH_CONE_HEIGHT, Constants.Arm.HIGH_CUBE_HEIGHT),
+
+        Mid(Constants.Wrist.SCORING_CONE_ANGLE, Constants.Wrist.SCORING_CUBE_ANGLE,
+                Constants.Arm.MID_CONE_HEIGHT, Constants.Arm.MID_CUBE_HEIGHT),
+
+        Low(Constants.Wrist.STANDING_CONE_INTAKE_ANGLE, Constants.Wrist.CUBE_INTAKE_ANGLE,
+                Constants.Arm.LOW_CONE_HEIGHT, Constants.Arm.LOW_CUBE_HEIGHT),
+
+        Stowed(Constants.Shoulder.STOWED_ANGLE,
+                Constants.Arm.STOWED_CONE_HEIGHT, Constants.Arm.STOWED_CUBE_HEIGHT);
+
+        private final double coneHeight;
+        private final double cubeHeight;
+        private final Rotation2d wristCubeAngle;
+        private final Rotation2d wristConeAngle;
+        private final Optional<Rotation2d> shoulderOverride;
 
         private Rotation2d shoulderConeOffset = new Rotation2d();
         private Rotation2d shoulderCubeOffset = new Rotation2d();
         private double heightConeOffset = 0;
         private double heightCubeOffset = 0;
 
-        State(Rotation2d shoulderConeAngle, Rotation2d shoulderCubeAngle, double wristConeHeight,
-              double wristCubeHeight) {
-            this.shoulderCubeAngle = shoulderCubeAngle;
-            this.shoulderConeAngle = shoulderConeAngle;
-            this.wristCubeHeight = wristCubeHeight;
-            this.wristConeHeight = wristConeHeight;
+        State(Rotation2d wristConeAngle, Rotation2d wristCubeAngle, double ConeHeight,
+              double CubeHeight) {
+            this.wristCubeAngle = wristCubeAngle;
+            this.wristConeAngle = wristConeAngle;
+            this.coneHeight = ConeHeight;
+            this.cubeHeight = CubeHeight;
+            shoulderOverride = Optional.empty();
+        }
+
+        State(Rotation2d shoulderOverride, double coneHeight, double cubeHeight) {
+            this.coneHeight = coneHeight;
+            this.cubeHeight = cubeHeight;
+            this.shoulderOverride = Optional.of(shoulderOverride);
+            this.wristConeAngle = Rotation2d.fromDegrees(0);
+            this.wristCubeAngle = Rotation2d.fromDegrees(0);
+        }
+
+        public Optional<Rotation2d> getShoulderOverride() {
+            return shoulderOverride;
         }
 
         public static State getTargetFromNode(Node node) {
@@ -258,14 +313,14 @@ public class Arm extends SubsystemBase {
             }
         }
 
-        public double getWristHeightFor(GamePiece piece) {
-            return piece == GamePiece.Cone ? this.wristConeHeight + this.heightConeOffset : this.wristCubeHeight + this.heightCubeOffset;
+        public double getHeightFor(GamePiece piece) {
+            return piece == GamePiece.Cone ? this.coneHeight + this.heightConeOffset : this.cubeHeight + this.heightCubeOffset;
         }
 
-        public Rotation2d getShoulderAngleFor(GamePiece gamePiece) {
+        public Rotation2d getWristAngleFor(GamePiece gamePiece) {
             return (gamePiece == GamePiece.Cone) ?
-                    this.shoulderConeAngle.plus(this.shoulderConeOffset)
-                    : this.shoulderCubeAngle.plus(this.shoulderCubeOffset);
+                    this.wristConeAngle.plus(this.shoulderConeOffset)
+                    : this.wristCubeAngle.plus(this.shoulderCubeOffset);
         }
 
         public Node.Level closestLevel() {
@@ -282,10 +337,10 @@ public class Arm extends SubsystemBase {
 
         public static double[] getPresets(State value) {
             return new double[] {
-                    value.shoulderConeAngle.plus(value.shoulderConeOffset).getRadians(),
-                    value.shoulderCubeAngle.plus(value.shoulderCubeOffset).getRadians(),
-                    value.wristConeHeight + value.heightConeOffset,
-                    value.wristCubeHeight + value.heightCubeOffset,
+                    value.coneHeight + value.heightConeOffset,
+                    value.cubeHeight + value.heightCubeOffset,
+                    value.wristConeAngle.plus(value.shoulderConeOffset).getRadians(),
+                    value.wristCubeAngle.plus(value.shoulderCubeOffset).getRadians(),
             };
         }
     }

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.arm.Shoulder;
 import frc.robot.utils.GamePiece;
 import frc.robot.subsystems.arm.Arm;
 
@@ -33,7 +34,10 @@ public class ArmMoveCommand extends CommandBase {
 
     public static TrapezoidProfile generateProfile(Arm.State goal, Arm arm){
         TrapezoidProfile profile = new TrapezoidProfile(Constants.Shoulder.TRAPEZOID_PROFILE_CONSTRAINTS, 
-        new TrapezoidProfile.State(goal.getShoulderAngleFor(arm.getGamePiece()).getRadians(), 0),
+        new TrapezoidProfile.State(
+                arm.getShoulderAngleFromState(goal).getRadians(),
+                0
+        ),
         new TrapezoidProfile.State(arm.getShoulderAngle().getRadians(), arm.getShoulderVelocity().getRadians()));
         return profile;
     }
@@ -46,12 +50,12 @@ public class ArmMoveCommand extends CommandBase {
     }
 
     public static boolean pathIntersectsChargeStation(Arm.State goal, Arm arm) {
-        double midCubeAngle = Arm.State.Mid.getShoulderAngleFor(GamePiece.Cube).getRadians();
+        double midCubeAngle = Arm.State.Mid.getWristAngleFor(GamePiece.Cube).getRadians();
         return (
-                goal.getShoulderAngleFor(arm.getGamePiece()).getRadians() >= midCubeAngle &&
+                arm.getShoulderAngleFromState(goal).getRadians() >= midCubeAngle &&
                 arm.getShoulderAngle().getRadians() <= midCubeAngle
         ) || (
-                goal.getShoulderAngleFor(arm.getGamePiece()).getRadians() <= midCubeAngle &&
+                arm.getShoulderAngleFromState(goal).getRadians() <= midCubeAngle &&
                 arm.getShoulderAngle().getRadians() >= midCubeAngle
         );
     }

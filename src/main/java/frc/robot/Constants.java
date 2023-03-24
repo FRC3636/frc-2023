@@ -86,7 +86,7 @@ public final class Constants {
     public static class Arm {
         public static final double HUMERUS_LENGTH = 0.969432;
         public static final double MANIPULATOR_LENGTH = 0.32;
-        public static final double PIVOT_HEIGHT = 1.162025;
+        public static final double PIVOT_HEIGHT = 1.15;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
         public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(63);
@@ -103,6 +103,19 @@ public final class Constants {
         public static final double SAFE_RAISING_DISTANCE = 2.4;
 
         public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
+
+        public static final double STOWED_CUBE_HEIGHT = 0.31;
+        public static final double STOWED_CONE_HEIGHT = 0.07;
+        public static final double HIGH_CONE_HEIGHT = 1.21;
+        public static final double HIGH_CUBE_HEIGHT = 1.31;
+        public static final double MID_CONE_HEIGHT = 1.04;
+        public static final double MID_CUBE_HEIGHT = 1.04;
+        public static final double LOW_CONE_HEIGHT = 0.33;
+        public static final double LOW_CUBE_HEIGHT = 0.5;
+        public static final double SLIDE_CONE_HEIGHT = 0.71;
+        public static final double SLIDE_CUBE_HEIGHT = 0.90;
+        public static final double TELLER_CONE_HEIGHT = 1.25;
+        public static final double TELLER_CUBE_HEIGHT = 1.27;
     }
 
     public static class Shoulder {
@@ -119,17 +132,7 @@ public final class Constants {
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 
-        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.103);
-        public static final Rotation2d HIGH_CONE_ANGLE = Rotation2d.fromRadians(1.945489);
-        public static final Rotation2d HIGH_CUBE_ANGLE = Rotation2d.fromRadians(1.570526);
-        public static final Rotation2d MID_CONE_ANGLE = Rotation2d.fromRadians(1.762299);
-        public static final Rotation2d MID_CUBE_ANGLE = Rotation2d.fromRadians(1.282185);
-        public static final Rotation2d INTAKE_CONE_ANGLE = Rotation2d.fromRadians(1.082943);
-        public static final Rotation2d LOW_CUBE_ANGLE = Rotation2d.fromRadians(0.6);
-        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.873581);
-        public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromRadians(1.037839);
-        public static final Rotation2d TELLER_CONE_ANGLE = Rotation2d.fromRadians(2.041552);
-        public static final Rotation2d TELLER_CUBE_ANGLE = Rotation2d.fromRadians(1.580170);
+        public static final Rotation2d STOWED_ANGLE = Rotation2d.fromRadians(-0.133);
 
         public static final Rotation2d MAX_ANGLE = Rotation2d.fromRadians(Math.PI);
 
@@ -151,18 +154,20 @@ public final class Constants {
         public static final double KV = 1.4242;
         public static final double KA = 0.052069;
 
-        public static final double STOWED_CUBE_HEIGHT = 0.31;
-        public static final double STOWED_CONE_HEIGHT = 0.07;
-        public static final double HIGH_CONE_HEIGHT = 1.21;
-        public static final double HIGH_CUBE_HEIGHT = 1.31;
-        public static final double MID_CONE_HEIGHT = 1.04;
-        public static final double MID_CUBE_HEIGHT = 1.04;
-        public static final double LOW_CONE_HEIGHT = 0.33;
-        public static final double LOW_CUBE_HEIGHT = 0.5;
-        public static final double SLIDE_CONE_HEIGHT = 0.71;
-        public static final double SLIDE_CUBE_HEIGHT = 0.90;
-        public static final double TELLER_CONE_HEIGHT = 1.25;
-        public static final double TELLER_CUBE_HEIGHT = 1.27;
+        // Intaking Angles
+
+        public static final Rotation2d STANDING_CONE_INTAKE_ANGLE = Rotation2d.fromRadians(0.966711);
+        public static final Rotation2d CUBE_INTAKE_ANGLE = Rotation2d.fromDegrees(30);
+        public static final Rotation2d TIPPED_CONE_ANGLE = Rotation2d.fromRadians(-0.3);
+
+
+        // Scoring Angles
+        public static final Rotation2d SCORING_CONE_ANGLE = Rotation2d.fromRadians(-0.4);
+        public static final Rotation2d SCORING_CUBE_ANGLE = Rotation2d.fromDegrees(90);
+
+        // Slide
+        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.960988);
+        public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
 
         public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(56);
 

@@ -14,8 +14,8 @@ public class SIMShoulder extends Shoulder {
             115.2,
             0.663,
             Constants.Arm.HUMERUS_LENGTH,
-            Arm.State.Stowed.getShoulderAngleFor(GamePiece.Cone).getRadians() - Math.PI / 2,
-            Arm.State.High.getShoulderAngleFor(GamePiece.Cone).getRadians() - Math.PI / 2,
+            -0.4 - Math.PI / 2,
+            2.3 - Math.PI / 2,
             5.715,
             true
     );

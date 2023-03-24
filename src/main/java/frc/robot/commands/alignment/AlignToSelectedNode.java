@@ -81,8 +81,14 @@ public class AlignToSelectedNode implements Command {
                             driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
                                     (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)
                     ).andThen(
-                            new InstantCommand(() -> arm.setTarget(targetArmState))
-                    )
+                            new InstantCommand(() -> {
+                                arm.setTarget(targetArmState);
+                                arm.setTemporaryAngleOffset(Rotation2d.fromRadians(0.4));
+                            })
+                    ).andThen(
+                            new WaitCommand(
+                            (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME))
+                    ).andThen(new InstantCommand(() -> arm.setTemporaryAngleOffset(new Rotation2d())))
             );
 
         }
