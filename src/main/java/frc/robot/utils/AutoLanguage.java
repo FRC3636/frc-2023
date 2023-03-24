@@ -54,18 +54,33 @@ public class AutoLanguage {
                 return new InstantCommand(() -> RobotContainer.arm.setGamePiece(scorePiece)).
                         andThen(new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node));
             case "balance":
-                boolean avoidObstacles = parsePathingMode(tokens[1]);
+                PathingMode pathingMode = parsePathingMode(tokens[1]);
+
+                SequentialCommandGroup command = new SequentialCommandGroup();
+
+                if (pathingMode.leaveCommunity) {
+                    Pose2d leaveCommunityPose = AllianceUtils.allianceToField(Constants.AutoConstants.BALANCE_LEAVE_COMMUNITY_POINT_ALLIANCE_RELATIVE);
+                    PathPoint leaveCommunityPoint = new PathPoint(leaveCommunityPose.getTranslation(), leaveCommunityPose.getRotation());
+
+                    command.addCommands(
+                            new GenerateCommand(
+                                    () -> new FollowTrajectoryToState(RobotContainer.drivetrain, RobotContainer.poseEstimation, leaveCommunityPoint, pathingMode.avoidFieldElements),
+                                    Set.of(RobotContainer.drivetrain)
+                            )
+                    );
+                }
 
                 Pose2d balanceStartPose = AllianceUtils.allianceToField(Constants.AutoConstants.BALANCE_STARTING_POINT_ALLIANCE_RELATIVE);
                 PathPoint balanceStartPoint = new PathPoint(balanceStartPose.getTranslation(), balanceStartPose.getRotation());
 
-                return new SequentialCommandGroup(
+                command.addCommands(
                         new GenerateCommand(
-                                () -> new FollowTrajectoryToState(RobotContainer.drivetrain, RobotContainer.poseEstimation, balanceStartPoint, avoidObstacles),
+                                () -> new FollowTrajectoryToState(RobotContainer.drivetrain, RobotContainer.poseEstimation, balanceStartPoint, pathingMode.avoidFieldElements),
                                 Set.of(RobotContainer.drivetrain)
-                        ),
-                        new AutoBalance(RobotContainer.drivetrain)
+                        )
                 );
+
+                return command;
             case "wait":
                 double time = Double.parseDouble(tokens[1]);
                 return new WaitCommand(time);
@@ -117,14 +132,30 @@ public class AutoLanguage {
         }
     }
 
-    private static boolean parsePathingMode(String source) {
+    private static PathingMode parsePathingMode(String source) {
         switch (source) {
             case "avoid_obstacles":
-                return true;
+                return PathingMode.AvoidObstacles;
             case "ignore_obstacles":
-                return false;
+                return PathingMode.IgnoreObstacles;
+            case "leave_community":
+                return PathingMode.LeaveCommunity;
             default:
                 throw new RuntimeException("Attempted to parse invalid pathing mode: '" + source + "'");
+        }
+    }
+
+    private enum PathingMode {
+        AvoidObstacles(true, false),
+        IgnoreObstacles(false, false),
+        LeaveCommunity(false, true);
+
+        final boolean avoidFieldElements;
+        final boolean leaveCommunity;
+
+        PathingMode(boolean avoidFieldElements, boolean leaveCommunity) {
+            this.avoidFieldElements = avoidFieldElements;
+            this.leaveCommunity = leaveCommunity;
         }
     }
 }
