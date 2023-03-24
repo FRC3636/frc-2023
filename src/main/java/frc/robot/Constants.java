@@ -107,8 +107,8 @@ public final class Constants {
 
         public static final double STOWED_CUBE_HEIGHT = 0.31;
         public static final double STOWED_CONE_HEIGHT = 0.07;
-        public static final double HIGH_CONE_HEIGHT = 1.21;
-        public static final double HIGH_CUBE_HEIGHT = 1.31;
+        public static final double HIGH_CONE_HEIGHT = 1.376;
+        public static final double HIGH_CUBE_HEIGHT = 1.33456;
         public static final double MID_CONE_HEIGHT = 1.04;
         public static final double MID_CUBE_HEIGHT = 1.04;
         public static final double LOW_CONE_HEIGHT = 0.33;
@@ -157,7 +157,7 @@ public final class Constants {
 
         // Intaking Angles
 
-        public static final Rotation2d STANDING_CONE_INTAKE_ANGLE = Rotation2d.fromRadians(0.966711);
+        public static final Rotation2d STANDING_CONE_INTAKE_ANGLE = Rotation2d.fromDegrees(-60);
         public static final Rotation2d CUBE_INTAKE_ANGLE = Rotation2d.fromDegrees(30);
         public static final Rotation2d TIPPED_CONE_ANGLE = Rotation2d.fromRadians(-0.3);
 

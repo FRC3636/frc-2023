@@ -3,6 +3,7 @@ package frc.robot.utils;
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
@@ -49,7 +50,8 @@ public class AutoLanguage {
                 Node.Level level = parseNodeLevel(tokens[3]);
                 Node.Column column = parseNodeColumn(tokens[4]);
                 Node node = new Node(scorePiece, level, column, grid);
-                return new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node);
+                return new InstantCommand(() -> RobotContainer.arm.setGamePiece(scorePiece)).
+                        andThen(new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node));
             case "balance":
                 boolean avoidObstacles = parsePathingMode(tokens[1]);
 
