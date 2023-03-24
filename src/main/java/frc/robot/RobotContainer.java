@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -34,7 +33,7 @@ import frc.robot.subsystems.GameInfoTable;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
-import frc.robot.utils.AutoSelector;
+import frc.robot.utils.AutoLanguage;
 import frc.robot.utils.GamePiece;
 import frc.robot.utils.GenerateCommand;
 import frc.robot.utils.Node;
@@ -66,23 +65,17 @@ public class RobotContainer {
             joystickRight);
     private final AutoBalance autoBalanceCommand = new AutoBalance(drivetrain);
 
-    private static SendableChooser<String> autoSelector;
-    public static SendableChooser<Node> autoNodeSelector;
-
     // RGB
     public static final GameInfoTable gameInfo = new GameInfoTable();
 
     // Node
     public Node targetNode = new Node(0);
+    public static Field2d nodeSelector = new Field2d();
 
     // Auto Selection
-    public static Field2d nodeSelector = new Field2d();
     private final FieldObject2d startingPosition = field.getObject("Starting Position");
 
     public RobotContainer() {
-        autoNodeSelector = new SendableChooser<>();
-        autoNodeSelector.setDefaultOption("default", new Node(0));
-
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
         armTab.add("Node Selector", nodeSelector).withWidget(BuiltInWidgets.kField).withSize(3, 3);
 
@@ -223,13 +216,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        SequentialCommandGroup command = new SequentialCommandGroup();
-
-        Pose2d startingPose = startingPosition.getPose();
-
-        command.addCommands(new InstantCommand(() -> poseEstimation.resetPose(startingPose)));
-
-        return AutoSelector.makeAutoCommand(drivetrain, poseEstimation, "");
+        return AutoLanguage.compile("intake cube 0; score cone left high cone_right; intake cone 1; balance avoid_obstacles");
     }
 
     public void setTargetNode(Node targetNode) {

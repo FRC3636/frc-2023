@@ -260,6 +260,8 @@ public final class Constants {
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(0.5);
 
         public static final PieceDependent<Transform2d> INTAKE_OFFSET = (piece) -> new Transform2d(new Translation2d(-0.15, 0), new Rotation2d());
+
+        public static final Pose2d BALANCE_STARTING_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(5, 2.65), Rotation2d.fromRadians(Math.PI));
     }
 
     public static final class NeoMotorConstants {

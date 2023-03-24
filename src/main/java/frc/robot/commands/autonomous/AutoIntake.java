@@ -13,6 +13,9 @@ import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
 import frc.robot.utils.GamePiece;
+import frc.robot.utils.GenerateCommand;
+
+import java.util.Set;
 
 public class AutoIntake extends SequentialCommandGroup {
     public AutoIntake(Drivetrain drivetrain, PoseEstimation poseEstimation, Arm arm, int index, GamePiece piece) {
@@ -28,7 +31,10 @@ public class AutoIntake extends SequentialCommandGroup {
                                 arm.setTarget(Arm.State.Stowed);
                             })
                         ),
-                        new FollowTrajectoryToState(drivetrain, poseEstimation, getTargetPoint(index, piece), true)
+                        new GenerateCommand(
+                                () -> new FollowTrajectoryToState(drivetrain, poseEstimation, getTargetPoint(index, piece), true),
+                                Set.of(drivetrain)
+                        )
                 ),
                 new WaitCommand(0.5),
                 new InstantCommand(() -> {
