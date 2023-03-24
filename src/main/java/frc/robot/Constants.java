@@ -111,10 +111,10 @@ public final class Constants {
         public static final int MOTOR_2_ID = 2;
         public static final double GEAR_RATIO = 15.0 / 36.0;
 
-        public static final double KS = 0.23446;
-        public static final double KG = 0.66001;
-        public static final double KV = 2.07220;
-        public static final double KA = 0.19625;
+        public static final double KS = 0.23315;
+        public static final double KG = 0.63300;
+        public static final double KV = 2.14650;
+        public static final double KA = 0.21209;
 
         public static final double KP = 1;
         public static final double KI = 0.0;

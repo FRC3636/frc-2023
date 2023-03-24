@@ -18,8 +18,8 @@
     1
   ],
   "primary motor ports": [
-    5,
-    6
+    1,
+    2
   ],
   "primary motors inverted": [
     true,
