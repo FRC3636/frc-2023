@@ -52,12 +52,13 @@ public class AutoIntake extends SequentialCommandGroup {
                 ),
                 new Rotation2d()
         ));
+
         Pose2d targetPose = piecePose.transformBy(Constants.AutoConstants.INTAKE_OFFSET.get(piece));
 
         return new PathPoint(
                 targetPose.getTranslation(),
                 targetPose.getRotation(),
                 targetPose.getRotation()
-        );
+        ).withPrevControlLength(2);
     }
 }

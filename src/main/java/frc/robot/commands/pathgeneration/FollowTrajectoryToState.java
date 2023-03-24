@@ -32,7 +32,7 @@ public class FollowTrajectoryToState implements Command {
     private PPSwerveControllerCommand swerveControllerCommand;
 
     private static final FieldPartition chargingPadPartition = new FieldPartition(
-            4.2,
+            3.8,
             5,
             new PathPoint[] {
                     new PathPoint(
@@ -175,7 +175,7 @@ public class FollowTrajectoryToState implements Command {
                     new Translation2d(bestWaypoint.getX() + fieldX, bestWaypoint.getY()),
                     heading,
                     bestWaypoint.getRotation()
-            ).withControlLengths(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX)), partitionWidth / 2));
+            ).withControlLengths(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX)), partitionWidth / 2.5));
         }
     }
 }

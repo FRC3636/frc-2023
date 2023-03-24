@@ -80,7 +80,7 @@ public class Node {
 
         Pose2d robotPose = RobotContainer.poseEstimation.getEstimatedPose();
 
-        int grid = (robotPose.getY() > Constants.FieldConstants.Grids.GRID_BOUNDARIES[1]
+        int grid = gridOverride.orElse(robotPose.getY() > Constants.FieldConstants.Grids.GRID_BOUNDARIES[1]
                 ? robotPose.getY() > Constants.FieldConstants.Grids.GRID_BOUNDARIES[2] ? 2 : 1
                 : 0);
 
