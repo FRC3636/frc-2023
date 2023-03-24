@@ -12,6 +12,6 @@ public class FollowTrajectoryToNode extends FollowTrajectoryToState {
                 targetNode.getRobotScoringPose().getTranslation(),
                 targetNode.getRobotScoringPose().getRotation(),
                 targetNode.getRobotScoringPose().getRotation(),
-                0).withPrevControlLength(1), true);
+                0), true);
     }
 }
