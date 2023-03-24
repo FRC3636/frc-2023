@@ -10,12 +10,12 @@ public class FollowTrajectoryToPose extends FollowTrajectoryToState {
         super(
                 drivetrain,
                 poseEstimation,
-                avoidFieldElements,
                 new PathPoint(
                     target.getTranslation(),
                     target.getTranslation().minus(poseEstimation.getEstimatedPose().getTranslation()).getAngle(),
                     target.getRotation()
-                )
+                ),
+                avoidFieldElements
         );
     }
 

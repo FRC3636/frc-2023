@@ -15,7 +15,6 @@ import frc.robot.utils.AllianceUtils;
 import frc.robot.utils.GamePiece;
 import frc.robot.utils.GenerateCommand;
 
-import java.util.List;
 import java.util.Set;
 
 public class AutoIntake extends SequentialCommandGroup {
@@ -33,7 +32,7 @@ public class AutoIntake extends SequentialCommandGroup {
                             })
                         ),
                         new GenerateCommand(
-                                () -> new FollowTrajectoryToState(drivetrain, poseEstimation, true, getTargetPoints(index, piece)),
+                                () -> new FollowTrajectoryToState(drivetrain, poseEstimation, getTargetPoint(index, piece), true),
                                 Set.of(drivetrain)
                         )
                 ),
@@ -45,8 +44,8 @@ public class AutoIntake extends SequentialCommandGroup {
         );
     }
 
-    private static PathPoint[] getTargetPoints(int index, GamePiece piece) {
-        Pose2d ultimatePose = AllianceUtils.allianceToField(new Pose2d(
+    private static PathPoint getTargetPoint(int index, GamePiece piece) {
+        Pose2d piecePose = AllianceUtils.allianceToField(new Pose2d(
                 new Translation2d(
                         Constants.FieldConstants.PRESET_PIECE_X,
                         Constants.FieldConstants.PRESET_PIECE_Y[index]
@@ -54,19 +53,12 @@ public class AutoIntake extends SequentialCommandGroup {
                 new Rotation2d()
         ));
 
-        Pose2d penultimatePose = ultimatePose.transformBy(Constants.AutoConstants.INTAKE_OFFSET.get(piece));
+        Pose2d targetPose = piecePose.transformBy(Constants.AutoConstants.INTAKE_OFFSET.get(piece));
 
-        return new PathPoint[] {
-                new PathPoint(
-                        penultimatePose.getTranslation(),
-                        penultimatePose.getRotation(),
-                        penultimatePose.getRotation()
-                ).withPrevControlLength(2),
-                new PathPoint(
-                        ultimatePose.getTranslation(),
-                        ultimatePose.getRotation(),
-                        ultimatePose.getRotation()
-                )
-        };
+        return new PathPoint(
+                targetPose.getTranslation(),
+                targetPose.getRotation(),
+                targetPose.getRotation()
+        ).withPrevControlLength(2);
     }
 }

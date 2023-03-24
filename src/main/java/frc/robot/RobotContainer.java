@@ -101,8 +101,8 @@ public class RobotContainer {
 
         startingPosition.setPose(AllianceUtils.allianceToField(new Pose2d(new Translation2d(3.47, 0.73), Rotation2d.fromRadians(Math.PI))));
 
-//        DataLogManager.start();
-//        DriverStation.startDataLog(DataLogManager.getLog());
+        DataLogManager.start();
+        DriverStation.startDataLog(DataLogManager.getLog());
     }
 
     private void configureButtonBindings() {
