@@ -78,10 +78,7 @@ public class FollowTrajectoryToState implements Command {
                 initial.getRotation(),
                 initialV.getNorm());
 
-        System.out.println("Building Trajectory...");
-        System.out.println("Speed = " + initialV.getNorm());
-        System.out.println("Point Velocity = " + start.velocityOverride);
-        System.out.println("Done");
+        RobotContainer.field.getObject("Alignment Start").setPose(new Pose2d(start.position, start.heading));
 
         if(avoidFieldElements) {
             Optional<PathPoint> waypoint = chargingPadPartition.queryWaypoint(initial.getTranslation(), target.position);
@@ -181,5 +178,4 @@ public class FollowTrajectoryToState implements Command {
             ).withControlLengths(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX)), partitionWidth / 2));
         }
     }
-
 }

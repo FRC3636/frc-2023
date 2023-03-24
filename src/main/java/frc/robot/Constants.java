@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.utils.PieceDependent;
 
 import java.util.Map;
 
@@ -258,9 +259,9 @@ public final class Constants {
         public static final double TRANSLATION_TOLERANCE = 0.01;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(0.5);
 
-        // Constraint for the motion profiled robot angle controller
-        public static final TrapezoidProfile.Constraints THETA_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(
-                MAX_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED);
+        public static final PieceDependent<Transform2d> INTAKE_OFFSET = (piece) -> new Transform2d(new Translation2d(-0.15, 0), new Rotation2d());
+
+        public static final Pose2d BALANCE_STARTING_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(5, 2.65), Rotation2d.fromRadians(Math.PI));
     }
 
     public static final class NeoMotorConstants {
@@ -292,6 +293,9 @@ public final class Constants {
         public static final double fieldWidth = 8.0137;
         public static final double tapeWidth = Units.inchesToMeters(2.0);
         public static final double aprilTagWidth = Units.inchesToMeters(6.0);
+
+        public static final double PRESET_PIECE_X = 7;
+        public static final double[] PRESET_PIECE_Y = new double[]{0.92, 2.14};
 
         public static class Grids {
 
