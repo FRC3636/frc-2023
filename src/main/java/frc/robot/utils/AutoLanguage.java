@@ -77,6 +77,7 @@ public class AutoLanguage {
                 return Optional.of(0);
             case "middle":
             case "center":
+            case "mid":
                 return Optional.of(1);
             case "right":
                 return Optional.of(2);
