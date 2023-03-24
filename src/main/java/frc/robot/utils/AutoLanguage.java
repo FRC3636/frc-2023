@@ -1,6 +1,7 @@
 package frc.robot.utils;
 
 import com.pathplanner.lib.PathPoint;
+import edu.wpi.first.math.Num;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -42,7 +43,7 @@ public class AutoLanguage {
         switch (tokens[0]) {
             case "intake":
                 GamePiece intakePiece = parseGamePiece(tokens[1]);
-                int index = Integer.parseInt(tokens[2]);
+                int index = Integer.parseInt(tokens[2]) - 1;
                 return new AutoIntake(RobotContainer.drivetrain, RobotContainer.poseEstimation, RobotContainer.arm, index, intakePiece);
             case "score":
                 GamePiece scorePiece = parseGamePiece(tokens[1]);
@@ -85,20 +86,9 @@ public class AutoLanguage {
     }
 
     private static Optional<Integer> parseGrid(String source) {
-        switch (source.toLowerCase()) {
-            case "left":
-                return Optional.of(0);
-            case "middle":
-            case "center":
-            case "mid":
-                return Optional.of(1);
-            case "right":
-                return Optional.of(2);
-            case "closest":
-                return Optional.empty();
-            default:
-                throw new RuntimeException("Attempted to parse invalid grid: '" + source + "'");
-        }
+        if (source.toLowerCase().equals("closest")) return Optional.empty();
+
+        return Optional.of(Integer.parseInt(source) - 1);
     }
 
     private static Node.Level parseNodeLevel(String source) {
