@@ -129,7 +129,8 @@ public final class Constants {
         public static final double KV = 2.14650;
         public static final double KA = 0.21209;
 
-        public static final double KP = 1;
+        public static final double DYNAMIC_KP = 1;
+        public static final double STATIC_KP = 4;
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 

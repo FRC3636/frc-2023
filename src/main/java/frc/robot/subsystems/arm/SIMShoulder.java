@@ -1,11 +1,11 @@
 package frc.robot.subsystems.arm;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.utils.GamePiece;
 
 public class SIMShoulder extends Shoulder {
 
@@ -37,6 +37,8 @@ public class SIMShoulder extends Shoulder {
 
     @Override
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity, Rotation2d acceleration) {
+
+        PIDController pidController = velocity.equals(new Rotation2d()) ? this.staticPIDController : this.dynamicPIDController;
         velocity = Rotation2d.fromRadians(velocity.getRadians() +
                         pidController.calculate(getAngle().getRadians(), position.getRadians())
         );

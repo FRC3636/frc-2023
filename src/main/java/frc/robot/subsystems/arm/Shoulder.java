@@ -26,7 +26,9 @@ public class Shoulder {
     protected ArmFeedforward feedforwardController = new ArmFeedforward(Constants.Shoulder.KS, Constants.Shoulder.KG,
             Constants.Shoulder.KV, Constants.Shoulder.KA);
 
-    protected final PIDController pidController = new PIDController(Constants.Shoulder.KP, Constants.Shoulder.KI,
+    protected final PIDController dynamicPIDController = new PIDController(Constants.Shoulder.DYNAMIC_KP, Constants.Shoulder.KI,
+            Constants.Shoulder.KD);
+    protected final PIDController staticPIDController = new PIDController(Constants.Shoulder.STATIC_KP, Constants.Shoulder.KI,
             Constants.Shoulder.KD);
 
     public Shoulder() {
@@ -42,12 +44,12 @@ public class Shoulder {
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1));
         encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) / 60.0);
 
-        RobotContainer.armTab.add("Shoulder PID", pidController).withWidget(BuiltInWidgets.kPIDController);
+        RobotContainer.armTab.add("Shoulder PID", dynamicPIDController).withWidget(BuiltInWidgets.kPIDController);
 
         motor1.setInverted(true);
         encoder.setInverted(false);
 
-        pidController.setTolerance(Units.degreesToRadians(1));
+        dynamicPIDController.setTolerance(Units.degreesToRadians(1));
         motor1.getEncoder().setPosition(0);
 
         initialize();
@@ -89,6 +91,7 @@ public class Shoulder {
     /// @param velocity The velocity setpoint. Measured in radians per second.
     /// @param acceleration The acceleration setpoint. Measured in radians per second squared.
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity, Rotation2d acceleration) {
+        PIDController pidController = velocity.equals(new Rotation2d()) ? this.staticPIDController : this.dynamicPIDController;
         velocity = Rotation2d.fromRadians(velocity.getRadians() +
                 pidController.calculate(getAngle().getRadians(),
                         Math.max(
