@@ -184,7 +184,10 @@ public class AutoLanguage {
 
         public void setProgram(String program) {
             this.program = program;
+            recompile();
+        }
 
+        public void recompile() {
             try {
                 this.compilationOutput = compile(program);
                 this.compilationError = null;

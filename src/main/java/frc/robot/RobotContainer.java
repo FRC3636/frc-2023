@@ -232,7 +232,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-
+        autoProgram.recompile();
         return autoProgram
                 .getCompilationOutput()
                 .orElse(AutoLanguage.compile(Constants.AutoConstants.DEFAULT_PROGRAM))
