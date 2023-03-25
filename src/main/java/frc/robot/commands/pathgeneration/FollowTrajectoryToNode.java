@@ -11,7 +11,7 @@ public class FollowTrajectoryToNode extends FollowTrajectoryToState {
         super(drivetrain, poseEstimation, new PathPoint(
                 targetNode.getRobotScoringPose().getTranslation(),
                 targetNode.getRobotScoringPose().getRotation(),
-                targetNode.getRobotScoringPose().getRotation(),
-                0), true);
+                targetNode.getRobotScoringPose().getRotation()
+        ), true);
     }
 }

@@ -33,16 +33,18 @@ public class AlignToSelectedNode implements Command {
 
     private final Supplier<Node> targetNode;
 
-    public AlignToSelectedNode(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, Supplier<Node> targetNode){
+    private final double pidDeadline;
+
+    public AlignToSelectedNode(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, Supplier<Node> targetNode, double pidDeadline){
         this.drivetrain = drivetrain;
         this.arm = arm;
         this.poseEstimation = poseEstimation;
         this.targetNode = targetNode;
-
+        this.pidDeadline = pidDeadline;
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         Arm.State targetArmState = Arm.State.getTargetFromNode(targetNode.get());
         DriveToNode driveCommand = new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get());
 

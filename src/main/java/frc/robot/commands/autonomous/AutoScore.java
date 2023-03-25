@@ -1,6 +1,5 @@
 package frc.robot.commands.autonomous;
 
-import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
 import frc.robot.commands.alignment.AlignToSelectedNode;
@@ -17,7 +16,7 @@ import java.util.function.Supplier;
 public class AutoScore extends SequentialCommandGroup {
     public AutoScore(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, Supplier<Node> targetNode){
         super(
-                new AlignToSelectedNode(drivetrain, arm, poseEstimation, targetNode),
+                new AlignToSelectedNode(drivetrain, arm, poseEstimation, targetNode, 0.75),
                 new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake)),
                 new WaitCommand(0.5),
                 new InstantCommand(() -> arm.setRollerState(Rollers.State.Off)),

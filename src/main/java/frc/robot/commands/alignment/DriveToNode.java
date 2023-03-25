@@ -1,6 +1,8 @@
 package frc.robot.commands.alignment;
 
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.PIDDriveToPoint;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToNode;
 import frc.robot.poseestimation.PoseEstimation;
@@ -12,12 +14,15 @@ public class DriveToNode extends SequentialCommandGroup {
 
     FollowTrajectoryToNode trajectoryCommand;
 
-    public DriveToNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Node targetNode) {
+    public DriveToNode(Drivetrain drivetrain, PoseEstimation poseEstimation, Node targetNode, double pidDeadline) {
         trajectoryCommand = new FollowTrajectoryToNode(drivetrain, poseEstimation, targetNode);
 
         super.addCommands(
                 trajectoryCommand,
-                new PIDDriveToPoint(drivetrain, poseEstimation, targetNode.getRobotScoringPose())
+                new ParallelDeadlineGroup(
+                    new WaitCommand(pidDeadline),
+                    new PIDDriveToPoint(drivetrain, poseEstimation, targetNode.getRobotScoringPose())
+                )
         );
     }
 
