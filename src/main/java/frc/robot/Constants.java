@@ -90,7 +90,7 @@ public final class Constants {
         public static final double PIVOT_HEIGHT = 1.15;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
-        public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(63);
+        public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(65);
         public static final double HIGH_CUBE_SCORING_DIST = Units.inchesToMeters(60);
 
         public static final double MID_CONE_SCORING_DIST = 1.49;
