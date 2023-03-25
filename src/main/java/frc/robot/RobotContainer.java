@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -75,10 +76,12 @@ public class RobotContainer {
 
     // Auto Selection
     private final FieldObject2d startingPosition = field.getObject("Starting Position");
-    private final GenericEntry autoProgram = autoTab.add("Auto Program", "score cube closest low cube;").getEntry();
+    private final AutoLanguage.AutoProgram autoProgram = new AutoLanguage.AutoProgram(Constants.AutoConstants.DEFAULT_PROGRAM);
 
     public RobotContainer() {
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
+        autoTab.add("Auto Program", autoProgram);
+
         armTab.add("Node Selector", nodeSelector).withWidget(BuiltInWidgets.kField).withSize(3, 3);
 
         driveSettingsTab.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
@@ -228,15 +231,11 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        poseEstimation.resetPose(startingPosition.getPose());
 
-        try {
-            return AutoLanguage.compile(autoProgram.getString(""));
-        } catch (Exception e) {
-            System.out.println("Failed to compile auto program: " + autoProgram.getString(""));
-            e.printStackTrace();
-            return null;
-        }
+        return autoProgram
+                .getCompilationOutput()
+                .orElse(AutoLanguage.compile(Constants.AutoConstants.DEFAULT_PROGRAM))
+                .beforeStarting(() -> poseEstimation.resetPose(startingPosition.getPose()));
     }
 
     public void setTargetNode(Node targetNode) {

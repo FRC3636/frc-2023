@@ -3,6 +3,8 @@ package frc.robot.utils;
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.Num;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -156,6 +158,48 @@ public class AutoLanguage {
         PathingMode(boolean avoidFieldElements, boolean leaveCommunity) {
             this.avoidFieldElements = avoidFieldElements;
             this.leaveCommunity = leaveCommunity;
+        }
+    }
+
+    public static class AutoProgram implements Sendable {
+        private String program;
+
+        private Exception compilationError;
+        private Command compilationOutput;
+
+        public AutoProgram(String defaultProgram) {
+            setProgram(defaultProgram);
+        }
+
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            builder.addStringProperty("Auto Program", this::getProgram, this::setProgram);
+            builder.addStringProperty("Auto Compilation Error", () -> getCompilationError().map(Exception::getMessage).orElse(""), (e) -> {});
+            builder.addBooleanProperty("Auto Compilation Good", () -> getCompilationOutput().isPresent(), (g) -> {});
+        }
+
+        public String getProgram() {
+            return program;
+        }
+
+        public void setProgram(String program) {
+            this.program = program;
+
+            try {
+                this.compilationOutput = compile(program);
+                this.compilationError = null;
+            } catch (Exception e) {
+                this.compilationOutput = null;
+                this.compilationError = e;
+            }
+        }
+
+        public Optional<Command> getCompilationOutput() {
+            return Optional.ofNullable(compilationOutput);
+        }
+
+        public Optional<Exception> getCompilationError() {
+            return Optional.ofNullable(compilationError);
         }
     }
 }
