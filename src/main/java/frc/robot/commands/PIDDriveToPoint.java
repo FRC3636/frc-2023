@@ -55,4 +55,9 @@ public class PIDDriveToPoint extends CommandBase {
     public boolean isFinished() {
         return xController.atSetpoint() && yController.atSetpoint() && thetaController.atSetpoint();
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        drivetrain.setX();
+    }
 }

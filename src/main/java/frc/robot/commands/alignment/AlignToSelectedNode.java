@@ -58,17 +58,14 @@ public class AlignToSelectedNode implements Command {
 
         if(driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
                 && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)) {
+            System.out.println("test");
             Pose2d initial = poseEstimation.getEstimatedPose();
             Pose2d waypoint = new Pose2d(
                     AllianceUtils.isBlue()?
                             Constants.Arm.SAFE_RAISING_DISTANCE :
                             Constants.FieldConstants.fieldLength - Constants.Arm.SAFE_RAISING_DISTANCE,
                     ((initial.getY() + targetNode.get().getRobotScoringPose().getY()) / 2),
-                    AllianceUtils.allianceToField(Rotation2d.fromRadians(Math.PI)).plus(
-                            Rotation2d.fromDegrees(
-                                    Math.copySign(45, initial.getRotation().getRadians())
-                            )
-                    )
+                    AllianceUtils.allianceToField(Rotation2d.fromRadians(Math.PI))
             );
 
             FollowTrajectoryToState waypointCommand = new FollowTrajectoryToState(drivetrain, poseEstimation,

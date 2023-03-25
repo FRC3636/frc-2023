@@ -150,7 +150,6 @@ public class Arm extends SubsystemBase {
     }
 
     public void setTemporaryAngleOffset(Rotation2d temporaryAngleOffset) {
-        System.out.println("temp angle offset");
         this.temporaryAngleOffset = temporaryAngleOffset;
     }
 
