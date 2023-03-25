@@ -48,7 +48,7 @@ public class PoseEstimation {
                 backends[0] = new PhotonVisionBackend("right-camera", Constants.VisionConstants.RIGHT_CAM_TRANSFORM);
                 backends[1] = new PhotonVisionBackend("left-camera", Constants.VisionConstants.LEFT_CAM_TRANSFORM);
                 backendToggles[0] = RobotContainer.autoTab.add("VisionBackend/right-camera", true).getEntry();
-                backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/left-camera", true).getEntry();
+                backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/left-camera", false).getEntry();
             } catch (Exception e) {
                 System.out.println("Failed to initialize PhotonVision");
                 e.printStackTrace();

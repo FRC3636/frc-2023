@@ -81,6 +81,7 @@ public class RobotContainer {
     public RobotContainer() {
         autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
         autoTab.add("Auto Program", autoProgram);
+        startingPosition.setPose(0, 0, new Rotation2d());
 
         armTab.add("Node Selector", nodeSelector).withWidget(BuiltInWidgets.kField).withSize(3, 3);
 
