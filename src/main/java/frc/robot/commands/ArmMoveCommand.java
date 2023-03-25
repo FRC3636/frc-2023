@@ -50,7 +50,7 @@ public class ArmMoveCommand extends CommandBase {
     }
 
     public static boolean pathIntersectsChargeStation(Arm.State goal, Arm arm) {
-        double midCubeAngle = Arm.State.Mid.getWristAngleFor(GamePiece.Cube).getRadians();
+        double midCubeAngle = arm.getShoulderAngleFromState(Arm.State.Mid).getRadians();
         return (
                 arm.getShoulderAngleFromState(goal).getRadians() >= midCubeAngle &&
                 arm.getShoulderAngle().getRadians() <= midCubeAngle
