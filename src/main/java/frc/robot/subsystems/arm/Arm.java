@@ -1,5 +1,6 @@
 package frc.robot.subsystems.arm;
 
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -204,6 +205,11 @@ public class Arm extends SubsystemBase {
 
     public double getTargetHeight() {
         return target.getHeightFor(gamePiece);
+    }
+
+    public void setIdleMode(CANSparkMax.IdleMode idleMode) {
+        shoulder.setIdleMode(idleMode);
+        wrist.setIdleMode(idleMode);
     }
 
     public void setTargetFromNode(Node node) {

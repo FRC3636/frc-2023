@@ -77,7 +77,7 @@ public final class Constants {
         public static final boolean GYRO_REVERSED = false;
         public static final Rotation3d GYRO_ROTATION = new Rotation3d(0, 0, -Math.PI / 2);
 
-        public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.05, 0.05, 0.001);
+        public static final Vector<N3> ODOMETRY_STD_DEV = VecBuilder.fill(0.02, 0.02, 0.01);
 
         public static final double CARPET_BIAS = 0.05;
 
@@ -111,7 +111,7 @@ public final class Constants {
         public static final double HIGH_CUBE_HEIGHT = 1.33456;
         public static final double MID_CONE_HEIGHT = 1.04;
         public static final double MID_CUBE_HEIGHT = 1.04;
-        public static final double LOW_CONE_HEIGHT = 0.33;
+        public static final double LOW_CONE_HEIGHT = 0.35;
         public static final double LOW_CUBE_HEIGHT = 0.5;
         public static final double SLIDE_CONE_HEIGHT = 0.71;
         public static final double SLIDE_CUBE_HEIGHT = 0.90;
@@ -130,7 +130,7 @@ public final class Constants {
         public static final double KA = 0.21209;
 
         public static final double DYNAMIC_KP = 1;
-        public static final double STATIC_KP = 4;
+        public static final double STATIC_KP = 3;
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 

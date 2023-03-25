@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.arm.Arm;
@@ -11,6 +12,11 @@ public class ArmHoldCommand extends CommandBase {
         this.arm = arm;
 
         addRequirements(arm);
+    }
+
+    @Override
+    public void initialize() {
+        arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
 
     @Override

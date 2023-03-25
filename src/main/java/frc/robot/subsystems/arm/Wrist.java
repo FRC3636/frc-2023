@@ -105,6 +105,10 @@ public class Wrist {
         }
     }
 
+    public void setIdleMode(CANSparkMax.IdleMode idleMode) {
+        motor.setIdleMode(idleMode);
+    }
+
     private void zeroEncoder() {
         motor.getEncoder().setPosition(encoder.getPosition());
     }

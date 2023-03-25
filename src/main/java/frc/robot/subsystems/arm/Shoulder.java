@@ -55,6 +55,11 @@ public class Shoulder {
         initialize();
     }
 
+    public void setIdleMode(CANSparkMax.IdleMode idleMode) {
+        motor1.setIdleMode(idleMode);
+        motor2.setIdleMode(idleMode);
+    }
+
     public static Rotation2d getShoulderAngleFromHeight(double height, Rotation2d wristAngle) {
         double jointHeight = height - Constants.Arm.MANIPULATOR_LENGTH * wristAngle.getSin();
         double cosAngle = Math.max(Math.min((Constants.Arm.PIVOT_HEIGHT - jointHeight) / Constants.Arm.HUMERUS_LENGTH, 1), -1);
