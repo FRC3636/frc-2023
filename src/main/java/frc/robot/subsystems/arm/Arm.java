@@ -154,6 +154,10 @@ public class Arm extends SubsystemBase {
         this.temporaryAngleOffset = temporaryAngleOffset;
     }
 
+    public void resetTemporaryAngleOffset() {
+        this.temporaryAngleOffset = new Rotation2d();
+    }
+
     public void resetOffset() {
         switch (gamePiece) {
             case Cone:

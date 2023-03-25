@@ -253,8 +253,8 @@ public final class Constants {
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
-        public static final double P_TRANSLATION_PATH_CONTROLLER = 1;
-        public static final double P_THETA_PATH_CONTROLLER = 1;
+        public static final double P_TRANSLATION_PATH_CONTROLLER = 2;
+        public static final double P_THETA_PATH_CONTROLLER = 2;
 
         public static final double P_TRANSLATION_POINT_CONTROLLER = 4;
         public static final double P_THETA_POINT_CONTROLLER = 6;

@@ -36,10 +36,12 @@ public class AutoIntake extends SequentialCommandGroup {
                                 Set.of(drivetrain)
                         )
                 ),
+                new InstantCommand(() -> arm.setTemporaryAngleOffset(Rotation2d.fromRadians(0.5))),
                 new WaitCommand(0.5),
                 new InstantCommand(() -> {
                     arm.setTarget(Arm.State.Stowed);
                     arm.setRollerState(Rollers.State.Off);
+                    arm.resetTemporaryAngleOffset();
                 })
         );
     }
