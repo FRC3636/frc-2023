@@ -141,7 +141,7 @@ public class RobotContainer {
         new JoystickButton(joystickRight, 3).whileTrue(
                 new SequentialCommandGroup(
                         new GenerateCommand(
-                                () -> new DriveToNode(drivetrain, poseEstimation, targetNode),
+                                () -> new DriveToNode(drivetrain, poseEstimation, targetNode, Double.POSITIVE_INFINITY),
                                 Set.of(drivetrain)
                         ),
                         new RunCommand(drivetrain::setX, drivetrain)

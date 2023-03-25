@@ -43,10 +43,18 @@ public class AlignToSelectedNode implements Command {
         this.pidDeadline = pidDeadline;
     }
 
+    public AlignToSelectedNode(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, Supplier<Node> targetNode) {
+        this.drivetrain = drivetrain;
+        this.arm = arm;
+        this.poseEstimation = poseEstimation;
+        this.targetNode = targetNode;
+        this.pidDeadline = Double.POSITIVE_INFINITY;
+    }
+
     @Override
     public void initialize() {
         Arm.State targetArmState = Arm.State.getTargetFromNode(targetNode.get());
-        DriveToNode driveCommand = new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get());
+        DriveToNode driveCommand = new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get(), pidDeadline);
 
         if(driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
                 && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)) {
@@ -75,7 +83,7 @@ public class AlignToSelectedNode implements Command {
 
             command = waypointCommand.andThen(
                             new GenerateCommand(
-                                    () -> new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get()),
+                                    () -> new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get(), pidDeadline),
                                     Set.of(drivetrain)
                             )
             ).alongWith(

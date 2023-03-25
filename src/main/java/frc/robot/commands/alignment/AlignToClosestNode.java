@@ -12,13 +12,14 @@ import java.util.Set;
 public class AlignToClosestNode extends GenerateCommand {
     public AlignToClosestNode(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation) {
         super(() -> new DriveToNode(
-                drivetrain,
-                poseEstimation,
-                Node.getClosestNode(
-                        RobotContainer.poseEstimation.getEstimatedPose(),
-                        arm.getTarget().closestLevel(),
-                        arm.getGamePiece()
-                )
+                        drivetrain,
+                        poseEstimation,
+                        Node.getClosestNode(
+                                RobotContainer.poseEstimation.getEstimatedPose(),
+                                arm.getTarget().closestLevel(),
+                                arm.getGamePiece()
+                        ),
+                        Double.POSITIVE_INFINITY
                 ),
                 Set.of(drivetrain)
         );
