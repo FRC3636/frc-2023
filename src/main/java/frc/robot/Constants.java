@@ -249,7 +249,7 @@ public final class Constants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
         public static final double MAX_SPEED_METERS_PER_SECOND = 8;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 5;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
@@ -265,7 +265,7 @@ public final class Constants {
         public static final PieceDependent<Transform2d> INTAKE_OFFSET = (piece) -> new Transform2d(new Translation2d(-0.65, 0), new Rotation2d());
 
         public static final Pose2d BALANCE_STARTING_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(5, 2.65), Rotation2d.fromRadians(Math.PI));
-        public static final Pose2d BALANCE_LEAVE_COMMUNITY_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(5.5, 2.65), Rotation2d.fromRadians(Math.PI));
+        public static final Pose2d BALANCE_LEAVE_COMMUNITY_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(6.0, 2.65), Rotation2d.fromRadians(Math.PI));
     }
 
     public static final class NeoMotorConstants {
