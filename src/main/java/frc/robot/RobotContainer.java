@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.server.PathPlannerServer;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -93,6 +94,8 @@ public class RobotContainer {
         arm.setDefaultCommand(new ArmHoldCommand(arm));
 
         drivetrain.setDefaultCommand(driveCommand);
+
+        LiveWindow.enableTelemetry(arm);
 
         configureButtonBindings();
 
@@ -214,6 +217,22 @@ public class RobotContainer {
         new JoystickButton(controller, XboxController.Button.kBack.value).onTrue(new InstantCommand(() -> {
             arm.setTarget(Arm.State.Teller);
         }));
+
+        // Arm Disabling
+        DigitalInput armButton = new DigitalInput(1);
+        new Trigger(() -> armButton.get() && DriverStation.isDisabled()).toggleOnTrue(
+                new FunctionalCommand(
+                        () -> arm.setIdleMode(CANSparkMax.IdleMode.kCoast),
+                        () -> {},
+                        (interrupted) -> {arm.setIdleMode(CANSparkMax.IdleMode.kBrake);},
+                        DriverStation::isEnabled
+                        ) {
+                    @Override
+                    public boolean runsWhenDisabled() {
+                        return true;
+                    }
+                }
+        );
 
         // Node Selector
         new Trigger(() -> controller.getLeftX() >= 0.75)

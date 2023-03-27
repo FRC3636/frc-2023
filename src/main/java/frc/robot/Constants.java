@@ -186,8 +186,8 @@ public final class Constants {
         public static final double OUTTAKE_CUBE = -.6;
         public static final double HOLDING_PIECE_VOLTAGE = 11;
 
-        public static final int ECHO_CHANNEL = 1;
-        public static final int PING_CHANNEL = 2;
+        public static final int ECHO_CHANNEL = 2;
+        public static final int PING_CHANNEL = 3;
 
         public static final double CONE_OFFSET = 0.00;
         public static final double CONE_CENTER_DISTANCE = Units.inchesToMeters(5.5);
