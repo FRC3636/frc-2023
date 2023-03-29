@@ -17,50 +17,72 @@ import frc.robot.utils.GenerateCommand;
 
 import java.util.Set;
 
-public class AutoIntake extends SequentialCommandGroup {
+public class AutoIntake extends GenerateCommand {
+    private final Arm arm;
+
     public AutoIntake(Drivetrain drivetrain, PoseEstimation poseEstimation, Arm arm, int index, GamePiece piece) {
         super(
-                new ParallelCommandGroup(
-                        new InstantCommand(() -> {
-                            arm.setRollerState(Rollers.State.Intake);
-                        }),
-                        new SequentialCommandGroup(
-                            new WaitUntilCommand(() -> AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) > Constants.Arm.SAFE_RAISING_DISTANCE),
-                            new InstantCommand(() -> {
-                                arm.setGamePiece(piece);
-                                arm.setTarget(Arm.State.Stowed);
-                            })
-                        ),
-                        new GenerateCommand(
-                                () -> new FollowTrajectoryToState(drivetrain, poseEstimation, getTargetPoint(index, piece), true),
-                                Set.of(drivetrain)
-                        )
-                ),
-                new InstantCommand(() -> arm.setTemporaryAngleOffset(Rotation2d.fromRadians(0.5))),
-                new WaitCommand(0.5),
-                new InstantCommand(() -> {
-                    arm.setTarget(Arm.State.Stowed);
-                    arm.setRollerState(Rollers.State.Off);
-                    arm.resetTemporaryAngleOffset();
-                })
+                () -> {
+                    FollowTrajectoryToState driveCommand = new FollowTrajectoryToState(
+                            drivetrain,
+                            poseEstimation,
+                            getTargetPoint(index, piece, poseEstimation.getEstimatedPose()),
+                            true);
+                    driveCommand.addTimedEvent(
+                            driveCommand.trajectory.getTotalTimeSeconds() - Constants.Arm.INTAKING_BUFFER_TIME,
+                            new InstantCommand(
+                                    () -> {
+                                        arm.setGamePiece(piece);
+                                        arm.setRollerState(Rollers.State.Intake);
+                                        arm.setTemporaryAngleOffset(Rotation2d.fromRadians(0.5));
+                                    }
+                            )
+                            );
+                    return driveCommand;
+                },
+                Set.of(drivetrain)
         );
+
+        this.arm = arm;
+    }
+    @Override
+    public void end(boolean interrupted) {
+        super.end(interrupted);
+        arm.resetTemporaryAngleOffset();
+        arm.setRollerState(Rollers.State.Off);
     }
 
-    private static PathPoint getTargetPoint(int index, GamePiece piece) {
-        Pose2d piecePose = AllianceUtils.allianceToField(new Pose2d(
+    private static PathPoint getTargetPoint(int index, GamePiece piece, Pose2d initialPose) {
+
+
+        Translation2d piecePose = AllianceUtils.allianceToField(
                 new Translation2d(
                         Constants.FieldConstants.PRESET_PIECE_X,
                         Constants.FieldConstants.PRESET_PIECE_Y[index]
-                ),
-                new Rotation2d()
-        ));
+                )
+        );
 
-        Pose2d targetPose = piecePose.transformBy(Constants.AutoConstants.INTAKE_OFFSET.get(piece));
+        Translation2d lastPose = FollowTrajectoryToState.chargingPadPartition.queryWaypoint(
+                initialPose.getTranslation(),
+                piecePose
+        ).orElse(
+                new PathPoint(
+                        initialPose.getTranslation(),
+                        new Rotation2d(),
+                        new Rotation2d()
+                )
+        ).position;
+
+        Pose2d targetPose =
+                new Pose2d(
+                        piecePose.interpolate(lastPose, Constants.AutoConstants.INTAKE_OFFSET.get(piece) / lastPose.getDistance(piecePose)),
+                        piecePose.minus(lastPose).getAngle()
+                );
 
         return new PathPoint(
                 targetPose.getTranslation(),
                 targetPose.getRotation(),
                 targetPose.getRotation()
-        ).withPrevControlLength(2);
+        ).withPrevControlLength(1);
     }
 }

@@ -25,6 +25,20 @@ public class AllianceUtils {
         }
     }
 
+    public static Translation2d allianceToField(Translation2d alliancePose) {
+        switch (DriverStation.getAlliance()) {
+            case Blue:
+                return alliancePose;
+            case Red:
+                return new Translation2d(
+                        FieldConstants.fieldLength - alliancePose.getX(),
+                        alliancePose.getY()
+                );
+            default:
+                return null;
+        }
+    }
+
     public static Pose2d fieldToAlliance(Pose2d fieldPose) {
         switch (DriverStation.getAlliance()) {
             case Blue:

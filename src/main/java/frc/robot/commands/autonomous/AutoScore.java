@@ -18,7 +18,7 @@ public class AutoScore extends SequentialCommandGroup {
         super(
                 new AlignToSelectedNode(drivetrain, arm, poseEstimation, targetNode, 0.75),
                 new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake)),
-                new WaitCommand(0.5),
+                new WaitCommand(0.25),
                 new InstantCommand(() -> arm.setRollerState(Rollers.State.Off)),
                 new InstantCommand(() ->
                         new WaitUntilCommand(

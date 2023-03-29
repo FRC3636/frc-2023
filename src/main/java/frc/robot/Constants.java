@@ -21,7 +21,6 @@ public final class Constants {
         public static final int JOYSTICK_RIGHT_PORT = 0;
         public static final int JOYSTICK_LEFT_PORT = 1;
         public static final int CONTROLLER_PORT = 2;
-        public static final int BUTTON_PANEL_PORT = 3;
 
     }
 
@@ -92,14 +91,14 @@ public final class Constants {
 
         public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(63);
         public static final double HIGH_CUBE_SCORING_DIST = Units.inchesToMeters(60);
-
-        public static final double MID_CONE_SCORING_DIST = 1.49;
+        public static final double MID_CONE_SCORING_DIST = 1.65;
         public static final double MID_CUBE_SCORING_DIST = Units.inchesToMeters(61);
 
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
 
         public static final double RAISING_BUFFER_TIME = 0.5;
+        public static final double INTAKING_BUFFER_TIME = 1;
 
         public static final double SAFE_RAISING_DISTANCE = 2.5;
 
@@ -253,8 +252,8 @@ public final class Constants {
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
-        public static final double P_TRANSLATION_PATH_CONTROLLER = 2;
-        public static final double P_THETA_PATH_CONTROLLER = 2;
+        public static final double P_TRANSLATION_PATH_CONTROLLER = 3;
+        public static final double P_THETA_PATH_CONTROLLER = 3;
 
         public static final double P_TRANSLATION_POINT_CONTROLLER = 4;
         public static final double P_THETA_POINT_CONTROLLER = 6;
@@ -262,7 +261,7 @@ public final class Constants {
         public static final double TRANSLATION_TOLERANCE = 0.01;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(0.5);
 
-        public static final PieceDependent<Transform2d> INTAKE_OFFSET = (piece) -> new Transform2d(new Translation2d(-0.65, 0), new Rotation2d());
+        public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> .5;
 
         public static final Pose2d BALANCE_STARTING_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(5, 2.65), Rotation2d.fromRadians(Math.PI));
         public static final Pose2d BALANCE_LEAVE_COMMUNITY_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(6.0, 2.65), Rotation2d.fromRadians(Math.PI));
