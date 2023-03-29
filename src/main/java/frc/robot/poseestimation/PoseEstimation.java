@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -41,21 +40,21 @@ public class PoseEstimation {
         lastModulePositions = RobotContainer.drivetrain.getModulePositions();
 
         if (Robot.isReal()) {
-            backends = new VisionBackend[2];
-            backendToggles = new GenericEntry[2];
+            backends = new VisionBackend[3];
+            backendToggles = new GenericEntry[3];
 
             try {
-                backends[0] = new PhotonVisionBackend("right-camera", Constants.VisionConstants.RIGHT_CAM_TRANSFORM);
+                backends[0] = new PhotonVisionBackend("back-camera", Constants.VisionConstants.BACK_CAM_TRANSFORM);
                 backends[1] = new PhotonVisionBackend("left-camera", Constants.VisionConstants.LEFT_CAM_TRANSFORM);
-                backendToggles[0] = RobotContainer.autoTab.add("VisionBackend/right-camera", true).getEntry();
-                backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/left-camera", false).getEntry();
+                backendToggles[0] = RobotContainer.autoTab.add("VisionBackend/back-camera", true).getEntry();
+                backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/left-camera", true).getEntry();
             } catch (Exception e) {
                 System.out.println("Failed to initialize PhotonVision");
                 e.printStackTrace();
             }
 
-            backends[1] = new LimelightBackend();
-            backendToggles[1] = RobotContainer.autoTab.add("VisionBackend/LL", false).getEntry();
+            backends[2] = new LimelightBackend();
+            backendToggles[2] = RobotContainer.autoTab.add("VisionBackend/LL", false).getEntry();
         } else {
             backends = new VisionBackend[0];
             backendToggles = new GenericEntry[0];
