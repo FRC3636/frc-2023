@@ -220,7 +220,7 @@ public class RobotContainer {
 
         // Arm Disabling
         DigitalInput armButton = new DigitalInput(1);
-        new Trigger(() -> armButton.get() && DriverStation.isDisabled()).toggleOnTrue(
+        new Trigger(() -> !armButton.get() && DriverStation.isDisabled()).toggleOnTrue(
                 new FunctionalCommand(
                         () -> arm.setIdleMode(CANSparkMax.IdleMode.kCoast),
                         () -> {},
