@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.AutoConstants;
@@ -17,20 +18,21 @@ import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 //Uses PathPlanner to move the robot to the specified Pose2d
 public class FollowTrajectoryToState implements Command {
     protected final Drivetrain drivetrain;
     protected final PoseEstimation poseEstimation;
+    protected final HashMap<Double, Command> events = new HashMap<>();
+    protected final Timer timer = new Timer();
 
     protected final PathPoint target;
     public PathPlannerTrajectory trajectory;
 
     private PPSwerveControllerCommand swerveControllerCommand;
 
-    private static final FieldPartition chargingPadPartition = new FieldPartition(
+    public static final FieldPartition chargingPadPartition = new FieldPartition(
             3.8,
             5,
             new PathPoint[] {
@@ -61,6 +63,8 @@ public class FollowTrajectoryToState implements Command {
 
         swerveControllerCommand = new PPSwerveControllerCommand(trajectory, poseEstimation::getEstimatedPose, new PIDController(AutoConstants.P_TRANSLATION_PATH_CONTROLLER, 0.0, 0.0), new PIDController(AutoConstants.P_TRANSLATION_PATH_CONTROLLER, 0.0, 0.0), new PIDController(AutoConstants.P_THETA_PATH_CONTROLLER, 0.0, 0.0), drivetrain::drive);
 
+        timer.reset();
+        timer.start();
         swerveControllerCommand.initialize();
     }
 
@@ -105,11 +109,26 @@ public class FollowTrajectoryToState implements Command {
     @Override
     public void execute() {
         swerveControllerCommand.execute();
+        events.entrySet().removeIf((event) -> {
+            if(timer.hasElapsed(event.getKey())) {
+                event.getValue().schedule();
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
     public void end(boolean interrupted) {
         swerveControllerCommand.end(interrupted);
+    }
+
+    public void addTimedEvent(double time, Command command) {
+        if(events.containsKey(time)) {
+            events.get(time).alongWith(command);
+            return;
+        }
+        events.put(time, command);
     }
 
     @Override
@@ -168,12 +187,16 @@ public class FollowTrajectoryToState implements Command {
                 heading = Rotation2d.fromRotations(0.5);
             }
 
-
-            return Optional.of(new PathPoint(
-                    new Translation2d(bestWaypoint.getX() + fieldX, bestWaypoint.getY()),
-                    heading,
-                    bestWaypoint.getRotation()
-            ).withControlLengths(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX)), partitionWidth / 2));
+            return Optional.of(
+                    new PathPoint(
+                            new Translation2d(bestWaypoint.getX() + fieldX, bestWaypoint.getY()),
+                            heading,
+                            bestWaypoint.getRotation()
+                    ).withControlLengths(
+                            Math.max(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX)), 0.01),
+                            Math.max(Math.min(partitionWidth / 2, Math.abs(start.getY() - bestWaypoint.getY()) * (partitionWidth / 2)), 1)
+                    )
+            );
         }
     }
 }
