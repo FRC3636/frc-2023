@@ -206,7 +206,7 @@ public final class Constants {
 
         // Calculations required for driving motor conversion factors and feed forward
         public static final double DRIVING_MOTOR_FREE_SPEED_RPS = NeoMotorConstants.FREE_SPEED_RPM / 60;
-        public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(3);
+        public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(2.8);
         public static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
         // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
         public static final double DRIVING_MOTOR_REDUCTION = (45.0 * 22) / (DRIVING_MOTOR_PINION_TEETH * 15);
@@ -275,10 +275,11 @@ public final class Constants {
     public static class VisionConstants {
         // FIXME: actually measure these constants
 
-        public static final Transform3d RIGHT_CAM_TRANSFORM = new Transform3d(
-                new Translation3d(.243, -0.229, -0.241),
-                new Rotation3d(0, Units.degreesToRadians(15), 0)
+        public static final Transform3d BACK_CAM_TRANSFORM = new Transform3d(
+                new Translation3d(-0.127869, 0.060930, -0.463550),
+                new Rotation3d(0, Units.degreesToRadians(15), Math.PI)
         );
+
         public static final Transform3d LEFT_CAM_TRANSFORM = new Transform3d(
                 new Translation3d(.243, 0.229, -0.241),
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
@@ -288,8 +289,8 @@ public final class Constants {
 
         public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
 
-        public static final double AMBIGUITY_FILTER = 0.05;
-        public static final double DISTANCE_FILTER = 3;
+        public static final double AMBIGUITY_FILTER = 1;
+        public static final double DISTANCE_FILTER = 10;
     }
 
     public static class FieldConstants {
