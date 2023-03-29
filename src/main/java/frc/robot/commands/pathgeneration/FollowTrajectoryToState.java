@@ -9,7 +9,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.AutoConstants;
@@ -59,7 +58,6 @@ public class FollowTrajectoryToState implements Command {
     public void initialize() {
         RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
         RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
-        RobotContainer.field.getObject("Target").setPose(new Pose2d(target.position, target.holonomicRotation));
 
         swerveControllerCommand = new PPSwerveControllerCommand(trajectory, poseEstimation::getEstimatedPose, new PIDController(AutoConstants.P_TRANSLATION_PATH_CONTROLLER, 0.0, 0.0), new PIDController(AutoConstants.P_TRANSLATION_PATH_CONTROLLER, 0.0, 0.0), new PIDController(AutoConstants.P_THETA_PATH_CONTROLLER, 0.0, 0.0), drivetrain::drive);
 
@@ -78,7 +76,7 @@ public class FollowTrajectoryToState implements Command {
                 initial.getRotation(),
                 initialV.getNorm());
 
-        RobotContainer.field.getObject("Alignment Start").setPose(new Pose2d(start.position, start.heading));
+        RobotContainer.field.getObject("Alignment Start").setPose(new Pose2d(start.position, start.holonomicRotation));
 
         if(avoidFieldElements) {
             Optional<PathPoint> waypoint = chargingPadPartition.queryWaypoint(initial.getTranslation(), target.position);
@@ -125,9 +123,9 @@ public class FollowTrajectoryToState implements Command {
     }
 
     public static class FieldPartition {
-        private double x;
-        private PathPoint[] waypoints;
-        private double partitionWidth;
+        private final double x;
+        private final PathPoint[] waypoints;
+        private final double partitionWidth;
 
         public FieldPartition(double x,  double partitionWidth, PathPoint[] waypoints) {
             this.x = x;
@@ -175,7 +173,7 @@ public class FollowTrajectoryToState implements Command {
                     new Translation2d(bestWaypoint.getX() + fieldX, bestWaypoint.getY()),
                     heading,
                     bestWaypoint.getRotation()
-            ).withControlLengths(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX)), partitionWidth / 2.5));
+            ).withControlLengths(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX)), partitionWidth / 2));
         }
     }
 }
