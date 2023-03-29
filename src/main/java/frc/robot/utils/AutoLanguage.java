@@ -82,6 +82,9 @@ public class AutoLanguage {
                         )
                 );
 
+                command.addCommands(
+                        new AutoBalance(RobotContainer.drivetrain)
+                );
                 return command;
             case "wait":
                 double time = Double.parseDouble(tokens[1]);
