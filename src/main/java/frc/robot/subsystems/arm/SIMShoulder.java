@@ -16,7 +16,6 @@ public class SIMShoulder extends Shoulder {
             Constants.Arm.HUMERUS_LENGTH,
             -0.4 - Math.PI / 2,
             2.3 - Math.PI / 2,
-            5.715,
             true
     );
 
