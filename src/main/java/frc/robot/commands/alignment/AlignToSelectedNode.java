@@ -62,8 +62,12 @@ public class AlignToSelectedNode implements Command {
             return;
         }
 
-        if(driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
-                && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)) {
+        if(
+                driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
+                        ||
+                        AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) < Constants.Arm.SAFE_RAISING_DISTANCE
+                && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)
+        ) {
             Pose2d initial = poseEstimation.getEstimatedPose();
             Pose2d waypoint = new Pose2d(
                     AllianceUtils.isBlue()?
@@ -89,32 +93,23 @@ public class AlignToSelectedNode implements Command {
                                     Set.of(drivetrain)
                             )
             ).alongWith(
-                    new WaitCommand(
-                            driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
-                                    (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)
-                    ).andThen(
-                            new InstantCommand(() -> {
-                                arm.setTarget(targetArmState);
-                                arm.setTemporaryAngleOffset(Rotation2d.fromRadians(0.4));
-                            })
-                    ).andThen(
-                            new WaitCommand(
-                            (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME))
-                    ).andThen(new InstantCommand(() -> arm.setTemporaryAngleOffset(new Rotation2d())))
+                    new InstantCommand(() -> {
+                        arm.setTarget(targetArmState);
+                    })
             );
-
         }
         else {
-            command = driveCommand.alongWith(
-                    new WaitCommand(
-                            driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
-                                    (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME)
-                    ).andThen(
-                            new InstantCommand(() -> arm.setTarget(targetArmState))
-                    ).andThen(
-                            new WaitCommand(
-                                    (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME))
-                    ).andThen(new InstantCommand(() -> arm.setTemporaryAngleOffset(new Rotation2d())))
+            command = driveCommand;
+
+            driveCommand.getTrajectoryCommand().addTimedEvent(
+                    driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
+                            (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME),
+                    new InstantCommand(() -> arm.setTarget(targetArmState))
+            );
+
+            driveCommand.getTrajectoryCommand().addConditionalEvent(
+                    () -> AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) < Constants.Arm.AUTO_RAISING_DISTANCE,
+                    new InstantCommand(() -> arm.setTarget(targetArmState))
             );
         }
 

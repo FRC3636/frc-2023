@@ -101,6 +101,7 @@ public final class Constants {
         public static final double INTAKING_BUFFER_TIME = 1;
 
         public static final double SAFE_RAISING_DISTANCE = 2.5;
+        public static final double AUTO_RAISING_DISTANCE = 3.5;
 
         public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
 
@@ -248,7 +249,7 @@ public final class Constants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
         public static final double MAX_SPEED_METERS_PER_SECOND = 5;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 1.5;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 

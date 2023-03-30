@@ -26,6 +26,10 @@ public class DriveToNode extends SequentialCommandGroup {
         );
     }
 
+    public FollowTrajectoryToNode getTrajectoryCommand() {
+        return trajectoryCommand;
+    }
+
     public double getEstimatedTotalTime() {
         return trajectoryCommand.trajectory.getTotalTimeSeconds();
     }

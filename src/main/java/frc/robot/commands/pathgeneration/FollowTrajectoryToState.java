@@ -19,12 +19,13 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 //Uses PathPlanner to move the robot to the specified Pose2d
 public class FollowTrajectoryToState implements Command {
     protected final Drivetrain drivetrain;
     protected final PoseEstimation poseEstimation;
-    protected final HashMap<Double, Command> events = new HashMap<>();
+    protected final Map<Supplier<Boolean>, Command> events = new HashMap<>();
     protected final Timer timer = new Timer();
 
     protected final PathPoint target;
@@ -110,7 +111,7 @@ public class FollowTrajectoryToState implements Command {
     public void execute() {
         swerveControllerCommand.execute();
         events.entrySet().removeIf((event) -> {
-            if(timer.hasElapsed(event.getKey())) {
+            if(event.getKey().get()) {
                 event.getValue().schedule();
                 return true;
             }
@@ -124,11 +125,11 @@ public class FollowTrajectoryToState implements Command {
     }
 
     public void addTimedEvent(double time, Command command) {
-        if(events.containsKey(time)) {
-            events.get(time).alongWith(command);
-            return;
-        }
-        events.put(time, command);
+        events.put(() -> timer.hasElapsed(time), command);
+    }
+
+    public void addConditionalEvent(Supplier<Boolean> supplier, Command command) {
+        events.put(supplier, command);
     }
 
     @Override
