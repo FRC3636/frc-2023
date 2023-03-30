@@ -131,7 +131,10 @@ public class RobotContainer {
         new JoystickButton(joystickLeft, 4)
                 .whileTrue(
                         new SequentialCommandGroup(
-                                new AutoScore(drivetrain, arm, poseEstimation, () -> this.targetNode),
+                                new GenerateCommand(
+                                        () -> new AutoScore(drivetrain, arm, poseEstimation, () -> this.targetNode),
+                                        Set.of(drivetrain)
+                                        ),
                                 new RunCommand(drivetrain::setX, drivetrain)
                         )
                 );
@@ -196,7 +199,7 @@ public class RobotContainer {
 
         new Trigger(() -> controller.getRightTriggerAxis() > 0.05)
                 .whileTrue(
-                        new RunCommand(() -> arm.setTemporaryAngleOffset(Rotation2d.fromRadians(controller.getRightTriggerAxis() / 2))))
+                        new RunCommand(() -> arm.setTemporaryAngleOffset(Rotation2d.fromRadians(controller.getRightTriggerAxis() / 1.5))))
                 .onFalse(new InstantCommand(() -> arm.setTemporaryAngleOffset(new Rotation2d())));
 
         new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {
