@@ -97,14 +97,14 @@ public final class Constants {
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
 
-        public static final double RAISING_BUFFER_TIME = 0.5;
+        public static final double RAISING_BUFFER_TIME = 1;
         public static final double INTAKING_BUFFER_TIME = 1;
 
         public static final double SAFE_RAISING_DISTANCE = 2.5;
 
         public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
 
-        public static final double STOWED_CUBE_HEIGHT = 0.31;
+        public static final double STOWED_CUBE_HEIGHT = 0.27;
         public static final double STOWED_CONE_HEIGHT = 0.07;
         public static final double HIGH_CONE_HEIGHT = 1.376;
         public static final double HIGH_CUBE_HEIGHT = 1.33456;
@@ -247,13 +247,13 @@ public final class Constants {
     public static final class AutoConstants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
-        public static final double MAX_SPEED_METERS_PER_SECOND = 8;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3;
+        public static final double MAX_SPEED_METERS_PER_SECOND = 5;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND = Math.PI * 2;
         public static final double MAX_ANGULAR_SPEED_RADIANS_PER_SECOND_SQUARED = Math.PI * 2;
 
-        public static final double P_TRANSLATION_PATH_CONTROLLER = 3;
-        public static final double P_THETA_PATH_CONTROLLER = 3;
+        public static final double P_TRANSLATION_PATH_CONTROLLER = 2;
+        public static final double P_THETA_PATH_CONTROLLER = 2;
 
         public static final double P_TRANSLATION_POINT_CONTROLLER = 4;
         public static final double P_THETA_POINT_CONTROLLER = 6;
@@ -288,8 +288,8 @@ public final class Constants {
 
         public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
 
-        public static final double AMBIGUITY_FILTER = 1;
-        public static final double DISTANCE_FILTER = 10;
+        public static final double AMBIGUITY_FILTER = 0.3;
+        public static final double DISTANCE_FILTER = FieldConstants.fieldLength / 2;
     }
 
     public static class FieldConstants {
