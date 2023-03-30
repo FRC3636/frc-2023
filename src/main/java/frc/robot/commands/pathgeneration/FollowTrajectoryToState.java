@@ -34,8 +34,8 @@ public class FollowTrajectoryToState implements Command {
     private PPSwerveControllerCommand swerveControllerCommand;
 
     public static final FieldPartition chargingPadPartition = new FieldPartition(
-            3.8,
-            5,
+            3.7,
+            5.5,
             new PathPoint[] {
                     new PathPoint(
                         new Translation2d(0, 0.75),
@@ -62,7 +62,19 @@ public class FollowTrajectoryToState implements Command {
         RobotContainer.field.getObject("Alignment Target").setPose(trajectory.getEndState().poseMeters);
         RobotContainer.field.getObject("Alignment Target").setTrajectory(trajectory);
 
-        swerveControllerCommand = new PPSwerveControllerCommand(trajectory, poseEstimation::getEstimatedPose, new PIDController(AutoConstants.P_TRANSLATION_PATH_CONTROLLER, 0.0, 0.0), new PIDController(AutoConstants.P_TRANSLATION_PATH_CONTROLLER, 0.0, 0.0), new PIDController(AutoConstants.P_THETA_PATH_CONTROLLER, 0.0, 0.0), drivetrain::drive);
+        swerveControllerCommand = new PPSwerveControllerCommand(
+                trajectory,
+                poseEstimation::getEstimatedPose,
+                new PIDController(
+                        AutoConstants.P_TRANSLATION_CONTROLLER,
+                        AutoConstants.I_TRANSLATION_CONTROLLER,
+                        AutoConstants.D_TRANSLATION_CONTROLLER),
+                new PIDController(
+                        AutoConstants.P_TRANSLATION_CONTROLLER,
+                        AutoConstants.I_TRANSLATION_CONTROLLER,
+                        AutoConstants.D_TRANSLATION_CONTROLLER),
+                new PIDController(AutoConstants.P_THETA_CONTROLLER, 0.0, 0.0),
+                drivetrain::drive);
 
         timer.reset();
         timer.start();
@@ -194,8 +206,8 @@ public class FollowTrajectoryToState implements Command {
                             heading,
                             bestWaypoint.getRotation()
                     ).withControlLengths(
-                            Math.max(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX)), 0.01),
-                            Math.max(Math.min(partitionWidth / 2, Math.abs(start.getY() - bestWaypoint.getY()) * (partitionWidth / 2)), 1)
+                            Math.max(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX) * 1.5), 0.01),
+                            Math.max(Math.min(partitionWidth / 2, Math.abs(end.getY() - bestWaypoint.getY()) * (partitionWidth / 2)), 1)
                     )
             );
         }

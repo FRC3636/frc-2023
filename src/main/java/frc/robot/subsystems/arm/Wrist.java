@@ -23,6 +23,7 @@ public class Wrist {
     protected final PIDController pidController = new PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD);
     protected final ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA);
 
+
     public Wrist(Arm arm) {
         this.arm = arm;
 

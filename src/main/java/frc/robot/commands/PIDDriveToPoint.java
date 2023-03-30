@@ -16,9 +16,17 @@ public class PIDDriveToPoint extends CommandBase {
     private final PoseEstimation poseEstimation;
     private final Pose2d target;
 
-    private final PIDController xController = new PIDController(Constants.AutoConstants.P_TRANSLATION_POINT_CONTROLLER, 0, 0);
-    private final PIDController yController = new PIDController(Constants.AutoConstants.P_TRANSLATION_POINT_CONTROLLER, 0, 0);
-    private final PIDController thetaController = new PIDController(Constants.AutoConstants.P_THETA_POINT_CONTROLLER, 0, 0);
+    private final PIDController xController = new PIDController(
+            Constants.AutoConstants.P_TRANSLATION_CONTROLLER,
+            Constants.AutoConstants.I_TRANSLATION_CONTROLLER,
+            Constants.AutoConstants.D_TRANSLATION_CONTROLLER
+    );
+    private final PIDController yController = new PIDController(
+            Constants.AutoConstants.P_TRANSLATION_CONTROLLER,
+            Constants.AutoConstants.I_TRANSLATION_CONTROLLER,
+            Constants.AutoConstants.D_TRANSLATION_CONTROLLER
+    );
+    private final PIDController thetaController = new PIDController(Constants.AutoConstants.P_THETA_CONTROLLER, 0, 0);
 
     public PIDDriveToPoint(Drivetrain drivetrain, PoseEstimation poseEstimation, Pose2d target) {
         this.drivetrain = drivetrain;

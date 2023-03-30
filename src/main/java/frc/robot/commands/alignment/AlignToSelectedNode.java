@@ -63,9 +63,11 @@ public class AlignToSelectedNode implements Command {
         }
 
         if(
-                driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
+                (
+                        driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
                         ||
                         AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) < Constants.Arm.SAFE_RAISING_DISTANCE
+                )
                 && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)
         ) {
             Pose2d initial = poseEstimation.getEstimatedPose();
