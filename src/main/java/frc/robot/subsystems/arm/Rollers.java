@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.utils.GamePiece;
 
 public class Rollers {
@@ -13,14 +14,13 @@ public class Rollers {
     private Ultrasonic ultrasonic = new Ultrasonic(Constants.Rollers.PING_CHANNEL, Constants.Rollers.ECHO_CHANNEL);
 
     private final CANSparkMax motor = new CANSparkMax(Constants.Rollers.ID, CANSparkMaxLowLevel.MotorType.kBrushless);
+    private boolean holdingGamePiece = false;
 
     public Rollers() {
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor.restoreFactoryDefaults();
         ultrasonic.setEnabled(true);
-//        RobotContainer.armTab.addNumber("Roller Bus Voltage", motor::getBusVoltage).withWidget(BuiltInWidgets.kGraph);
-//        RobotContainer.armTab.addNumber("Roller Applied Voltage", motor::getAppliedOutput).withWidget(BuiltInWidgets.kGraph);
-//        RobotContainer.armTab.addNumber("Roller Compensation Voltage", motor::getVoltageCompensationNominalVoltage).withWidget(BuiltInWidgets.kGraph);
+        RobotContainer.armTab.addBoolean("Holding Game Piece", this::isHoldingGamePiece);
     }
 
     public void setRollerState(State rollerState) {
@@ -42,14 +42,15 @@ public class Rollers {
         return gamePiece == GamePiece.Cone ? rollerState.coneSpeed : rollerState.cubeSpeed;
     }
 
-    public void periodic() {
-        motor.set(getRollerSpeed());
+    public boolean isHoldingGamePiece() {
+        return holdingGamePiece;
     }
 
-    public boolean isHoldingGamePiece() {
-        //motor.getAppliedOutput();
-        //motor.getVoltageCompensationNominalVoltage();
-        return motor.getBusVoltage() < Constants.Rollers.HOLDING_PIECE_VOLTAGE;
+    public void periodic() {
+        motor.set(getRollerSpeed());
+        if (getRollerSpeed() != 0) {
+            holdingGamePiece = Math.abs(motor.getEncoder().getVelocity()) < Constants.Rollers.HOLDING_PIECE_VELOCITY;
+        }
     }
 
     public enum State {

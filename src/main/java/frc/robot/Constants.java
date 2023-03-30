@@ -184,7 +184,7 @@ public final class Constants {
         public static final double INTAKE_CUBE = 0.5;
         public static final double OUTTAKE_CONE = 0.5;
         public static final double OUTTAKE_CUBE = -.6;
-        public static final double HOLDING_PIECE_VOLTAGE = 11;
+        public static final double HOLDING_PIECE_VELOCITY = 250;
 
         public static final int ECHO_CHANNEL = 2;
         public static final int PING_CHANNEL = 3;
