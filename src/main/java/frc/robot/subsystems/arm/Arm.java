@@ -121,7 +121,12 @@ public class Arm extends SubsystemBase {
 
     public void runWithSetpoint(Rotation2d shoulderPosition, Rotation2d velocity) {
         shoulder.runWithSetpoint(shoulderPosition, velocity, new Rotation2d());
-        wrist.followShoulderWithVelocity(velocity.times(-1));
+        if(velocity.getRadians() == 0) {
+            wrist.followShoulder();
+        }
+        else {
+            wrist.followShoulderWithVelocity(velocity.times(-1));
+        }
     }
 
     public Rotation2d getWristAngle() {
@@ -277,7 +282,7 @@ public class Arm extends SubsystemBase {
         Low(Constants.Wrist.STANDING_CONE_INTAKE_ANGLE, Constants.Wrist.CUBE_INTAKE_ANGLE,
                 Constants.Arm.LOW_CONE_HEIGHT, Constants.Arm.LOW_CUBE_HEIGHT),
 
-        Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.LIMIT_SWITCH_OFFSET, Constants.Wrist.LIMIT_SWITCH_OFFSET,
+        Stowed(Constants.Shoulder.STOWED_ANGLE, Constants.Wrist.STOWED_WRIST_ANGLE, Constants.Wrist.STOWED_WRIST_ANGLE,
                 Constants.Arm.STOWED_CONE_HEIGHT, Constants.Arm.STOWED_CUBE_HEIGHT);
 
         private final double coneHeight;

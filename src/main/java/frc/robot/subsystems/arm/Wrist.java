@@ -20,6 +20,8 @@ public class Wrist {
     private final DigitalInput limitSwitch = new DigitalInput(Constants.Wrist.LIMIT_SWITCH);
     private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
+    private Rotation2d wristAngleOffset = new Rotation2d();
+
     protected final PIDController pidController = new PIDController(Constants.Wrist.KP, Constants.Wrist.KI, Constants.Wrist.KD);
     protected final ArmFeedforward feedforward = new ArmFeedforward(Constants.Wrist.KS, Constants.Wrist.KG, Constants.Wrist.KV, Constants.Wrist.KA);
 
@@ -44,11 +46,11 @@ public class Wrist {
     }
 
     public Rotation2d getAngle() {
-        return Rotation2d.fromRadians(motor.getEncoder().getPosition());
+        return Rotation2d.fromRadians(motor.getEncoder().getPosition()).plus(wristAngleOffset);
     }
 
     public Rotation2d getAbsoluteAngle() {
-        return Rotation2d.fromRadians(encoder.getPosition() < Constants.Wrist.LIMIT_SWITCH_OFFSET.getRadians() ? encoder.getPosition() : encoder.getPosition() - Math.PI * 2);
+        return Rotation2d.fromRadians(encoder.getPosition() < Constants.Wrist.ABSOLUTE_ENCODER_WRAPPING_ANGLE.getRadians() ? encoder.getPosition() : encoder.getPosition() - Math.PI * 2);
     }
 
     public void followShoulderWithVelocity(Rotation2d velocity) {
@@ -96,13 +98,22 @@ public class Wrist {
 
     public void periodic() {
         SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
-        SmartDashboard.putNumber("Wrist Angle", Units.radiansToDegrees(encoder.getPosition()));
+        SmartDashboard.putNumber("Wrist Angle", getAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Set Point", arm.getTargetWristAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Target Height", arm.getTargetHeight());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
 
-        if(isLimitSwitchPressed()) {
-            motor.getEncoder().setPosition(getAbsoluteAngle().getRadians());
+        adjustWristAngle();
+    }
+
+    public void adjustWristAngle() {
+        if(encoder.getPosition() != 0) {
+            wristAngleOffset = wristAngleOffset.plus(
+                    Rotation2d.fromRadians(
+                            Math.signum(getAbsoluteAngle().minus(getAngle()).getRadians()) *
+                                    Constants.Wrist.ENCODER_INTERPOLATION_SPEED.getRadians()
+                    )
+            );
         }
     }
 
@@ -111,6 +122,7 @@ public class Wrist {
     }
 
     private void zeroEncoder() {
-        motor.getEncoder().setPosition(encoder.getPosition());
+        wristAngleOffset = new Rotation2d();
+        motor.getEncoder().setPosition(getAbsoluteAngle().getRadians());
     }
 }
