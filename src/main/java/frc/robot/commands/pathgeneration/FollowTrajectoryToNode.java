@@ -18,7 +18,7 @@ public class FollowTrajectoryToNode extends FollowTrajectoryToState {
                         Math.min(
                                 Math.abs(targetNode.getRobotScoringPose().getX() - poseEstimation.getEstimatedPose().getX()),
                                 Constants.AutoConstants.NODE_ALIGNMENT_CONTROL_HANDLE_LENGTH),
-                        0.1
+                        0.001
                 )
         ), true);
     }

@@ -36,6 +36,7 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.*;
 
 import javax.xml.crypto.Data;
+import java.util.Optional;
 import java.util.Set;
 
 public class RobotContainer {
@@ -118,39 +119,61 @@ public class RobotContainer {
                                 new Rotation2d()))));
 
         // Auto Alignment
+        new JoystickButton(joystickLeft, 4)
+                .onTrue(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Node.Grid.left)))
+                .onFalse(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Optional.empty())));
+
+        new JoystickButton(joystickLeft, 3)
+                .onTrue(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Node.Grid.center)))
+                .onFalse(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Optional.empty())));
+
+
+        new JoystickButton(joystickLeft, 5)
+                .onTrue(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Node.Grid.right)))
+                .onFalse(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Optional.empty())));
+
         new JoystickButton(joystickRight, 4)
                 .whileTrue(
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
-                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode),
+                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode.setColumn(Node.Column.LeftCone)),
                                         new RunCommand(drivetrain::setX, drivetrain)
                                 )
                         )
                 );
 
-        new JoystickButton(joystickLeft, 4)
+        new JoystickButton(joystickRight, 3)
                 .whileTrue(
-                        new SequentialCommandGroup(
-                                new GenerateCommand(
-                                        () -> new AutoScore(drivetrain, arm, poseEstimation, () -> this.targetNode),
-                                        Set.of(drivetrain)
-                                        ),
-                                new RunCommand(drivetrain::setX, drivetrain)
+                        new ParallelCommandGroup(
+                                new SequentialCommandGroup(
+                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode.setColumn(Node.Column.Cube)),
+                                        new RunCommand(drivetrain::setX, drivetrain)
+                                )
                         )
                 );
 
-        new JoystickButton(joystickRight, 3).whileTrue(
-                new SequentialCommandGroup(
-                        new GenerateCommand(
-                                () -> new DriveToNode(drivetrain, poseEstimation, targetNode, Double.POSITIVE_INFINITY),
-                                Set.of(drivetrain)
-                        ),
-                        new RunCommand(drivetrain::setX, drivetrain)
-                )
-        );
+        new JoystickButton(joystickRight, 5)
+                .whileTrue(
+                        new ParallelCommandGroup(
+                                new SequentialCommandGroup(
+                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode.setColumn(Node.Column.RightCone)),
+                                        new RunCommand(drivetrain::setX, drivetrain)
+                                )
+                        )
+                );
 
         new JoystickButton(joystickLeft, 2)
                 .whileTrue(autoBalanceCommand);
+
+        new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {
+            targetNode.setLevel(Node.Level.Low);
+        }));
+        new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {
+            targetNode.setLevel(Node.Level.Mid);
+        }));
+        new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {
+            targetNode.setLevel(Node.Level.High);
+        }));
 
         // Rollers
         new JoystickButton(controller, XboxController.Button.kRightBumper.value)

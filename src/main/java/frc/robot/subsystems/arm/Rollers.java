@@ -3,6 +3,8 @@ package frc.robot.subsystems.arm;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.utils.GamePiece;
@@ -31,7 +33,7 @@ public class Rollers {
         if(!ultrasonic.isRangeValid() || gamePiece == GamePiece.Cube) {
             return 0;
         }
-        return ((ultrasonic.getRangeMM() / 1000) - Constants.Rollers.CONE_OFFSET) + Constants.Rollers.CONE_CENTER_DISTANCE;
+        return ultrasonic.getRangeMM();/*((ultrasonic.getRangeMM() / 1000) - Constants.Rollers.CONE_OFFSET) + Constants.Rollers.CONE_CENTER_DISTANCE*/
     }
 
     public void setGamePiece(GamePiece gamePiece) {
@@ -51,6 +53,8 @@ public class Rollers {
         if (getRollerSpeed() != 0) {
             holdingGamePiece = Math.abs(motor.getEncoder().getVelocity()) < Constants.Rollers.HOLDING_PIECE_VELOCITY;
         }
+
+        SmartDashboard.putNumber("Ultrasonic Sensor", getGamePieceOffset());
     }
 
     public enum State {

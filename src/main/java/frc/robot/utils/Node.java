@@ -44,6 +44,14 @@ public class Node {
         return new Node(this.nodeType, this.level, column, this.gridOverride);
     }
 
+    public Node setGridOverride(Optional<Integer> gridOverride) {
+        return new Node(this.nodeType, this.level, this.column, gridOverride);
+    }
+
+    public Node setGridOverride(Grid grid) {
+        return new Node(this.nodeType, this.level, this.column, Optional.of(grid.getIndex()));
+    }
+
     public Level getLevel() {
         return level;
     }
@@ -126,6 +134,22 @@ public class Node {
         High,
         Mid,
         Low,
+    }
+
+    public enum Grid {
+        right(0),
+        center(1),
+        left(2);
+
+        private final int blueIndex;
+
+        public int getIndex() {
+            return DriverStation.getAlliance() == DriverStation.Alliance.Blue ? blueIndex : 2 - blueIndex;
+        }
+
+        Grid(int blueIndex) {
+            this.blueIndex = blueIndex;
+        }
     }
 
     public enum Column {

@@ -36,6 +36,7 @@ public class Wrist {
         motor.getEncoder().setVelocityConversionFactor(Units.rotationsToRadians(1) * Constants.Wrist.GEAR_RATIO / 60.0);
         encoder.setPositionConversionFactor(Units.rotationsToRadians(1));
         encoder.setVelocityConversionFactor(Units.rotationsToRadians(1) / 60.0);
+        motor.getEncoder().setMeasurementPeriod(8);
         motor.setSmartCurrentLimit(40);
         motor.setInverted(true);
         encoder.setInverted(false);
@@ -103,6 +104,9 @@ public class Wrist {
         SmartDashboard.putNumber("Wrist Target Height", arm.getTargetHeight());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
 
+        if(motor.getEncoder().getVelocity() < Units.degreesToRadians(1)) {
+            zeroEncoder();
+        }
         adjustWristAngle();
     }
 
