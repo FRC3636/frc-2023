@@ -104,9 +104,6 @@ public class Wrist {
         SmartDashboard.putNumber("Wrist Target Height", arm.getTargetHeight());
         SmartDashboard.putNumber("Wrist Relative", arm.getWristAngle().getDegrees());
 
-        if(motor.getEncoder().getVelocity() < Units.degreesToRadians(1)) {
-            zeroEncoder();
-        }
         adjustWristAngle();
     }
 

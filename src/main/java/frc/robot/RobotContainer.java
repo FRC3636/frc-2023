@@ -25,19 +25,18 @@ import frc.robot.commands.MoveNodeSelection;
 import frc.robot.commands.MoveNodeSelection.MovementDirection;
 import frc.robot.commands.alignment.AlignToClosestNode;
 import frc.robot.commands.alignment.AlignToSelectedNode;
-import frc.robot.commands.alignment.DriveToNode;
 import frc.robot.commands.autonomous.AutoBalance;
-import frc.robot.commands.autonomous.AutoScore;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.GameInfoTable;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
-import frc.robot.utils.*;
+import frc.robot.utils.AllianceUtils;
+import frc.robot.utils.AutoLanguage;
+import frc.robot.utils.GamePiece;
+import frc.robot.utils.Node;
 
-import javax.xml.crypto.Data;
 import java.util.Optional;
-import java.util.Set;
 
 public class RobotContainer {
     // Dashboard
@@ -103,6 +102,13 @@ public class RobotContainer {
         DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
 
         startingPosition.setPose(AllianceUtils.allianceToField(new Pose2d(new Translation2d(3.47, 0.73), Rotation2d.fromRadians(Math.PI))));
+        autoTab.add("Set Starting Position", new InstantCommand(() -> startingPosition.setPose(poseEstimation.getEstimatedPose())
+        ) {
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        }).withWidget(BuiltInWidgets.kCommand);
 
         DataLogManager.start();
         DriverStation.startDataLog(DataLogManager.getLog());
@@ -162,6 +168,8 @@ public class RobotContainer {
                         )
                 );
 
+
+        // Auto
         new JoystickButton(joystickLeft, 2)
                 .whileTrue(autoBalanceCommand);
 

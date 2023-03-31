@@ -83,6 +83,6 @@ public class AutoIntake extends GenerateCommand {
                 targetPose.getTranslation(),
                 targetPose.getRotation(),
                 targetPose.getRotation()
-        ).withPrevControlLength(1);
+        ).withPrevControlLength(2);
     }
 }

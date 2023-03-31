@@ -131,7 +131,7 @@ public final class Constants {
         public static final double KA = 0.21209;
 
         public static final double DYNAMIC_KP = 1;
-        public static final double STATIC_KP = 4;
+        public static final double STATIC_KP = 2;
         public static final double KI = 0.0;
         public static final double KD = 0.03;
 
@@ -148,9 +148,9 @@ public final class Constants {
 
         public static final double GEAR_RATIO = 1.0 / 75.0;
 
-        public static final double KP = 7;
-        public static final double KI = 0.1;
-        public static final double KD = 0.25;
+        public static final double KP = 8;
+        public static final double KI = 0.2;
+        public static final double KD = 0.1;
 
         public static final double KS = 0.14588;
         public static final double KG = 0.13063;
