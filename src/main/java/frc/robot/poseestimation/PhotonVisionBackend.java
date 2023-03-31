@@ -38,7 +38,7 @@ public class PhotonVisionBackend extends VisionBackend {
             return Optional.of(new Measurement(
                     result.timestampSeconds,
                     result.estimatedPose,
-                    Constants.VisionConstants.PHOTON_VISION_STD_DEV
+                    Constants.VisionConstants.PHOTON_VISION_STD_DEV.apply(result.targetsUsed.get(0).getBestCameraToTarget().getX(), result.targetsUsed.size())
             ));
         });
     }

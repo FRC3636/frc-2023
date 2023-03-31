@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.utils.PieceDependent;
 
 import java.util.Map;
+import java.util.function.BiFunction;
 
 public final class Constants {
     public static class ControlConstants {
@@ -156,8 +157,12 @@ public final class Constants {
         public static final double KV = 1.4242;
         public static final double KA = 0.052069;
 
-        // Intaking Angles
 
+        //Min Angle
+        public static final Rotation2d ABSOLUTE_ENCODER_WRAPPING_ANGLE = Rotation2d.fromDegrees(70);
+        public static final Rotation2d STOWED_WRIST_ANGLE = Rotation2d.fromDegrees(45);
+
+        // Intaking Angles
         public static final Rotation2d STANDING_CONE_INTAKE_ANGLE = Rotation2d.fromDegrees(-60);
         public static final Rotation2d CUBE_INTAKE_ANGLE = Rotation2d.fromDegrees(30);
         public static final Rotation2d TIPPED_CONE_ANGLE = Rotation2d.fromRadians(-0.3);
@@ -171,11 +176,9 @@ public final class Constants {
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.960988);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
 
-        public static final Rotation2d LIMIT_SWITCH_OFFSET = Rotation2d.fromDegrees(56);
-
-        //Min Angle
         public static final double HORIZONTAL_TO_CORNER_ANGLE = 0.2985176246;
         public static final double JOINT_TO_CORNER_DISTANCE = Units.inchesToMeters(14);
+        public static final Rotation2d ENCODER_INTERPOLATION_SPEED = Rotation2d.fromDegrees(Robot.kDefaultPeriod);
     }
 
     public static class Rollers {
@@ -283,7 +286,17 @@ public final class Constants {
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 
-        public static final Vector<N3> PHOTON_VISION_STD_DEV = VecBuilder.fill(0.2, 0.1, 0.3);
+        public static final BiFunction<Double, Integer, Vector<N3>> PHOTON_VISION_STD_DEV =
+                (distance, count) -> {
+                    double distanceMultiplier = Math.pow(distance - ((count - 1) * 2), 2);
+                    double translationalStdDev = (0.05 / (count)) * distanceMultiplier + 0.05;
+                    double rotationalStdDev = 0.2 * distanceMultiplier + 0.1;
+                    return VecBuilder.fill(
+                            translationalStdDev,
+                            translationalStdDev,
+                            rotationalStdDev
+                    );
+                };
 
         public static final Vector<N3> LIMELIGHT_STD_DEV = VecBuilder.fill(0.9, 0.9, 0.9);
 
