@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems.drivetrain;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 import java.util.ArrayList;
@@ -92,13 +95,13 @@ public class Drivetrain extends SubsystemBase {
                 swerveModules.rearLeft.getSetState(),
                 swerveModules.rearRight.getSetState()
         });
-        SmartDashboard.putNumberArray("Swerve Module Distance", new double[] {
+        SmartDashboard.putNumberArray("Swerve Module Distance", new double[]{
                 swerveModules.frontLeft.getPosition().distanceMeters / Constants.ModuleConstants.WHEEL_CIRCUMFERENCE_METERS,
                 swerveModules.frontRight.getPosition().distanceMeters / Constants.ModuleConstants.WHEEL_CIRCUMFERENCE_METERS,
                 swerveModules.rearLeft.getPosition().distanceMeters / Constants.ModuleConstants.WHEEL_CIRCUMFERENCE_METERS,
                 swerveModules.rearRight.getPosition().distanceMeters / Constants.ModuleConstants.WHEEL_CIRCUMFERENCE_METERS});
 
-        SmartDashboard.putNumberArray("Swerve Module Distance Revolutions", new double[] {
+        SmartDashboard.putNumberArray("Swerve Module Distance Revolutions", new double[]{
                 swerveModules.frontLeft.getPosition().distanceMeters,
                 swerveModules.frontRight.getPosition().distanceMeters,
                 swerveModules.rearLeft.getPosition().distanceMeters,
@@ -141,7 +144,16 @@ public class Drivetrain extends SubsystemBase {
      * @param speeds The chassis speeds.
      */
     public void drive(ChassisSpeeds speeds) {
-        SwerveModuleState[] swerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(speeds);
+        double dt = Robot.kDefaultPeriod;
+        Pose2d poseVel = new Pose2d(
+                speeds.vxMetersPerSecond * dt,
+                speeds.vyMetersPerSecond * dt,
+                Rotation2d.fromRadians(speeds.omegaRadiansPerSecond * dt));
+        Twist2d twistVel = new Pose2d().log(poseVel);
+        ChassisSpeeds correctedSpeeds = new ChassisSpeeds(
+                twistVel.dx / dt, twistVel.dy / dt, twistVel.dtheta / dt);
+
+        SwerveModuleState[] swerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(correctedSpeeds);
         setModuleStates(swerveModuleStates);
     }
 
