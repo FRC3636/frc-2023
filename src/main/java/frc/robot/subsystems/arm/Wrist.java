@@ -17,7 +17,6 @@ public class Wrist {
     protected final Arm arm;
 
     private final CANSparkMax motor = new CANSparkMax(Constants.Wrist.ID, CANSparkMax.MotorType.kBrushless);
-    private final DigitalInput limitSwitch = new DigitalInput(Constants.Wrist.LIMIT_SWITCH);
     private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
 
     private Rotation2d wristAngleOffset = new Rotation2d();
@@ -79,11 +78,6 @@ public class Wrist {
 
         SmartDashboard.putNumber("Wrist Setpoint", position.getRadians());
 
-        if (isLimitSwitchPressed() && velocity.getRadians() >= 0) {
-            motor.set(0);
-            return;
-        }
-
         motor.setVoltage(feedforward.calculate(arm.getWristAngle().getRadians(), velocity.getRadians()));
     }
 
@@ -93,12 +87,7 @@ public class Wrist {
         return Rotation2d.fromRadians(Math.asin(sinAngle));
     }
 
-    public boolean isLimitSwitchPressed() {
-        return !limitSwitch.get();
-    }
-
     public void periodic() {
-        SmartDashboard.putBoolean("Wrist Limit Switch", limitSwitch.get());
         SmartDashboard.putNumber("Wrist Angle", getAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Set Point", arm.getTargetWristAngle().getDegrees());
         SmartDashboard.putNumber("Wrist Target Height", arm.getTargetHeight());

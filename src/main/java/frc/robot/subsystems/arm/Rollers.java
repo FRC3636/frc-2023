@@ -2,8 +2,8 @@ package frc.robot.subsystems.arm;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -22,7 +22,10 @@ public class Rollers {
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor.restoreFactoryDefaults();
         ultrasonic.setEnabled(true);
+        Ultrasonic.setAutomaticMode(true);
         RobotContainer.armTab.addBoolean("Holding Game Piece", this::isHoldingGamePiece);
+
+        RobotContainer.armTab.add("Ultrasonic", ultrasonic);
     }
 
     public void setRollerState(State rollerState) {
@@ -33,7 +36,7 @@ public class Rollers {
         if(!ultrasonic.isRangeValid() || gamePiece == GamePiece.Cube) {
             return 0;
         }
-        return ultrasonic.getRangeMM();/*((ultrasonic.getRangeMM() / 1000) - Constants.Rollers.CONE_OFFSET) + Constants.Rollers.CONE_CENTER_DISTANCE*/
+        return (Constants.Rollers.INTAKE_WIDTH / 2) - (Units.inchesToMeters(ultrasonic.getRangeInches()) + Constants.Rollers.CONE_WIDTH / 2);
     }
 
     public void setGamePiece(GamePiece gamePiece) {

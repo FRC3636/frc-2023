@@ -35,11 +35,6 @@ public class SIMWrist extends Wrist{
     }
 
     @Override
-    public boolean isLimitSwitchPressed() {
-        return false;
-    }
-
-    @Override
     public void runWithSetpoint(Rotation2d position, Rotation2d velocity) {
         if(velocity.getRadians() != 0) {
             Rotation2d minAngle = Wrist.getWristAngleFromHeight(0.4, arm.getShoulderAngle());
@@ -51,11 +46,6 @@ public class SIMWrist extends Wrist{
         velocity = Rotation2d.fromRadians(velocity.getRadians() + pidController.calculate(arm.getWristAngle().getRadians(), position.getRadians()));
 
         SmartDashboard.putNumber("Wrist Setpoint", position.getDegrees());
-
-        if (isLimitSwitchPressed() && velocity.getRadians() >= 0) {
-            wristSim.setInputVoltage(0);
-            return;
-        }
 
         wristSim.setInputVoltage(feedforward.calculate(arm.getWristAngle().getRadians(), velocity.getRadians()));
     }

@@ -82,9 +82,10 @@ public final class Constants {
         public static final double CARPET_BIAS = 0.05;
 
         public static final double DEADZONE = 0.1;
-    }
 
+    }
     public static class Arm {
+        public static final int UNLOCK_BUTTON_PORT = 2;
         public static final double HUMERUS_LENGTH = 0.969432;
         public static final double MANIPULATOR_LENGTH = 0.32;
         public static final double PIVOT_HEIGHT = 1.15;
@@ -189,11 +190,12 @@ public final class Constants {
         public static final double OUTTAKE_CUBE = -.6;
         public static final double HOLDING_PIECE_VELOCITY = 250;
 
-        public static final int ECHO_CHANNEL = 2;
-        public static final int PING_CHANNEL = 3;
+        public static final int ECHO_CHANNEL = 8;
+        public static final int PING_CHANNEL = 7;
 
-        public static final double CONE_OFFSET = 0.00;
-        public static final double CONE_CENTER_DISTANCE = Units.inchesToMeters(5.5);
+        public static final double CONE_WIDTH = .15;
+        public static final double ULTRASONIC_WIDTH = Units.inchesToMeters(1);
+        public static final double INTAKE_WIDTH = Units.inchesToMeters(11);
 
     }
 
