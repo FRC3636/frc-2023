@@ -33,9 +33,9 @@ public final class Constants {
 
         // Chassis configuration
         // Distance between centers of right and left wheels on robot
-        public static final double TRACK_WIDTH = Units.inchesToMeters(22.5);
+        public static final double TRACK_WIDTH = Units.inchesToMeters(22.6);
         // Distance between front and back wheels on robot
-        public static final double WHEEL_BASE = Units.inchesToMeters(24.5);
+        public static final double WHEEL_BASE = Units.inchesToMeters(24.6);
 
         public static final Translation2d[] MODULE_POSITIONS = new Translation2d[]{
                 new Translation2d(WHEEL_BASE / 2, TRACK_WIDTH / 2),
