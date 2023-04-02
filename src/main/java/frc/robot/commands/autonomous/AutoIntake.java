@@ -63,8 +63,11 @@ public class AutoIntake extends GenerateCommand {
         );
 
         Translation2d lastPose = FollowTrajectoryToState.chargingPadPartition.queryWaypoint(
-                initialPose.getTranslation(),
-                piecePose
+                initialPose,
+                new Pose2d(
+                        piecePose,
+                        new Rotation2d()
+                )
         ).orElse(
                 new PathPoint(
                         initialPose.getTranslation(),

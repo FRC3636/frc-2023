@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -34,18 +35,16 @@ public class FollowTrajectoryToState implements Command {
     private PPSwerveControllerCommand swerveControllerCommand;
 
     public static final FieldPartition chargingPadPartition = new FieldPartition(
-            3.7,
-            5.5,
-            new PathPoint[] {
-                    new PathPoint(
+            3.9,
+            2,
+            new Waypoint[] {
+                    new Waypoint(
                         new Translation2d(0, 0.75),
-                        new Rotation2d(),
-                        Rotation2d.fromDegrees(150)
+                        Rotation2d.fromDegrees(202.5)
                 ),
-                new PathPoint(
+                new Waypoint(
                         new Translation2d(0, 4.75),
-                        new Rotation2d(),
-                        Rotation2d.fromDegrees(180)
+                        Rotation2d.fromRotations(0.5)
                 ),
             });
 
@@ -96,7 +95,8 @@ public class FollowTrajectoryToState implements Command {
         RobotContainer.field.getObject("Alignment Start").setPose(new Pose2d(start.position, start.holonomicRotation));
 
         if(avoidFieldElements) {
-            Optional<PathPoint> waypoint = chargingPadPartition.queryWaypoint(initial.getTranslation(), target.position);
+            Optional<PathPoint> waypoint = chargingPadPartition.queryWaypoint(initial, new Pose2d(target.position, target.holonomicRotation));
+            waypoint.ifPresent((point) -> RobotContainer.field.getObject("Waypoint").setPose(new Pose2d(point.position, point.holonomicRotation)));
             if (waypoint.isPresent()) {
                 return PathPlanner.generatePath(
                         new PathConstraints(
@@ -156,23 +156,18 @@ public class FollowTrajectoryToState implements Command {
 
     public static class FieldPartition {
         private final double x;
-        private final PathPoint[] waypoints;
+        private final Waypoint[] waypoints;
         private final double partitionWidth;
 
-        public FieldPartition(double x,  double partitionWidth, PathPoint[] waypoints) {
+        public FieldPartition(double x,  double partitionWidth, Waypoint[] waypoints) {
             this.x = x;
             this.waypoints = waypoints;
             this.partitionWidth = partitionWidth;
         }
 
-        public Optional<PathPoint> queryWaypoint(Translation2d start, Translation2d end) {
+        public Optional<PathPoint> queryWaypoint(Pose2d start, Pose2d end) {
             // find intersection with partition, or return empty
             double fieldX = AllianceUtils.allianceToField(x);
-            Pose2d[] fieldWaypoints = new Pose2d[waypoints.length];
-
-            for (int i = 0; i < waypoints.length; i++) {
-                fieldWaypoints[i] = AllianceUtils.mirrorPoseByAlliance(new Pose2d(waypoints[i].position, waypoints[i].holonomicRotation));
-            }
 
             double t = (fieldX - start.getX()) / (end.getX() - start.getX());
             if (0 > t || t > 1) return Optional.empty();
@@ -181,11 +176,11 @@ public class FollowTrajectoryToState implements Command {
 
             if (waypoints.length == 0) return Optional.empty();
 
-            Pose2d bestWaypoint = fieldWaypoints[0];
+            Waypoint bestWaypoint = waypoints[0];
 
-            for (Pose2d waypoint : fieldWaypoints) {
-                double bestDistance = Math.abs(intersectionY - bestWaypoint.getY());
-                double distance = Math.abs(intersectionY - waypoint.getY());
+            for (Waypoint waypoint : waypoints) {
+                double bestDistance = Math.abs(intersectionY - bestWaypoint.getPosition().getY());
+                double distance = Math.abs(intersectionY - waypoint.getPosition().getY());
 
                 if (distance < bestDistance) {
                     bestWaypoint = waypoint;
@@ -202,14 +197,41 @@ public class FollowTrajectoryToState implements Command {
 
             return Optional.of(
                     new PathPoint(
-                            new Translation2d(bestWaypoint.getX() + fieldX, bestWaypoint.getY()),
+                            new Translation2d(bestWaypoint.getPosition().getX() + fieldX, bestWaypoint.getPosition().getY()),
                             heading,
-                            bestWaypoint.getRotation()
+                            bestWaypoint.getHeadingOverride().orElse(start.getRotation().interpolate(end.getRotation(), 0.5))
                     ).withControlLengths(
-                            Math.max(Math.min(partitionWidth / 2, Math.abs(start.getX() - fieldX) * 1.5), 0.01),
-                            Math.max(Math.min(partitionWidth / 2, Math.abs(end.getY() - bestWaypoint.getY()) * (partitionWidth / 2)), 1)
+                            getControlLength(Math.abs(start.getY() - bestWaypoint.getPosition().getY()), Math.abs(start.getX() - fieldX)),
+                            getControlLength(Math.abs(end.getY() - bestWaypoint.getPosition().getY()), Math.abs(end.getX() - fieldX))
                     )
             );
+        }
+
+        private double getControlLength(double yOffset, double xOffset) {
+            return Math.max(Math.min(partitionWidth * 1.25, Math.pow(yOffset, 3) + xOffset / 3), 0.1);
+        }
+    }
+
+    public static class Waypoint {
+        private final Translation2d position;
+        private final Optional<Rotation2d> headingOverride;
+
+        public Waypoint(Translation2d position) {
+            this.position = position;
+            this.headingOverride = Optional.empty();
+        }
+
+        public Waypoint(Translation2d position, Rotation2d heading) {
+            this.position = position;
+            this.headingOverride = Optional.of(heading);
+        }
+
+        public Translation2d getPosition() {
+            return AllianceUtils.mirrorByAlliance(position);
+        }
+
+        public Optional<Rotation2d> getHeadingOverride() {
+            return headingOverride.map(AllianceUtils::mirrorByAlliance);
         }
     }
 }

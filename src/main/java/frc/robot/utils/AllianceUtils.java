@@ -72,8 +72,16 @@ public class AllianceUtils {
         return isBlue() ? allianceRotation : Rotation2d.fromRadians(Math.PI).minus(allianceRotation);
     }
 
-    public static Pose2d mirrorPoseByAlliance(Pose2d alliancePose) {
+    public static Pose2d mirrorByAlliance(Pose2d alliancePose) {
         return isBlue()? alliancePose : new Pose2d(-alliancePose.getX(), alliancePose.getY(), Rotation2d.fromRotations(0.5).minus(alliancePose.getRotation()));
+    }
+
+    public static Translation2d mirrorByAlliance(Translation2d allianceTranslation) {
+        return isBlue()? allianceTranslation : new Translation2d(-allianceTranslation.getX(), allianceTranslation.getY());
+    }
+
+    public static Rotation2d mirrorByAlliance(Rotation2d allianceRotation) {
+        return isBlue()? allianceRotation :Rotation2d.fromRotations(0.5).minus(allianceRotation);
     }
 
     public static Rotation2d getFieldOrientationZero() {

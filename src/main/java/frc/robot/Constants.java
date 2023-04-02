@@ -90,7 +90,7 @@ public final class Constants {
         public static final double PIVOT_HEIGHT = 1.15;
         public static final double PIVOT_FORWARD_OFFSET = 0.203391;
 
-        public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(63);
+        public static final double HIGH_CONE_SCORING_DIST = Units.inchesToMeters(65);
         public static final double HIGH_CUBE_SCORING_DIST = Units.inchesToMeters(60);
         public static final double MID_CONE_SCORING_DIST = 1.65;
         public static final double MID_CUBE_SCORING_DIST = Units.inchesToMeters(61);
@@ -108,7 +108,7 @@ public final class Constants {
 
         public static final double STOWED_CUBE_HEIGHT = 0.27;
         public static final double STOWED_CONE_HEIGHT = 0.07;
-        public static final double HIGH_CONE_HEIGHT = 1.376;
+        public static final double HIGH_CONE_HEIGHT = 1.35;
         public static final double HIGH_CUBE_HEIGHT = 1.33456;
         public static final double MID_CONE_HEIGHT = 1.04;
         public static final double MID_CUBE_HEIGHT = 1.04;
@@ -170,7 +170,7 @@ public final class Constants {
 
         // Scoring Angles
         public static final Rotation2d SCORING_CONE_ANGLE = Rotation2d.fromRadians(-0.4);
-        public static final Rotation2d SCORING_CUBE_ANGLE = Rotation2d.fromDegrees(90);
+        public static final Rotation2d SCORING_CUBE_ANGLE = Rotation2d.fromDegrees(60);
 
         // Slide
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.960988);
@@ -251,15 +251,15 @@ public final class Constants {
     public static final class AutoConstants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
-        public static final double MAX_SPEED_METERS_PER_SECOND = 8;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3;
+        public static final double MAX_SPEED_METERS_PER_SECOND = 5;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 1.5;
 
         public static final double P_TRANSLATION_CONTROLLER = 4;
         public static final double I_TRANSLATION_CONTROLLER = 0;
         public static final double D_TRANSLATION_CONTROLLER = 0.3;
         public static final double P_THETA_CONTROLLER = 6;
 
-        public static final double TRANSLATION_TOLERANCE = 0.02;
+        public static final double TRANSLATION_TOLERANCE = 0.03;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
         public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> .5;
@@ -278,11 +278,11 @@ public final class Constants {
 
         public static final Transform3d BACK_CAM_TRANSFORM = new Transform3d(
                 new Translation3d(-0.127869, 0.060930, -0.463550),
-                new Rotation3d(0, Units.degreesToRadians(15), Math.PI)
+                new Rotation3d(0, 0, Math.PI)
         );
 
         public static final Transform3d LEFT_CAM_TRANSFORM = new Transform3d(
-                new Translation3d(.243, 0.229, -0.241),
+                new Translation3d(.255, 0.229, -0.245),
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 

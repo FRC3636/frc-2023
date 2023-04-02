@@ -15,17 +15,17 @@ import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 public class PoseEstimation {
-    private SwerveDrivePoseEstimator poseEstimator;
+    private final SwerveDrivePoseEstimator poseEstimator;
     private SwerveModulePosition[] lastModulePositions;
 
     private Translation2d carpetBias = new Translation2d(1, 0).times(DriveConstants.CARPET_BIAS);
 
-    private VisionBackend[] backends;
-    private GenericEntry[] backendToggles;
+    private final VisionBackend[] backends;
+    private final GenericEntry[] backendToggles;
 
-    private TimeInterpolatableBuffer<Pose2d> poseHistory = TimeInterpolatableBuffer.createBuffer(1.5);
+    private final TimeInterpolatableBuffer<Pose2d> poseHistory = TimeInterpolatableBuffer.createBuffer(2);
 
-    private static final double DIFFERENTIATION_TIME = Robot.kDefaultPeriod * 4;
+    private static final double DIFFERENTIATION_TIME = Robot.kDefaultPeriod;
 
     public PoseEstimation() {
         poseEstimator = new SwerveDrivePoseEstimator(

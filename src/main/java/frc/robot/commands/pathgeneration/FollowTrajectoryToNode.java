@@ -16,7 +16,10 @@ public class FollowTrajectoryToNode extends FollowTrajectoryToState {
         ).withPrevControlLength(
                 Math.max(
                         Math.min(
-                                Math.abs(targetNode.getRobotScoringPose().getX() - poseEstimation.getEstimatedPose().getX()),
+                                Math.max(
+                                        Math.abs(targetNode.getRobotScoringPose().getX() - poseEstimation.getEstimatedPose().getX()),
+                                        Math.abs(targetNode.getRobotScoringPose().getY() - poseEstimation.getEstimatedPose().getY())
+                                ),
                                 Constants.AutoConstants.NODE_ALIGNMENT_CONTROL_HANDLE_LENGTH),
                         0.001
                 )
