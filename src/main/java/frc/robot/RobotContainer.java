@@ -126,23 +126,23 @@ public class RobotContainer {
 
         // Auto Alignment
         new JoystickButton(joystickLeft, 4)
-                .onTrue(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Node.Grid.left)))
-                .onFalse(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Optional.empty())));
+                .onTrue(new InstantCommand(() -> targetNode = targetNode.getWithGridOverride(Node.Grid.left)))
+                .onFalse(new InstantCommand(() -> targetNode = targetNode.getWithGridOverride(Optional.empty())));
 
         new JoystickButton(joystickLeft, 3)
-                .onTrue(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Node.Grid.center)))
-                .onFalse(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Optional.empty())));
+                .onTrue(new InstantCommand(() -> targetNode = targetNode.getWithGridOverride(Node.Grid.center)))
+                .onFalse(new InstantCommand(() -> targetNode = targetNode.getWithGridOverride(Optional.empty())));
 
 
         new JoystickButton(joystickLeft, 5)
-                .onTrue(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Node.Grid.right)))
-                .onFalse(new InstantCommand(() -> targetNode = targetNode.setGridOverride(Optional.empty())));
+                .onTrue(new InstantCommand(() -> targetNode = targetNode.getWithGridOverride(Node.Grid.right)))
+                .onFalse(new InstantCommand(() -> targetNode = targetNode.getWithGridOverride(Optional.empty())));
 
         new JoystickButton(joystickRight, 4)
                 .whileTrue(
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
-                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode.setColumn(Node.Column.LeftCone)),
+                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode.getWithColumn(Node.Column.LeftCone)),
                                         new RunCommand(drivetrain::setX, drivetrain)
                                 )
                         )
@@ -152,7 +152,7 @@ public class RobotContainer {
                 .whileTrue(
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
-                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode.setColumn(Node.Column.Cube)),
+                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode.getWithColumn(Node.Column.Cube)),
                                         new RunCommand(drivetrain::setX, drivetrain)
                                 )
                         )
@@ -162,7 +162,7 @@ public class RobotContainer {
                 .whileTrue(
                         new ParallelCommandGroup(
                                 new SequentialCommandGroup(
-                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode.setColumn(Node.Column.RightCone)),
+                                        new AlignToSelectedNode(drivetrain, arm, poseEstimation, () -> this.targetNode.getWithColumn(Node.Column.RightCone)),
                                         new RunCommand(drivetrain::setX, drivetrain)
                                 )
                         )
@@ -174,13 +174,13 @@ public class RobotContainer {
                 .whileTrue(autoBalanceCommand);
 
         new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {
-            targetNode.setLevel(Node.Level.Low);
+            targetNode = targetNode.getWithLevel(Node.Level.Low);
         }));
         new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {
-            targetNode.setLevel(Node.Level.Mid);
+            targetNode = targetNode.getWithLevel(Node.Level.Mid);
         }));
         new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {
-            targetNode.setLevel(Node.Level.High);
+            targetNode = targetNode.getWithLevel(Node.Level.High);
         }));
 
         // Rollers

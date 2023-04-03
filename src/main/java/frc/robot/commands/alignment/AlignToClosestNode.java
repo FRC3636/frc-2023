@@ -18,7 +18,7 @@ public class AlignToClosestNode extends GenerateCommand {
                                 RobotContainer.poseEstimation.getEstimatedPose(),
                                 arm.getTarget().closestLevel(),
                                 arm.getGamePiece()
-                        ),
+                        ).getWithGamePiece(arm.getRollers().getGamePieceOffset()),
                         Double.POSITIVE_INFINITY
                 ),
                 Set.of(drivetrain)

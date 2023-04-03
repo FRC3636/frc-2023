@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.ArmMoveCommand;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
@@ -14,7 +13,6 @@ import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
-import frc.robot.utils.GamePiece;
 import frc.robot.utils.GenerateCommand;
 import frc.robot.utils.Node;
 
@@ -54,7 +52,7 @@ public class AlignToSelectedNode implements Command {
     @Override
     public void initialize() {
         Arm.State targetArmState = Arm.State.getTargetFromNode(targetNode.get());
-        DriveToNode driveCommand = new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get(), pidDeadline);
+        DriveToNode driveCommand = new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get().getWithGamePiece(arm.getRollers().getGamePieceOffset()), pidDeadline);
 
         if(AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) > Constants.FieldConstants.fieldLength / 2) {
             command = new InstantCommand();
@@ -91,7 +89,7 @@ public class AlignToSelectedNode implements Command {
 
             command = waypointCommand.andThen(
                             new GenerateCommand(
-                                    () -> new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get(), pidDeadline),
+                                    () -> new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get().getWithGamePiece(arm.getRollers().getGamePieceOffset()), pidDeadline),
                                     Set.of(drivetrain)
                             )
             ).alongWith(

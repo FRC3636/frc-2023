@@ -16,11 +16,22 @@ public class Node {
     private final Column column;
     private final Optional<Integer> gridOverride;
 
+    private final double gamePieceOffset;
+
     public Node(GamePiece nodeType, Level level, Column column, Optional<Integer> gridOverride) {
         this.nodeType = nodeType;
         this.level = level;
         this.column = column;
         this.gridOverride = gridOverride;
+        gamePieceOffset = 0;
+    }
+
+    public Node(GamePiece nodeType, Level level, Column column, Optional<Integer> gridOverride, double gamePieceOffset) {
+        this.nodeType = nodeType;
+        this.level = level;
+        this.column = column;
+        this.gridOverride = gridOverride;
+        this.gamePieceOffset = gamePieceOffset;
     }
 
     public Node(GamePiece nodeType, Level level, Column column) {
@@ -36,19 +47,23 @@ public class Node {
         );
     }
 
-    public Node setLevel(Level level) {
+    public Node getWithGamePiece(double gamePieceOffset) {
+        return new Node(this.nodeType, this.level, this.column, this.gridOverride, gamePieceOffset);
+    }
+
+    public Node getWithLevel(Level level) {
         return new Node(this.nodeType, level, this.column, this.gridOverride);
     }
 
-    public Node setColumn(Column column) {
+    public Node getWithColumn(Column column) {
         return new Node(this.nodeType, this.level, column, this.gridOverride);
     }
 
-    public Node setGridOverride(Optional<Integer> gridOverride) {
+    public Node getWithGridOverride(Optional<Integer> gridOverride) {
         return new Node(this.nodeType, this.level, this.column, gridOverride);
     }
 
-    public Node setGridOverride(Grid grid) {
+    public Node getWithGridOverride(Grid grid) {
         return new Node(this.nodeType, this.level, this.column, Optional.of(grid.getIndex()));
     }
 
@@ -79,7 +94,7 @@ public class Node {
                 x = nodeType == GamePiece.Cone ? Constants.Arm.LOW_CONE_SCORING_DIST
                         : Constants.Arm.LOW_CUBE_SCORING_DIST;
         }
-        return new Transform2d(new Translation2d(-x, 0.0),
+        return new Transform2d(new Translation2d(-x, -gamePieceOffset),
                 new Rotation2d(0));
     }
 
