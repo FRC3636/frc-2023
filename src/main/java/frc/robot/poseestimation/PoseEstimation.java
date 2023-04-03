@@ -54,7 +54,7 @@ public class PoseEstimation {
             }
 
             backends[2] = new LimelightBackend();
-            backendToggles[2] = RobotContainer.autoTab.add("VisionBackend/LL", false).getEntry();
+            backendToggles[2] = RobotContainer.autoTab.add("VisionBackend/limelight", false).getEntry();
         } else {
             backends = new VisionBackend[0];
             backendToggles = new GenericEntry[0];
@@ -64,8 +64,6 @@ public class PoseEstimation {
     }
 
     public void periodic() {
-        poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
-
         for (int i = 0; i < backends.length; i++) {
             if (backendToggles[i].getBoolean(false)) {
                 // this is a hack to get around an issue in `SwerveDrivePoseEstimator`
@@ -78,6 +76,8 @@ public class PoseEstimation {
                 }).ifPresent(this::addVisionMeasurement);
             }
         }
+
+        poseHistory.addSample(Timer.getFPGATimestamp(), poseEstimator.getEstimatedPosition());
 
         RobotContainer.field.setRobotPose(getEstimatedPose());
     }

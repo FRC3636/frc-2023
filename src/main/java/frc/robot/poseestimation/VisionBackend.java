@@ -10,7 +10,7 @@ import java.util.Optional;
 public abstract class VisionBackend {
     public abstract Optional<Measurement> getMeasurement();
 
-    public class Measurement {
+    public static class Measurement {
         public double timestamp;
         public Pose3d pose;
         public Matrix<N3, N1> stdDeviation;
