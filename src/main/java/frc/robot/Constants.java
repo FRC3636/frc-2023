@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.poseestimation.PhotonVisionBackend;
 import frc.robot.utils.PieceDependent;
 
 import java.util.Map;
@@ -288,7 +289,7 @@ public final class Constants {
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 
-        public static final BiFunction<Double, Integer, Vector<N3>> PHOTON_VISION_STD_DEV =
+        public static final PhotonVisionBackend.StandardDeviation PHOTON_VISION_STD_DEV =
                 (distance, count) -> {
                     double distanceMultiplier = Math.pow(distance - ((count - 1) * 2), 2);
                     double translationalStdDev = (0.05 / (count)) * distanceMultiplier + 0.05;
