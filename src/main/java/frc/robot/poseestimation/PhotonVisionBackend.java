@@ -35,6 +35,12 @@ public class PhotonVisionBackend extends VisionBackend {
                 return Optional.empty();
             }
 
+            // Reject pose estimates outside the field
+            if(result.estimatedPose.toPose2d().getX() < 0 || result.estimatedPose.toPose2d().getX() > Constants.FieldConstants.fieldLength ||
+                    result.estimatedPose.toPose2d().getY() < 0  || result.estimatedPose.toPose2d().getY() > Constants.FieldConstants.fieldWidth ) {
+                return Optional.empty();
+            }
+
             return Optional.of(new Measurement(
                     result.timestampSeconds,
                     result.estimatedPose,
