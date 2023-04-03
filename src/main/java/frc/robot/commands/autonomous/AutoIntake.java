@@ -20,21 +20,31 @@ import java.util.Set;
 public class AutoIntake extends GenerateCommand {
     private final Arm arm;
 
+    private static final FollowTrajectoryToState.FieldPartition gamePiecePartition = new FollowTrajectoryToState.FieldPartition(
+            Constants.FieldConstants.PRESET_PIECE_X,
+            .5,
+            new FollowTrajectoryToState.Waypoint(new Translation2d(0, 1.55), Rotation2d.fromRadians(Math.PI), 1),
+            new FollowTrajectoryToState.Waypoint(new Translation2d(0, 2.77), Rotation2d.fromRadians(Math.PI), 1),
+            new FollowTrajectoryToState.Waypoint(new Translation2d(0, 4), Rotation2d.fromRadians(Math.PI), 1),
+            new FollowTrajectoryToState.Waypoint(new Translation2d(0, 5.25), Rotation2d.fromRadians(Math.PI), 1)
+
+    );
+
     public AutoIntake(Drivetrain drivetrain, PoseEstimation poseEstimation, Arm arm, int index, GamePiece piece) {
         super(
                 () -> {
                     FollowTrajectoryToState driveCommand = new FollowTrajectoryToState(
                             drivetrain,
                             poseEstimation,
-                            getTargetPoint(index, piece, poseEstimation.getEstimatedPose()),
-                            true);
+                            getTargetPoint(index, piece),
+                            true,
+                            gamePiecePartition);
                     driveCommand.addTimedEvent(
                             driveCommand.trajectory.getTotalTimeSeconds() - Constants.Arm.INTAKING_BUFFER_TIME,
                             new InstantCommand(
                                     () -> {
                                         arm.setGamePiece(piece);
                                         arm.setRollerState(Rollers.State.Intake);
-                                        arm.setTemporaryAngleOffset(Rotation2d.fromRadians(0.25));
                                     }
                             )
                             );
@@ -45,47 +55,31 @@ public class AutoIntake extends GenerateCommand {
 
         this.arm = arm;
     }
+
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
-        arm.resetTemporaryAngleOffset();
         arm.setRollerState(Rollers.State.Off);
     }
 
-    private static PathPoint getTargetPoint(int index, GamePiece piece, Pose2d initialPose) {
+    private static PathPoint getTargetPoint(int index, GamePiece piece) {
 
 
-        Translation2d piecePose = AllianceUtils.allianceToField(
+        Pose2d piecePose = AllianceUtils.allianceToField(new Pose2d(
                 new Translation2d(
                         Constants.FieldConstants.PRESET_PIECE_X,
                         Constants.FieldConstants.PRESET_PIECE_Y[index]
-                )
-        );
+                ),
+                new Rotation2d()
+        ));
 
-        Translation2d lastPose = FollowTrajectoryToState.chargingPadPartition.queryWaypoint(
-                initialPose,
-                new Pose2d(
-                        piecePose,
-                        new Rotation2d()
-                )
-        ).orElse(
-                new PathPoint(
-                        initialPose.getTranslation(),
-                        new Rotation2d(),
-                        new Rotation2d()
-                )
-        ).position;
-
-        Pose2d targetPose =
-                new Pose2d(
-                        piecePose.interpolate(lastPose, Constants.AutoConstants.INTAKE_OFFSET.get(piece) / lastPose.getDistance(piecePose)),
-                        piecePose.minus(lastPose).getAngle()
-                );
+        Pose2d targetPose = piecePose.transformBy(Constants.AutoConstants.INTAKE_OFFSET.get(piece));
 
         return new PathPoint(
                 targetPose.getTranslation(),
                 targetPose.getRotation(),
-                targetPose.getRotation()
-        ).withPrevControlLength(2);
+                targetPose.getRotation(),
+                2
+        ).withPrevControlLength(0.7);
     }
 }

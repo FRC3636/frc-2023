@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -21,6 +20,7 @@ import frc.robot.utils.AllianceUtils;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 //Uses PathPlanner to move the robot to the specified Pose2d
 public class FollowTrajectoryToState implements Command {
@@ -34,26 +34,50 @@ public class FollowTrajectoryToState implements Command {
 
     private PPSwerveControllerCommand swerveControllerCommand;
 
-    public static final FieldPartition chargingPadPartition = new FieldPartition(
-            3.9,
-            2,
-            new Waypoint[] {
+    public static final FieldPartition[] partitions = new FieldPartition[]{
+            new FieldPartition(
+                    3.9,
+                    2,
                     new Waypoint(
-                        new Translation2d(0, 0.75),
-                        Rotation2d.fromDegrees(202.5)
-                ),
-                new Waypoint(
-                        new Translation2d(0, 4.75),
-                        Rotation2d.fromRotations(0.5)
-                ),
-            });
+                            new Translation2d(0, 0.75),
+                            Rotation2d.fromDegrees(167.5)
+                    ),
+                    new Waypoint(
+                            new Translation2d(0, 4.75),
+                            Rotation2d.fromRotations(0.5)
+                    )),
+    };
 
     public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target, boolean avoidFieldElements) {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
         this.target = target;
 
-        trajectory = buildTrajectory(target, avoidFieldElements);
+        if(avoidFieldElements) {
+            trajectory = buildTrajectory(AutoConstants.DEFAULT_PATH_CONSTRAINTS, target, partitions);
+        }
+        else {
+            trajectory = buildTrajectory(AutoConstants.DEFAULT_PATH_CONSTRAINTS, target);
+        }
+    }
+
+    public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target, FieldPartition... fieldPartitions) {
+        this.drivetrain = drivetrain;
+        this.poseEstimation = poseEstimation;
+        this.target = target;
+
+        trajectory = buildTrajectory(AutoConstants.DEFAULT_PATH_CONSTRAINTS, target, fieldPartitions);
+    }
+
+    public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target, boolean avoidFieldElements, FieldPartition... fieldPartitions) {
+        this(
+                drivetrain,
+                poseEstimation,
+                target,
+                avoidFieldElements ?
+                        Stream.concat(Arrays.stream(partitions), Arrays.stream(fieldPartitions)).toArray(FieldPartition[]::new) :
+                        fieldPartitions
+        );
     }
 
     @Override
@@ -80,42 +104,43 @@ public class FollowTrajectoryToState implements Command {
         swerveControllerCommand.initialize();
     }
 
-    protected PathPlannerTrajectory buildTrajectory(PathPoint target, boolean avoidFieldElements) {
+    protected PathPlannerTrajectory buildTrajectory(PathConstraints pathConstraints, PathPoint target, FieldPartition... fieldPartitions) {
+        ArrayList<PathPoint> waypoints = new ArrayList<>();
+
         Pose2d initial = poseEstimation.getEstimatedPose();
-        Translation2d initialV = poseEstimation.getEstimatedVelocity();
+        Translation2d initialV = drivetrain.getRelativeVelocity().rotateBy(initial.getRotation());
 
-        PathPoint start = new PathPoint(
-                initial.getTranslation(),
-                initialV.getNorm() == 0 ?
-                        target.position.minus(initial.getTranslation()).getAngle() :
-                        initialV.getAngle(),
-                initial.getRotation(),
-                initialV.getNorm());
+        waypoints.add(
+                new PathPoint(
+                        initial.getTranslation(),
+                        initialV.getNorm() < 0.1 ?
+                                target.position.minus(initial.getTranslation()).getAngle() :
+                                initialV.getAngle(),
+                        initial.getRotation(),
+                        initialV.getNorm()
+                )
+        );
 
-        RobotContainer.field.getObject("Alignment Start").setPose(new Pose2d(start.position, start.holonomicRotation));
+        RobotContainer.field.getObject("Alignment Start").setPose(new Pose2d(waypoints.get(0).position, waypoints.get(0).holonomicRotation));
 
-        if(avoidFieldElements) {
-            Optional<PathPoint> waypoint = chargingPadPartition.queryWaypoint(initial, new Pose2d(target.position, target.holonomicRotation));
-            waypoint.ifPresent((point) -> RobotContainer.field.getObject("Waypoint").setPose(new Pose2d(point.position, point.holonomicRotation)));
-            if (waypoint.isPresent()) {
-                return PathPlanner.generatePath(
-                        new PathConstraints(
-                                AutoConstants.MAX_SPEED_METERS_PER_SECOND,
-                                AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
-                        ),
-                        start,
-                        waypoint.get(),
-                        target
-                );
-            }
-        }
+        Arrays.stream(fieldPartitions).sorted(
+                Collections.reverseOrder(Comparator.comparingDouble(partition -> Math.abs(partition.x - initial.getX())))
+        ).forEach((fieldPartition) -> {
+            Optional<PathPoint> waypoint = fieldPartition.queryWaypoint(
+                    new Pose2d(waypoints.get(waypoints.size() - 1).position, waypoints.get(waypoints.size() - 1).holonomicRotation),
+                    new Pose2d(target.position, target.holonomicRotation)
+            );
+            waypoint.ifPresent((point) -> {
+                RobotContainer.field.getObject("Waypoint").setPose(new Pose2d(point.position, point.holonomicRotation));
+                waypoints.add(point);
+            });
+        });
+
+        waypoints.add(target);
+
         return PathPlanner.generatePath(
-                new PathConstraints(
-                        AutoConstants.MAX_SPEED_METERS_PER_SECOND,
-                        AutoConstants.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
-                ),
-                start,
-                target
+                pathConstraints,
+                waypoints
         );
     }
 
@@ -159,7 +184,7 @@ public class FollowTrajectoryToState implements Command {
         private final Waypoint[] waypoints;
         private final double partitionWidth;
 
-        public FieldPartition(double x,  double partitionWidth, Waypoint[] waypoints) {
+        public FieldPartition(double x,  double partitionWidth, Waypoint... waypoints) {
             this.x = x;
             this.waypoints = waypoints;
             this.partitionWidth = partitionWidth;
@@ -199,7 +224,8 @@ public class FollowTrajectoryToState implements Command {
                     new PathPoint(
                             new Translation2d(bestWaypoint.getPosition().getX() + fieldX, bestWaypoint.getPosition().getY()),
                             heading,
-                            bestWaypoint.getHeadingOverride().orElse(start.getRotation().interpolate(end.getRotation(), 0.5))
+                            bestWaypoint.getHeadingOverride().orElse(start.getRotation().interpolate(end.getRotation(), 0.5)),
+                            bestWaypoint.getVelocityOverride().orElse(-1.0)
                     ).withControlLengths(
                             getControlLength(Math.abs(start.getY() - bestWaypoint.getPosition().getY()), Math.abs(start.getX() - fieldX)),
                             getControlLength(Math.abs(end.getY() - bestWaypoint.getPosition().getY()), Math.abs(end.getX() - fieldX))
@@ -208,22 +234,31 @@ public class FollowTrajectoryToState implements Command {
         }
 
         private double getControlLength(double yOffset, double xOffset) {
-            return Math.max(Math.min(partitionWidth * 1.25, Math.pow(yOffset, 3) + xOffset / 3), 0.1);
+            return Math.max(Math.min(partitionWidth * 1.25, Math.pow(yOffset * 2, 3) + xOffset / 3), 0.1);
         }
     }
 
     public static class Waypoint {
         private final Translation2d position;
         private final Optional<Rotation2d> headingOverride;
+        private final Optional<Double> velocityOverride;
 
         public Waypoint(Translation2d position) {
             this.position = position;
             this.headingOverride = Optional.empty();
+            velocityOverride = Optional.empty();
         }
 
         public Waypoint(Translation2d position, Rotation2d heading) {
             this.position = position;
             this.headingOverride = Optional.of(heading);
+            velocityOverride = Optional.empty();
+        }
+
+        public Waypoint(Translation2d position, Rotation2d heading, double velocity) {
+            this.position = position;
+            this.headingOverride = Optional.of(heading);
+            velocityOverride = Optional.of(velocity);
         }
 
         public Translation2d getPosition() {
@@ -232,6 +267,10 @@ public class FollowTrajectoryToState implements Command {
 
         public Optional<Rotation2d> getHeadingOverride() {
             return headingOverride.map(AllianceUtils::mirrorByAlliance);
+        }
+
+        public Optional<Double> getVelocityOverride() {
+            return velocityOverride;
         }
     }
 }

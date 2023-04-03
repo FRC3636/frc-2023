@@ -6,6 +6,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.utils.GamePiece;
 
@@ -48,7 +49,7 @@ public class Rollers {
     }
 
     public boolean isHoldingGamePiece() {
-        return holdingGamePiece;
+        return Units.inchesToMeters(ultrasonic.getRangeInches()) < Constants.Rollers.INTAKE_WIDTH  - 0.05 || Robot.isSimulation();
     }
 
     public void periodic() {

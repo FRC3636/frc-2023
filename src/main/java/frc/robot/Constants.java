@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.PathConstraints;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.utils.PieceDependent;
 
+import javax.xml.crypto.dsig.Transform;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -253,8 +255,13 @@ public final class Constants {
     public static final class AutoConstants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
-        public static final double MAX_SPEED_METERS_PER_SECOND = 6;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 1.5;
+        public static final double MAX_SPEED_METERS_PER_SECOND = 10;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3;
+
+        public static final PathConstraints DEFAULT_PATH_CONSTRAINTS = new PathConstraints(
+                MAX_SPEED_METERS_PER_SECOND,
+                MAX_ACCELERATION_METERS_PER_SECOND_SQUARED
+        );
 
         public static final double P_TRANSLATION_CONTROLLER = 4;
         public static final double I_TRANSLATION_CONTROLLER = 0;
@@ -264,7 +271,10 @@ public final class Constants {
         public static final double TRANSLATION_TOLERANCE = 0.03;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
-        public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> .2;
+        public static final PieceDependent<Transform2d> INTAKE_OFFSET = (piece) -> new Transform2d(
+                        new Translation2d(0.1, 0),
+                        new Rotation2d(Math.PI)
+                );
 
         public static final Pose2d BALANCE_STARTING_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(5, 2.65), Rotation2d.fromRadians(Math.PI));
         public static final Pose2d BALANCE_LEAVE_COMMUNITY_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(6.0, 2.65), Rotation2d.fromRadians(Math.PI));
@@ -312,7 +322,7 @@ public final class Constants {
         public static final double tapeWidth = Units.inchesToMeters(2.0);
         public static final double aprilTagWidth = Units.inchesToMeters(6.0);
 
-        public static final double PRESET_PIECE_X = 7;
+        public static final double PRESET_PIECE_X = 7.1;
         public static final double[] PRESET_PIECE_Y = new double[]{0.92, 2.14, 3.36, 4.57};
 
         public static class Grids {

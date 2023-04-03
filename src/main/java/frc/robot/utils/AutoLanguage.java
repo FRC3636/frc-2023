@@ -14,11 +14,8 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.autonomous.AutoBalance;
 import frc.robot.commands.autonomous.AutoIntake;
 import frc.robot.commands.autonomous.AutoScore;
-import frc.robot.commands.pathgeneration.FollowTrajectoryToPose;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 
-import java.nio.file.Path;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 

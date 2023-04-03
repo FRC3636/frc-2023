@@ -4,10 +4,7 @@
 
 package frc.robot.subsystems.drivetrain;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -138,6 +135,10 @@ public class Drivetrain extends SubsystemBase {
         return swerveModules.getPositions().asArray();
     }
 
+    public SwerveModuleState[] getModuleStates() {
+        return swerveModules.getStates().asArray();
+    }
+
     /**
      * Method to drive the drivetrain using chassis speeds.
      *
@@ -206,6 +207,12 @@ public class Drivetrain extends SubsystemBase {
      */
     public Rotation2d getHeading() {
         return gyro.getAngle();
+    }
+
+    public Translation2d getRelativeVelocity() {
+        ChassisSpeeds chassisSpeeds = DriveConstants.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates());
+
+        return new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond);
     }
 
     /**
