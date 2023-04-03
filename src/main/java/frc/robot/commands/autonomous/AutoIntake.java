@@ -34,7 +34,7 @@ public class AutoIntake extends GenerateCommand {
                                     () -> {
                                         arm.setGamePiece(piece);
                                         arm.setRollerState(Rollers.State.Intake);
-                                        arm.setTemporaryAngleOffset(Rotation2d.fromRadians(0.5));
+                                        arm.setTemporaryAngleOffset(Rotation2d.fromRadians(0.25));
                                     }
                             )
                             );

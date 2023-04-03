@@ -99,7 +99,7 @@ public final class Constants {
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
 
-        public static final double RAISING_BUFFER_TIME = 1;
+        public static final double RAISING_BUFFER_TIME = 0.5;
         public static final double INTAKING_BUFFER_TIME = 1;
 
         public static final double SAFE_RAISING_DISTANCE = 2.5;
@@ -211,7 +211,7 @@ public final class Constants {
 
         // Calculations required for driving motor conversion factors and feed forward
         public static final double DRIVING_MOTOR_FREE_SPEED_RPS = NeoMotorConstants.FREE_SPEED_RPM / 60;
-        public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(3);
+        public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(2.9);
         public static final double WHEEL_CIRCUMFERENCE_METERS = WHEEL_DIAMETER_METERS * Math.PI;
         // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
         public static final double DRIVING_MOTOR_REDUCTION = (45.0 * 22) / (DRIVING_MOTOR_PINION_TEETH * 15);
@@ -253,7 +253,7 @@ public final class Constants {
     public static final class AutoConstants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
-        public static final double MAX_SPEED_METERS_PER_SECOND = 5;
+        public static final double MAX_SPEED_METERS_PER_SECOND = 6;
         public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 1.5;
 
         public static final double P_TRANSLATION_CONTROLLER = 4;
@@ -264,7 +264,7 @@ public final class Constants {
         public static final double TRANSLATION_TOLERANCE = 0.03;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
-        public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> .5;
+        public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> .2;
 
         public static final Pose2d BALANCE_STARTING_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(5, 2.65), Rotation2d.fromRadians(Math.PI));
         public static final Pose2d BALANCE_LEAVE_COMMUNITY_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(6.0, 2.65), Rotation2d.fromRadians(Math.PI));
