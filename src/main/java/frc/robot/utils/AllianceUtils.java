@@ -9,20 +9,10 @@ import frc.robot.Constants.FieldConstants;
 
 public class AllianceUtils {
     public static Pose2d allianceToField(Pose2d alliancePose) {
-        switch (DriverStation.getAlliance()) {
-            case Blue:
-                return alliancePose;
-            case Red:
-                return new Pose2d(
-                    new Translation2d(
-                        FieldConstants.fieldLength - alliancePose.getX(),
-                        alliancePose.getY()
-                    ),
-                    allianceToField(alliancePose.getRotation())
-                );
-            default:
-                return null;
-        }
+        return new Pose2d(
+                allianceToField(alliancePose.getTranslation()),
+                allianceToField(alliancePose.getRotation())
+        );
     }
 
     public static Translation2d allianceToField(Translation2d alliancePose) {
@@ -61,11 +51,11 @@ public class AllianceUtils {
     }
 
     public static double getDistanceFromAlliance(Pose2d pose) {
-        return isBlue()? pose.getX() : FieldConstants.fieldLength - pose.getX();
+        return isBlue() ? pose.getX() : FieldConstants.fieldLength - pose.getX();
     }
 
     public static double allianceToField(double x) {
-        return isBlue()? x : FieldConstants.fieldLength - x;
+        return isBlue() ? x : FieldConstants.fieldLength - x;
     }
 
     public static Rotation2d allianceToField(Rotation2d allianceRotation) {
@@ -73,15 +63,15 @@ public class AllianceUtils {
     }
 
     public static Pose2d mirrorByAlliance(Pose2d alliancePose) {
-        return isBlue()? alliancePose : new Pose2d(-alliancePose.getX(), alliancePose.getY(), Rotation2d.fromRotations(0.5).minus(alliancePose.getRotation()));
+        return isBlue() ? alliancePose : new Pose2d(-alliancePose.getX(), alliancePose.getY(), Rotation2d.fromRotations(0.5).minus(alliancePose.getRotation()));
     }
 
     public static Translation2d mirrorByAlliance(Translation2d allianceTranslation) {
-        return isBlue()? allianceTranslation : new Translation2d(-allianceTranslation.getX(), allianceTranslation.getY());
+        return isBlue() ? allianceTranslation : new Translation2d(-allianceTranslation.getX(), allianceTranslation.getY());
     }
 
     public static Rotation2d mirrorByAlliance(Rotation2d allianceRotation) {
-        return isBlue()? allianceRotation :Rotation2d.fromRotations(0.5).minus(allianceRotation);
+        return isBlue() ? allianceRotation : Rotation2d.fromRotations(0.5).minus(allianceRotation);
     }
 
     public static Rotation2d getFieldOrientationZero() {
