@@ -22,7 +22,7 @@ public class SIMSwerveModule implements SwerveModule {
     private final SimpleMotorFeedforward driveFeedForward;
     private final PIDController turnPIDController;
 
-    private double drivePosition = 0.0;
+    private double drivePosition;
     private Rotation2d turnAbsolutePosition = new Rotation2d();
 
     private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
