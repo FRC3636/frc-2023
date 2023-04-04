@@ -13,9 +13,9 @@ import java.util.Optional;
 public class LimelightBackend extends VisionBackend {
     private static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
-    private DoubleArraySubscriber botPose;
-    private DoubleSubscriber cl;
-    private DoubleSubscriber tl;
+    private final DoubleArraySubscriber botPose;
+    private final DoubleSubscriber cl;
+    private final DoubleSubscriber tl;
 
     public LimelightBackend() {
         botPose = table.getDoubleArrayTopic("botpose_wpiblue").subscribe(null);
@@ -51,9 +51,9 @@ public class LimelightBackend extends VisionBackend {
         Pose3d pose = new Pose3d(new Translation3d(x, y, z), new Rotation3d(roll, pitch, yaw));
 
         return Optional.of(new Measurement(
-            timestamp,
-            pose,
-            Constants.VisionConstants.LIMELIGHT_STD_DEV
+                timestamp,
+                pose,
+                Constants.VisionConstants.LIMELIGHT_STD_DEV
         ));
     }
 }
