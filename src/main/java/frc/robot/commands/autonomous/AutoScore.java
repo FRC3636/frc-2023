@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 //Move to a node, position the arm and outtake the current game piece
 public class AutoScore extends SequentialCommandGroup {
     public AutoScore(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, Supplier<Node> targetNode){
-        //if (arm.getRollers().isHoldingGamePiece()) {
+        if (arm.getRollers().isHoldingGamePiece()) {
             this.addCommands(
                     new AlignToSelectedNode(drivetrain, arm, poseEstimation, targetNode, 0.75)
                             .raceWith(
@@ -35,6 +35,6 @@ public class AutoScore extends SequentialCommandGroup {
                             ).schedule()
                     )
             );
-        //}
+        }
     }
 }
