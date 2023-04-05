@@ -1,19 +1,16 @@
 package frc.robot.utils;
 
 import com.pathplanner.lib.PathPoint;
-import edu.wpi.first.math.Num;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.commands.autonomous.AutoBalance;
+import frc.robot.commands.autonomous.Balance;
 import frc.robot.commands.autonomous.AutoIntake;
 import frc.robot.commands.autonomous.AutoScore;
+import frc.robot.commands.pathgeneration.FollowTrajectoryToPose;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 
 import java.util.Optional;
@@ -43,7 +40,8 @@ public class AutoLanguage {
             case "intake":
                 GamePiece intakePiece = parseGamePiece(tokens[1]);
                 int index = Integer.parseInt(tokens[2]) - 1;
-                return new AutoIntake(RobotContainer.drivetrain, RobotContainer.poseEstimation, RobotContainer.arm, index, intakePiece);
+                PathingMode mode = tokens.length > 3 ? parsePathingMode(tokens[3]) : PathingMode.AvoidObstacles;
+                return new AutoIntake(RobotContainer.drivetrain, RobotContainer.poseEstimation, RobotContainer.arm, index, intakePiece, mode.avoidFieldElements);
             case "score":
                 GamePiece scorePiece = parseGamePiece(tokens[1]);
                 Optional<Integer> grid = parseGrid(tokens[2]);
@@ -53,36 +51,36 @@ public class AutoLanguage {
                 return new InstantCommand(() -> RobotContainer.arm.setGamePiece(scorePiece)).
                         andThen(new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node));
             case "balance":
-                PathingMode pathingMode = parsePathingMode(tokens[1]);
-
                 SequentialCommandGroup command = new SequentialCommandGroup();
-
-                if (pathingMode.leaveCommunity) {
-                    Pose2d leaveCommunityPose = AllianceUtils.allianceToField(Constants.AutoConstants.BALANCE_LEAVE_COMMUNITY_POINT_ALLIANCE_RELATIVE);
-                    PathPoint leaveCommunityPoint = new PathPoint(leaveCommunityPose.getTranslation(), leaveCommunityPose.getRotation());
-
-                    command.addCommands(
-                            new GenerateCommand(
-                                    () -> new FollowTrajectoryToState(RobotContainer.drivetrain, RobotContainer.poseEstimation, leaveCommunityPoint, pathingMode.avoidFieldElements),
-                                    Set.of(RobotContainer.drivetrain)
-                            )
-                    );
-                }
 
                 Pose2d balanceStartPose = AllianceUtils.allianceToField(Constants.AutoConstants.BALANCE_STARTING_POINT_ALLIANCE_RELATIVE);
                 PathPoint balanceStartPoint = new PathPoint(balanceStartPose.getTranslation(), balanceStartPose.getRotation());
 
                 command.addCommands(
                         new GenerateCommand(
-                                () -> new FollowTrajectoryToState(RobotContainer.drivetrain, RobotContainer.poseEstimation, balanceStartPoint, pathingMode.avoidFieldElements),
+                                () -> new FollowTrajectoryToState(RobotContainer.drivetrain, RobotContainer.poseEstimation, balanceStartPoint, false),
                                 Set.of(RobotContainer.drivetrain)
                         )
                 );
 
                 command.addCommands(
-                        new AutoBalance(RobotContainer.drivetrain)
+                        new Balance(RobotContainer.drivetrain)
                 );
                 return command;
+            case "leave_community":
+                PathingMode pathingMode = parsePathingMode(tokens[1]);
+                Pose2d leaveCommunityPoint = AllianceUtils.allianceToField(
+                        new Pose2d(
+                                Constants.AutoConstants.LEAVE_COMMUNITY_DISTANCE,
+                                RobotContainer.poseEstimation.getEstimatedPose().getY(),
+                                RobotContainer.poseEstimation.getEstimatedPose().getRotation()
+                        )
+                );
+
+                return new GenerateCommand(
+                        () -> new FollowTrajectoryToPose(RobotContainer.drivetrain, RobotContainer.poseEstimation, leaveCommunityPoint, pathingMode.avoidFieldElements),
+                        Set.of(RobotContainer.drivetrain)
+                );
             case "wait":
                 double time = Double.parseDouble(tokens[1]);
                 return new WaitCommand(time);
@@ -140,24 +138,19 @@ public class AutoLanguage {
                 return PathingMode.AvoidObstacles;
             case "ignore_obstacles":
                 return PathingMode.IgnoreObstacles;
-            case "leave_community":
-                return PathingMode.LeaveCommunity;
             default:
                 throw new RuntimeException("Attempted to parse invalid pathing mode: '" + source + "'");
         }
     }
 
     private enum PathingMode {
-        AvoidObstacles(true, false),
-        IgnoreObstacles(false, false),
-        LeaveCommunity(false, true);
+        AvoidObstacles(true),
+        IgnoreObstacles(false);
 
         final boolean avoidFieldElements;
-        final boolean leaveCommunity;
 
-        PathingMode(boolean avoidFieldElements, boolean leaveCommunity) {
+        PathingMode(boolean avoidFieldElements) {
             this.avoidFieldElements = avoidFieldElements;
-            this.leaveCommunity = leaveCommunity;
         }
     }
 
@@ -206,3 +199,5 @@ public class AutoLanguage {
         }
     }
 }
+
+//hi silas, how is the auto code going. I am really hungry can i please have a snack. will the program be done before dcmp;. good job sila I am proud of you
