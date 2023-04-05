@@ -30,14 +30,14 @@ public class AutoIntake extends GenerateCommand {
 
     );
 
-    public AutoIntake(Drivetrain drivetrain, PoseEstimation poseEstimation, Arm arm, int index, GamePiece piece) {
+    public AutoIntake(Drivetrain drivetrain, PoseEstimation poseEstimation, Arm arm, int index, GamePiece piece, boolean avoidFieldElements) {
         super(
                 () -> {
                     FollowTrajectoryToState driveCommand = new FollowTrajectoryToState(
                             drivetrain,
                             poseEstimation,
                             getTargetPoint(index, piece),
-                            true,
+                            avoidFieldElements,
                             gamePiecePartition);
                     driveCommand.addTimedEvent(
                             driveCommand.trajectory.getTotalTimeSeconds() - Constants.Arm.INTAKING_BUFFER_TIME,

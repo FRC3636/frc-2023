@@ -14,7 +14,7 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 
 import java.util.Set;
 
-public class AutoBalance implements Command {
+public class Balance implements Command {
 
     private int oscillationCount = 0;
 
@@ -24,7 +24,7 @@ public class AutoBalance implements Command {
     private final Drivetrain drivetrain;
     //private final PIDController pidController = new PIDController(0, 0, 0);
 
-    public AutoBalance(Drivetrain drivetrain) {
+    public Balance(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
         //RobotContainer.autoTab.add("AutoBalance", pidController).withWidget(BuiltInWidgets.kPIDController);
     }

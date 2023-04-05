@@ -54,6 +54,9 @@ public class Sensitivity extends CommandBase {
         .add("Teller Sensitivity Decrease Rate", 2)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", 0, "max", 5)).getEntry();
+
+        RobotContainer.driveSettingsTab.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
+        RobotContainer.driveSettingsTab.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
     }
 
     @Override

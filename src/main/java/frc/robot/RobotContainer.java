@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -16,6 +17,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -25,7 +28,7 @@ import frc.robot.commands.MoveNodeSelection;
 import frc.robot.commands.MoveNodeSelection.MovementDirection;
 import frc.robot.commands.alignment.AlignToClosestNode;
 import frc.robot.commands.alignment.AlignToSelectedNode;
-import frc.robot.commands.autonomous.AutoBalance;
+import frc.robot.commands.autonomous.Balance;
 import frc.robot.poseestimation.PoseEstimation;
 import frc.robot.subsystems.GameInfoTable;
 import frc.robot.subsystems.arm.Arm;
@@ -61,7 +64,7 @@ public class RobotContainer {
     // Commands
     private final DriveWithJoysticks driveCommand = new DriveWithJoysticks(drivetrain, poseEstimation, joystickLeft,
             joystickRight);
-    private final AutoBalance autoBalanceCommand = new AutoBalance(drivetrain);
+    private final Balance autoBalanceCommand = new Balance(drivetrain);
 
     // RGB
     public static final GameInfoTable gameInfo = new GameInfoTable();
@@ -72,46 +75,60 @@ public class RobotContainer {
 
     // Auto Selection
     private final FieldObject2d startingPosition = field.getObject("Starting Position");
-    private final AutoLanguage.AutoProgram autoProgram = new AutoLanguage.AutoProgram(Constants.AutoConstants.DEFAULT_PROGRAM);
+    private final SendableChooser<AutoLanguage.AutoProgram> autoSelector = new SendableChooser<>() {
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            super.initSendable(builder);
+            builder.addStringProperty("Auto Program", () -> this.getSelected().getProgram(), (program) -> autoSelector.getSelected().setProgram(program));
+            builder.addStringProperty("Auto Compilation Error", () -> this.getSelected().getCompilationError().map(Exception::getMessage).orElse(""), (e) -> {});
+            builder.addBooleanProperty("Auto Compilation Good", () -> this.getSelected().getCompilationOutput().isPresent(), (g) -> {});
+        }
+    };
 
     public RobotContainer() {
-        autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
-        autoTab.add("Auto Program", autoProgram);
-        startingPosition.setPose(0, 0, new Rotation2d());
-
-        armTab.add("Node Selector", nodeSelector).withWidget(BuiltInWidgets.kField).withSize(3, 3);
-
-        driveSettingsTab.addNumber("Turn Sensitivity", RobotContainer.joystickRight::getZ);
-        driveSettingsTab.addNumber("Drive Sensitivity", RobotContainer.joystickLeft::getZ);
-
-        LiveWindow.enableTelemetry(arm);
-        LiveWindow.enableTelemetry(drivetrain);
-
         if (!DriverStation.isFMSAttached()) {
             PathPlannerServer.startServer(5811);
         }
-
-        arm.setDefaultCommand(new ArmHoldCommand(arm));
-
-        drivetrain.setDefaultCommand(driveCommand);
-
-        LiveWindow.enableTelemetry(arm);
-
-        configureButtonBindings();
-
         DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
 
+        setDefaultCommands();
+        configureAutoTab();
+        configureButtonBindings();
+
+        enableLogging();
+    }
+
+    private void enableLogging() {
+        LiveWindow.enableTelemetry(arm);
+        LiveWindow.enableTelemetry(drivetrain);
+
+        DataLogManager.start();
+        DriverStation.startDataLog(DataLogManager.getLog());
+    }
+
+    private void setDefaultCommands() {
+        arm.setDefaultCommand(new ArmHoldCommand(arm));
+        drivetrain.setDefaultCommand(driveCommand);
+    }
+
+    private void configureAutoTab() {
+        autoTab.add("Field", field).withWidget(BuiltInWidgets.kField).withSize(5, 3);
+        autoSelector.setDefaultOption("Cube Low", new AutoLanguage.AutoProgram(Constants.AutoConstants.DEFAULT_PROGRAM));
+        autoSelector.addOption("Grid 1: 2.5 Piece", new AutoLanguage.AutoProgram("score cone 1 high cone_right; intake cube 1; score cube 1 high cube; intake cone 2;"));
+        autoSelector.addOption("Grid 2: 1.5 + Balance", new AutoLanguage.AutoProgram("score cone 2 high cone_right; intake cube 2 ignore_obstacles; balance;"));
+        autoSelector.addOption("Grid 3: 2.5 Piece", new AutoLanguage.AutoProgram("score cone 3 high cone_right; intake cube 4; score cube 1 high cube; intake cone 3;"));
+
         startingPosition.setPose(AllianceUtils.allianceToField(new Pose2d(new Translation2d(3.47, 0.73), Rotation2d.fromRadians(Math.PI))));
-        autoTab.add("Set Starting Position", new InstantCommand(() -> startingPosition.setPose(poseEstimation.getEstimatedPose())
-        ) {
+        autoTab.add("Set Starting Position", new InstantCommand(() -> startingPosition.setPose(poseEstimation.getEstimatedPose())) {
             @Override
             public boolean runsWhenDisabled() {
                 return true;
             }
         }).withWidget(BuiltInWidgets.kCommand);
 
-        DataLogManager.start();
-        DriverStation.startDataLog(DataLogManager.getLog());
+        autoTab.add("Auto Chooser", autoSelector);
+
+        armTab.add("Node Selector", nodeSelector).withWidget(BuiltInWidgets.kField).withSize(3, 3);
     }
 
     private void configureButtonBindings() {
@@ -280,8 +297,8 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        autoProgram.recompile();
-        return autoProgram
+        autoSelector.getSelected().recompile();
+        return autoSelector.getSelected()
                 .getCompilationOutput()
                 .orElse(AutoLanguage.compile(Constants.AutoConstants.DEFAULT_PROGRAM))
                 .beforeStarting(() -> poseEstimation.resetPose(startingPosition.getPose()));
