@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 import frc.robot.poseestimation.PhotonVisionBackend;
+import frc.robot.poseestimation.PhotonVisionBackend;
 import frc.robot.utils.PieceDependent;
 
 import javax.xml.crypto.dsig.Transform;
@@ -193,8 +194,8 @@ public final class Constants {
         public static final double OUTTAKE_CUBE = -.6;
         public static final double HOLDING_PIECE_VELOCITY = 250;
 
-        public static final int ECHO_CHANNEL = 8;
-        public static final int PING_CHANNEL = 7;
+        public static final int ECHO_CHANNEL = 1;
+        public static final int PING_CHANNEL = 0;
 
         public static final double CONE_WIDTH = .15;
         public static final double ULTRASONIC_WIDTH = Units.inchesToMeters(1);
