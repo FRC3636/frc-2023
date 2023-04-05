@@ -47,7 +47,7 @@ public class Shoulder {
         RobotContainer.armTab.add("Shoulder PID", dynamicPIDController).withWidget(BuiltInWidgets.kPIDController);
 
         motor1.setInverted(true);
-        encoder.setInverted(false);
+        encoder.setInverted(true);
 
         dynamicPIDController.setTolerance(Units.degreesToRadians(1));
         motor1.getEncoder().setPosition(0);

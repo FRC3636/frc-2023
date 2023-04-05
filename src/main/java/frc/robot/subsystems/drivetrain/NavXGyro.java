@@ -21,7 +21,7 @@ public class NavXGyro implements Gyro{
 
     @Override
     public Rotation2d getAngle() {
-        return navX.getRotation2d();
+        return navX.getRotation2d().rotateBy(getRate().times(1));
     }
 
     @Override

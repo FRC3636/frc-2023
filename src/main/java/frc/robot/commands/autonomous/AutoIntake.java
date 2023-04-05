@@ -1,5 +1,6 @@
 package frc.robot.commands.autonomous;
 
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -36,7 +37,8 @@ public class AutoIntake extends GenerateCommand {
                     FollowTrajectoryToState driveCommand = new FollowTrajectoryToState(
                             drivetrain,
                             poseEstimation,
-                            getTargetPoint(index, piece),
+                            getTargetPoint(index, piece, poseEstimation.getEstimatedPose()),
+                            new PathConstraints(4, 1),
                             avoidFieldElements,
                             gamePiecePartition);
                     driveCommand.addTimedEvent(
@@ -44,6 +46,7 @@ public class AutoIntake extends GenerateCommand {
                             new InstantCommand(
                                     () -> {
                                         arm.setGamePiece(piece);
+                                        arm.setTemporaryAngleOffset(Rotation2d.fromRadians(0.25));
                                         arm.setRollerState(Rollers.State.Intake);
                                     }
                             )
@@ -59,27 +62,42 @@ public class AutoIntake extends GenerateCommand {
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
+        arm.resetTemporaryAngleOffset();
         arm.setRollerState(Rollers.State.Off);
     }
 
-    private static PathPoint getTargetPoint(int index, GamePiece piece) {
-
-
-        Pose2d piecePose = AllianceUtils.allianceToField(new Pose2d(
+    private static PathPoint getTargetPoint(int index, GamePiece piece, Pose2d initialPose) {
+        Translation2d piecePose = AllianceUtils.allianceToField(
                 new Translation2d(
                         Constants.FieldConstants.PRESET_PIECE_X,
                         Constants.FieldConstants.PRESET_PIECE_Y[index]
-                ),
-                new Rotation2d()
-        ));
+                )
+        );
 
-        Pose2d targetPose = piecePose.transformBy(Constants.AutoConstants.INTAKE_OFFSET.get(piece));
+        Translation2d lastPose = FollowTrajectoryToState.partitions[0].queryWaypoint(
+                initialPose,
+                new Pose2d(
+                        piecePose,
+                        new Rotation2d()
+                )
+        ).orElse(
+                new PathPoint(
+                        initialPose.getTranslation(),
+                        new Rotation2d(),
+                        new Rotation2d()
+                )
+        ).position;
+
+        Pose2d targetPose =
+                new Pose2d(
+                        piecePose.interpolate(lastPose, Constants.AutoConstants.INTAKE_OFFSET.get(piece) / lastPose.getDistance(piecePose)),
+                        piecePose.minus(lastPose).getAngle()
+                );
 
         return new PathPoint(
                 targetPose.getTranslation(),
                 targetPose.getRotation(),
-                targetPose.getRotation(),
-                2
-        ).withPrevControlLength(0.7);
+                targetPose.getRotation()
+        ).withPrevControlLength(2);
     }
 }

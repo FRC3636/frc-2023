@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.RobotContainer;
 import frc.robot.poseestimation.PoseEstimation;
@@ -35,17 +36,7 @@ public class FollowTrajectoryToState implements Command {
     private PPSwerveControllerCommand swerveControllerCommand;
 
     public static final FieldPartition[] partitions = new FieldPartition[]{
-            new FieldPartition(
-                    3.9,
-                    2,
-                    new Waypoint(
-                            new Translation2d(0, 0.75),
-                            Rotation2d.fromDegrees(167.5)
-                    ),
-                    new Waypoint(
-                            new Translation2d(0, 4.75),
-                            Rotation2d.fromRotations(0.5)
-                    )),
+            Constants.FieldConstants.CHARGING_PAD_PARTITION
     };
 
     public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target, boolean avoidFieldElements) {
@@ -61,12 +52,12 @@ public class FollowTrajectoryToState implements Command {
         }
     }
 
-    public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target, FieldPartition... fieldPartitions) {
+    public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target, PathConstraints constraints, FieldPartition... fieldPartitions) {
         this.drivetrain = drivetrain;
         this.poseEstimation = poseEstimation;
         this.target = target;
 
-        trajectory = buildTrajectory(AutoConstants.DEFAULT_PATH_CONSTRAINTS, target, fieldPartitions);
+        trajectory = buildTrajectory(constraints, target, fieldPartitions);
     }
 
     public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target, boolean avoidFieldElements, FieldPartition... fieldPartitions) {
@@ -74,6 +65,18 @@ public class FollowTrajectoryToState implements Command {
                 drivetrain,
                 poseEstimation,
                 target,
+                AutoConstants.DEFAULT_PATH_CONSTRAINTS,
+                avoidFieldElements,
+                fieldPartitions
+        );
+    }
+
+    public FollowTrajectoryToState(Drivetrain drivetrain, PoseEstimation poseEstimation, PathPoint target, PathConstraints constraints, boolean avoidFieldElements, FieldPartition... fieldPartitions) {
+        this(
+                drivetrain,
+                poseEstimation,
+                target,
+                constraints,
                 avoidFieldElements ?
                         Stream.concat(Arrays.stream(partitions), Arrays.stream(fieldPartitions)).toArray(FieldPartition[]::new) :
                         fieldPartitions

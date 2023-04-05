@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 import frc.robot.poseestimation.PhotonVisionBackend;
 import frc.robot.utils.PieceDependent;
 
@@ -102,7 +103,7 @@ public final class Constants {
         public static final double LOW_CUBE_SCORING_DIST = 1;
 
         public static final double RAISING_BUFFER_TIME = 0.5;
-        public static final double INTAKING_BUFFER_TIME = 1;
+        public static final double INTAKING_BUFFER_TIME = 2;
 
         public static final double SAFE_RAISING_DISTANCE = 2.5;
         public static final double AUTO_RAISING_DISTANCE = 4;
@@ -111,7 +112,7 @@ public final class Constants {
 
         public static final double STOWED_CUBE_HEIGHT = 0.27;
         public static final double STOWED_CONE_HEIGHT = 0.07;
-        public static final double HIGH_CONE_HEIGHT = 1.35;
+        public static final double HIGH_CONE_HEIGHT = 1.37;
         public static final double HIGH_CUBE_HEIGHT = 1.33456;
         public static final double MID_CONE_HEIGHT = 1.04;
         public static final double MID_CUBE_HEIGHT = 1.04;
@@ -172,7 +173,7 @@ public final class Constants {
 
 
         // Scoring Angles
-        public static final Rotation2d SCORING_CONE_ANGLE = Rotation2d.fromRadians(-0.4);
+        public static final Rotation2d SCORING_CONE_ANGLE = Rotation2d.fromRadians(-0.6);
         public static final Rotation2d SCORING_CUBE_ANGLE = Rotation2d.fromDegrees(60);
 
         // Slide
@@ -256,7 +257,7 @@ public final class Constants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
         public static final double MAX_SPEED_METERS_PER_SECOND = 10;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 3;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
 
         public static final PathConstraints DEFAULT_PATH_CONSTRAINTS = new PathConstraints(
                 MAX_SPEED_METERS_PER_SECOND,
@@ -271,10 +272,7 @@ public final class Constants {
         public static final double TRANSLATION_TOLERANCE = 0.03;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
-        public static final PieceDependent<Transform2d> INTAKE_OFFSET = (piece) -> new Transform2d(
-                        new Translation2d(0.1, 0),
-                        new Rotation2d(Math.PI)
-                );
+        public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> 0.3;
 
         public static final Pose2d BALANCE_STARTING_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(5, 2.65), Rotation2d.fromRadians(Math.PI));
         public static final double LEAVE_COMMUNITY_DISTANCE = 6.0;
@@ -324,6 +322,20 @@ public final class Constants {
 
         public static final double PRESET_PIECE_X = 7.1;
         public static final double[] PRESET_PIECE_Y = new double[]{0.92, 2.14, 3.36, 4.57};
+
+        public static final FollowTrajectoryToState.FieldPartition CHARGING_PAD_PARTITION = new FollowTrajectoryToState.FieldPartition(
+                3.9,
+                2,
+                new FollowTrajectoryToState.Waypoint(
+                        new Translation2d(0, 0.75),
+                        Rotation2d.fromDegrees(167.5),
+                        1
+                ),
+                new FollowTrajectoryToState.Waypoint(
+                        new Translation2d(0, 4.75),
+                        Rotation2d.fromRotations(0.5)
+                )
+        );
 
         public static class Grids {
 
