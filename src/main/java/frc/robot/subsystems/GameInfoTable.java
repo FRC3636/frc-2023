@@ -45,6 +45,11 @@ public class GameInfoTable extends SubsystemBase {
             false,
             NetworkTableValue::makeBoolean
     );
+    private final CachedVal<Boolean> holding = new CachedVal<>(
+            "holding",
+            false,
+            NetworkTableValue::makeBoolean
+    );
 
     public GameInfoTable() {}
 
@@ -54,6 +59,7 @@ public class GameInfoTable extends SubsystemBase {
         this.alliance.setValue(DriverStation.getAlliance());
         this.matchType.setValue(DriverStation.getMatchType());
         this.estopped.setValue(DriverStation.isEStopped());
+        this.holding.setValue(RobotContainer.arm.getRollers().isHoldingGamePiece());
 
         this.time.setValue(DriverStation.getMatchTime());
     }
