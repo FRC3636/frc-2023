@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.PathConstraints;
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.*;
@@ -15,12 +16,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 import frc.robot.poseestimation.PhotonVisionBackend;
-import frc.robot.poseestimation.PhotonVisionBackend;
 import frc.robot.utils.PieceDependent;
 
-import javax.xml.crypto.dsig.Transform;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 public final class Constants {
     public static class ControlConstants {
@@ -112,7 +110,7 @@ public final class Constants {
         public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
 
         public static final double STOWED_CUBE_HEIGHT = 0.27;
-        public static final double STOWED_CONE_HEIGHT = 0.07;
+        public static final double STOWED_CONE_HEIGHT = 0.05;
         public static final double HIGH_CONE_HEIGHT = 1.37;
         public static final double HIGH_CUBE_HEIGHT = 1.33456;
         public static final double MID_CONE_HEIGHT = 1.04;
@@ -121,7 +119,7 @@ public final class Constants {
         public static final double LOW_CUBE_HEIGHT = 0.5;
         public static final double SLIDE_CONE_HEIGHT = 0.71;
         public static final double SLIDE_CUBE_HEIGHT = 0.90;
-        public static final double TELLER_CONE_HEIGHT = 1.25;
+        public static final double TELLER_CONE_HEIGHT = 1.35;
         public static final double TELLER_CUBE_HEIGHT = 1.27;
     }
 
@@ -149,7 +147,6 @@ public final class Constants {
 
     public static class Wrist {
         public static final int ID = 3;
-        public static final int LIMIT_SWITCH = 0;
 
         public static final double GEAR_RATIO = 1.0 / 75.0;
 
@@ -168,7 +165,7 @@ public final class Constants {
         public static final Rotation2d STOWED_WRIST_ANGLE = Rotation2d.fromDegrees(45);
 
         // Intaking Angles
-        public static final Rotation2d STANDING_CONE_INTAKE_ANGLE = Rotation2d.fromDegrees(-60);
+        public static final Rotation2d STANDING_CONE_INTAKE_ANGLE = Rotation2d.fromDegrees(-68);
         public static final Rotation2d CUBE_INTAKE_ANGLE = Rotation2d.fromDegrees(30);
         public static final Rotation2d TIPPED_CONE_ANGLE = Rotation2d.fromRadians(-0.3);
 
@@ -275,7 +272,22 @@ public final class Constants {
 
         public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> 0.3;
 
-        public static final Pose2d BALANCE_STARTING_POINT_ALLIANCE_RELATIVE = new Pose2d(new Translation2d(5, 2.65), Rotation2d.fromRadians(Math.PI));
+        public static final double BALANCE_X_POSITION = 3.9;
+        public static final FollowTrajectoryToState.FieldPartition BALANCING_INNER_PARTITION = new FollowTrajectoryToState.FieldPartition(
+                3.4,
+                2,
+                new FollowTrajectoryToState.Waypoint(new Translation2d(0, 2.2)),
+                new FollowTrajectoryToState.Waypoint(new Translation2d(0, 2.75)),
+                new FollowTrajectoryToState.Waypoint(new Translation2d(0, 3.3))
+        );
+        public static final FollowTrajectoryToState.FieldPartition BALANCING_OUTER_PARTITION = new FollowTrajectoryToState.FieldPartition(
+                4.4,
+                2,
+                new FollowTrajectoryToState.Waypoint(new Translation2d(0, 2.2)),
+                new FollowTrajectoryToState.Waypoint(new Translation2d(0, 2.75)),
+                new FollowTrajectoryToState.Waypoint(new Translation2d(0, 3.3))
+        );
+        public static final Pair<Double, Double> BALANCE_STARTING_Y = new Pair<>(2.0, 3.5);
         public static final double LEAVE_COMMUNITY_DISTANCE = 6.0;
         public static final double NODE_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
     }
@@ -288,12 +300,12 @@ public final class Constants {
         // FIXME: actually measure these constants
 
         public static final Transform3d BACK_CAM_TRANSFORM = new Transform3d(
-                new Translation3d(-0.127869, 0.060930, -0.463550),
+                new Translation3d(-0.132869, 0.060930, -0.463550),
                 new Rotation3d(0, 0, Math.PI)
         );
 
         public static final Transform3d LEFT_CAM_TRANSFORM = new Transform3d(
-                new Translation3d(.255, 0.229, -0.245),
+                new Translation3d(.218, 0.231, -0.25),
                 new Rotation3d(0, Units.degreesToRadians(15), 0)
         );
 

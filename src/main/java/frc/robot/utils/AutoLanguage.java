@@ -7,7 +7,8 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.commands.autonomous.Balance;
+import frc.robot.commands.Balance;
+import frc.robot.commands.autonomous.AutoBalance;
 import frc.robot.commands.autonomous.AutoIntake;
 import frc.robot.commands.autonomous.AutoScore;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToPose;
@@ -51,22 +52,7 @@ public class AutoLanguage {
                 return new InstantCommand(() -> RobotContainer.arm.setGamePiece(scorePiece)).
                         andThen(new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node));
             case "balance":
-                SequentialCommandGroup command = new SequentialCommandGroup();
-
-                Pose2d balanceStartPose = AllianceUtils.allianceToField(Constants.AutoConstants.BALANCE_STARTING_POINT_ALLIANCE_RELATIVE);
-                PathPoint balanceStartPoint = new PathPoint(balanceStartPose.getTranslation(), balanceStartPose.getRotation());
-
-                command.addCommands(
-                        new GenerateCommand(
-                                () -> new FollowTrajectoryToState(RobotContainer.drivetrain, RobotContainer.poseEstimation, balanceStartPoint, false),
-                                Set.of(RobotContainer.drivetrain)
-                        )
-                );
-
-                command.addCommands(
-                        new Balance(RobotContainer.drivetrain)
-                );
-                return command;
+                return new AutoBalance(RobotContainer.drivetrain, RobotContainer.poseEstimation);
             case "leave_community":
                 PathingMode pathingMode = parsePathingMode(tokens[1]);
                 Pose2d leaveCommunityPoint = AllianceUtils.allianceToField(
