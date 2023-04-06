@@ -191,7 +191,7 @@ public class Arm extends SubsystemBase {
 
     public Rotation2d getWristAngleFromState(State state) {
         if(target.getShoulderOverride().isPresent()) {
-            if(rollerState == Rollers.State.Off) {
+            if(rollerState != Rollers.State.Intake) {
                 return target.getWristAngleFor(gamePiece);
             }
             return Wrist.getWristAngleFromHeight(state.getHeightFor(gamePiece), state.getShoulderOverride().get().plus(temporaryAngleOffset));
