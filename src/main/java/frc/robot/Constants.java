@@ -117,7 +117,7 @@ public final class Constants {
         public static final double MID_CUBE_HEIGHT = 1.04;
         public static final double LOW_CONE_HEIGHT = 0.35;
         public static final double LOW_CUBE_HEIGHT = 0.5;
-        public static final double SLIDE_CONE_HEIGHT = 0.71;
+        public static final double SLIDE_CONE_HEIGHT = .49;
         public static final double SLIDE_CUBE_HEIGHT = 0.90;
         public static final double TELLER_CONE_HEIGHT = 1.35;
         public static final double TELLER_CUBE_HEIGHT = 1.27;
@@ -175,7 +175,7 @@ public final class Constants {
         public static final Rotation2d SCORING_CUBE_ANGLE = Rotation2d.fromDegrees(60);
 
         // Slide
-        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromRadians(0.960988);
+        public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromDegrees(51);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
 
         public static final double HORIZONTAL_TO_CORNER_ANGLE = 0.2985176246;
