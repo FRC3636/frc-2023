@@ -6,6 +6,7 @@ import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.commands.Balance;
 import frc.robot.utils.GamePiece;
 
 import java.util.Objects;
@@ -50,6 +51,11 @@ public class GameInfoTable extends SubsystemBase {
             false,
             NetworkTableValue::makeBoolean
     );
+    private final CachedVal<Boolean> balanced = new CachedVal<>(
+            "balanced",
+            false,
+            NetworkTableValue::makeBoolean
+    );
 
     public GameInfoTable() {}
 
@@ -60,12 +66,15 @@ public class GameInfoTable extends SubsystemBase {
         this.matchType.setValue(DriverStation.getMatchType());
         this.estopped.setValue(DriverStation.isEStopped());
         this.holding.setValue(RobotContainer.arm.getRollers().isHoldingGamePiece());
-
         this.time.setValue(DriverStation.getMatchTime());
     }
 
     public void setStage(GameStage s) {
         stage.setValue(s);
+    }
+
+    public void setBalanced(boolean balanced) {
+        this.balanced.setValue(balanced);
     }
 
     public enum GameStage {

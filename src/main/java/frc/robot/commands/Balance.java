@@ -1,4 +1,4 @@
-package frc.robot.commands.autonomous;
+package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.GameInfoTable;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 import java.util.Set;
@@ -66,6 +68,13 @@ public class Balance implements Command {
         Translation2d driveVelocity = ascent.div(ascent.getNorm()).times(driveSpeed);
 
         drivetrain.drive(new ChassisSpeeds(driveVelocity.getX(), driveVelocity.getY(), 0));
+
+        if(
+                incline.getRadians() <= Constants.DriveConstants.CHARGE_TOLERANCE.getRadians() &&
+                deltaIncline.getRadians() <= Constants.DriveConstants.CHARGE_ANGULAR_VELOCITY_TOLERANCE.getRadians()
+        ) {
+            RobotContainer.gameInfo.setBalanced(true);
+        }
     }
     
     private Translation2d getAscentChassisRelative() {
@@ -92,5 +101,10 @@ public class Balance implements Command {
     @Override
     public Set<Subsystem> getRequirements() {
         return Set.of(drivetrain);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        RobotContainer.gameInfo.setBalanced(false);
     }
 }
