@@ -55,12 +55,10 @@ public class AutoLanguage {
                 return new AutoBalance(RobotContainer.drivetrain, RobotContainer.poseEstimation);
             case "leave_community":
                 PathingMode pathingMode = parsePathingMode(tokens[1]);
-                Pose2d leaveCommunityPoint = AllianceUtils.allianceToField(
-                        new Pose2d(
-                                Constants.AutoConstants.LEAVE_COMMUNITY_DISTANCE,
-                                RobotContainer.poseEstimation.getEstimatedPose().getY(),
-                                RobotContainer.poseEstimation.getEstimatedPose().getRotation()
-                        )
+                Pose2d leaveCommunityPoint = new Pose2d(
+                        AllianceUtils.allianceToField(Constants.AutoConstants.LEAVE_COMMUNITY_DISTANCE),
+                        RobotContainer.poseEstimation.getEstimatedPose().getY(),
+                        RobotContainer.poseEstimation.getEstimatedPose().getRotation()
                 );
 
                 return new GenerateCommand(
