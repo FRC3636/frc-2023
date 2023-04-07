@@ -103,7 +103,7 @@ public final class Constants {
         public static final double LOW_CUBE_SCORING_DIST = 1;
 
         public static final double TELLER_INTAKE_DIST = 1;
-        public static final double DROPPER_INTAKE_DIST = 1;
+        public static final double SLIDE_INTAKE_DIST = 1;
 
         public static final double RAISING_BUFFER_TIME = 0.5;
         public static final double INTAKING_BUFFER_TIME = 2;
@@ -294,7 +294,9 @@ public final class Constants {
         public static final Pair<Double, Double> BALANCE_STARTING_Y = new Pair<>(2.0, 3.5);
         public static final double LEAVE_COMMUNITY_DISTANCE = 6.0;
         public static final double NODE_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
-        public static final double SUBSTATION_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
+        public static final double SLIDE_ALIGNMENT_CONTROL_HANDLE_LENGTH = 0.5;
+        public static final double TELLER_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
+
     }
 
     public static final class NeoMotorConstants {
@@ -402,12 +404,10 @@ public final class Constants {
             }
         }
 
-        public static final Pose2d[] SINGLE_SUBSTATION_POSES = new Pose2d[] {
-                new Pose2d(
+        public static final Pose2d SINGLE_SUBSTATION_POSE = new Pose2d(
                         new Translation2d(14.218, 8.103),
                         new Rotation2d(Math.PI / 2)
-                )
-        };
+        );
 
         public static final Pose2d[] DOUBLE_SUBSTATION_POSES = new Pose2d[]{
                 new Pose2d(
