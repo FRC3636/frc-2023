@@ -4,12 +4,9 @@
 
 package frc.robot.subsystems.drivetrain;
 
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.*;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -41,6 +38,9 @@ public class MAXSwerveModule implements SwerveModule {
         // them. This is useful in case a SPARK MAX is swapped out.
         drivingSparkMax.restoreFactoryDefaults();
         turningSparkMax.restoreFactoryDefaults();
+
+        // Set Status5 Reading Rate
+        turningSparkMax.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus5, 20);
 
         // Setup encoders and PID controllers for the driving and turning SPARKS MAX.
         drivingEncoder = drivingSparkMax.getEncoder();
