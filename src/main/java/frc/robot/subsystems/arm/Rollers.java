@@ -12,7 +12,7 @@ import frc.robot.utils.GamePiece;
 
 public class Rollers {
     private Rollers.State rollerState = Rollers.State.Off;
-    private GamePiece gamePiece = GamePiece.Cone;
+    private GamePiece gamePiece = GamePiece.Cube;
 
     private Ultrasonic ultrasonic = new Ultrasonic(Constants.Rollers.PING_CHANNEL, Constants.Rollers.ECHO_CHANNEL);
 
