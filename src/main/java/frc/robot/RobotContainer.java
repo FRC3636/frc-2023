@@ -25,7 +25,7 @@ import frc.robot.commands.ArmHoldCommand;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.MoveNodeSelection;
 import frc.robot.commands.MoveNodeSelection.MovementDirection;
-import frc.robot.commands.alignment.AlignToClosestNode;
+import frc.robot.commands.alignment.AlignToClosestElement;
 import frc.robot.commands.alignment.AlignToSelectedNode;
 import frc.robot.commands.Balance;
 import frc.robot.poseestimation.PoseEstimation;
@@ -184,6 +184,8 @@ public class RobotContainer {
                         )
                 );
 
+        new JoystickButton(joystickRight, 2).whileTrue(new AlignToClosestElement(drivetrain, arm, poseEstimation));
+
 
         // Auto
         new JoystickButton(joystickLeft, 2)
@@ -223,8 +225,6 @@ public class RobotContainer {
                         arm.setRollerState(Rollers.State.Off);
                     }
                 }));
-
-        new JoystickButton(joystickRight, 2).whileTrue(new AlignToClosestNode(drivetrain, arm, poseEstimation));
 
         // Arm Control
         new JoystickButton(controller, XboxController.Button.kLeftBumper.value)
