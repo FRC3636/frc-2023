@@ -39,8 +39,8 @@ public class AlignToClosestElement extends GenerateCommand {
                                 Double.POSITIVE_INFINITY
                         );
                     } else {
-                        Transform2d tellerTransform = new Transform2d(new Translation2d(-Constants.Arm.TELLER_INTAKE_DIST, 0), new Rotation2d());
-                        Transform2d slideTransform = new Transform2d(new Translation2d(-Constants.Arm.SLIDE_INTAKE_DIST, 0), new Rotation2d());
+                        Transform2d tellerTransform = new Transform2d(new Translation2d(-Constants.Arm.TELLER_INTAKE_DIST.get(arm.getGamePiece()), 0), new Rotation2d());
+                        Transform2d slideTransform = new Transform2d(new Translation2d(-Constants.Arm.SLIDE_INTAKE_DIST.get(arm.getGamePiece()), 0), new Rotation2d());
 
 
 

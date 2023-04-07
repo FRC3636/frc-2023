@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 import frc.robot.poseestimation.PhotonVisionBackend;
+import frc.robot.utils.GamePiece;
 import frc.robot.utils.PieceDependent;
 
 import java.util.Map;
@@ -102,8 +103,8 @@ public final class Constants {
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
 
-        public static final double TELLER_INTAKE_DIST = 1;
-        public static final double SLIDE_INTAKE_DIST = 1;
+        public static final PieceDependent<Double> TELLER_INTAKE_DIST = (piece) -> 1.0;
+        public static final PieceDependent<Double> SLIDE_INTAKE_DIST = (piece) -> piece == GamePiece.Cone ? Units.inchesToMeters(19) : Units.inchesToMeters(30);
 
         public static final double RAISING_BUFFER_TIME = 0.5;
         public static final double INTAKING_BUFFER_TIME = 2;
