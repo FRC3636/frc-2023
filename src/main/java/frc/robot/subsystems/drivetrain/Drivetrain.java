@@ -26,9 +26,11 @@ public class Drivetrain extends SubsystemBase {
     // Create MAXSwerveModules
     private final SwerveModules swerveModules;
 
-    // The gyro sensor
-    private final Gyro gyro;
+    private final NavXGyro navXGyro;
+    private final SIMGyro simGyro;
 
+    // The gyro sensor
+    private Gyro gyro;
     /**
      * Creates a new DriveSubsystem.
      */
@@ -65,7 +67,10 @@ public class Drivetrain extends SubsystemBase {
             );
         }
 
-        gyro = (RobotBase.isReal() ? new NavXGyro() : new SIMGyro(swerveModules));
+        navXGyro = new NavXGyro();
+        simGyro = new SIMGyro(swerveModules);
+
+        gyro = (RobotBase.isReal() ? navXGyro : simGyro);
 
         RobotContainer.swerveTab.addNumber("Front Left", swerveModules.frontLeft::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
         RobotContainer.swerveTab.addNumber("Front Right", swerveModules.frontRight::getSwerveEncoderPosition).withWidget(BuiltInWidgets.kGraph);
@@ -77,6 +82,8 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        gyro = (RobotBase.isSimulation() || !navXGyro.isConnected()) ? simGyro : navXGyro;
+
         RobotContainer.poseEstimation.updateOdometry(
                 getRotation(),
                 getModulePositions()
