@@ -23,7 +23,7 @@ import java.util.Optional;
 public class Arm extends SubsystemBase {
 
     private State target = State.Stowed;
-    private GamePiece gamePiece = GamePiece.Cone;
+    private GamePiece gamePiece = GamePiece.Cube;
     private Rollers.State rollerState = Rollers.State.Off;
 
     private final Shoulder shoulder;
