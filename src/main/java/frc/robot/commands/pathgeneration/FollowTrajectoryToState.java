@@ -237,7 +237,7 @@ public class FollowTrajectoryToState implements Command {
         }
 
         private double getControlLength(double yOffset, double xOffset) {
-            return Math.max(Math.min(partitionWidth * 1.25, Math.pow(yOffset * 2, 3) + xOffset / 3), 0.1);
+            return Math.max(Math.min(partitionWidth * 1.25, Math.pow(yOffset * 2, 3) + xOffset / 4), 0.1);
         }
     }
 

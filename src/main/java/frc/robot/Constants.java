@@ -298,6 +298,7 @@ public final class Constants {
         public static final double SLIDE_ALIGNMENT_CONTROL_HANDLE_LENGTH = 0.5;
         public static final double TELLER_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
 
+        public static final double INTAKE_CONTROL_HANDLE = 2.5;
     }
 
     public static final class NeoMotorConstants {

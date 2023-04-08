@@ -4,10 +4,13 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.networktables.GenericEntry;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotContainer;
 
 public class NavXGyro implements Gyro{
     private final AHRS navX = new AHRS();
+    private GenericEntry gyroAdjustment = RobotContainer.swerveTab.add("Gyro Adjustment", -2).getEntry();
 
     public NavXGyro() {
         navX.calibrate();
@@ -21,7 +24,7 @@ public class NavXGyro implements Gyro{
 
     @Override
     public Rotation2d getAngle() {
-        return navX.getRotation2d().rotateBy(getRate().times(1));
+        return navX.getRotation2d().rotateBy(getRate().times(gyroAdjustment.getDouble(-2)));
     }
 
     @Override
