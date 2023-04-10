@@ -2,6 +2,7 @@ package frc.robot.utils;
 
 import com.pathplanner.lib.PathPoint;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.*;
@@ -13,6 +14,7 @@ import frc.robot.commands.autonomous.AutoIntake;
 import frc.robot.commands.autonomous.AutoScore;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToPose;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
+import frc.robot.subsystems.arm.Rollers;
 
 import java.util.Optional;
 import java.util.Set;
@@ -68,6 +70,19 @@ public class AutoLanguage {
             case "wait":
                 double time = Double.parseDouble(tokens[1]);
                 return new WaitCommand(time);
+            case "drop":
+                return new GenerateCommand(
+                        () -> {
+                            FollowTrajectoryToPose driveCommand = new FollowTrajectoryToPose(
+                                    RobotContainer.drivetrain,
+                                    RobotContainer.poseEstimation,
+                                    AllianceUtils.allianceToField(new Pose2d(4.47, 0.70, Rotation2d.fromRotations(0.5))),
+                                    true);
+                            driveCommand.addTimedEvent(1, new InstantCommand(() -> RobotContainer.arm.setRollerState(Rollers.State.Outtake)));
+                            return driveCommand;
+                        },
+                        Set.of(RobotContainer.drivetrain)
+                );
             default:
                 throw new RuntimeException("Attempted to compile invalid statement of type: '" + tokens[0] + "'");
         }
