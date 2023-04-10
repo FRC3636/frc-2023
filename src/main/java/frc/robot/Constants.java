@@ -103,6 +103,9 @@ public final class Constants {
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
 
+        public static final double SHOOT_CONE_OPPOSITESIDE_DIST = 3.35;
+        public static final double SHOOT_CONE_CABLESIDE_DIST = 4.9;
+
         public static final PieceDependent<Double> TELLER_INTAKE_DIST = (piece) -> 1.0;
         public static final PieceDependent<Double> SLIDE_INTAKE_DIST = (piece) -> piece == GamePiece.Cone ? Units.inchesToMeters(19) : Units.inchesToMeters(30);
 
@@ -126,6 +129,8 @@ public final class Constants {
         public static final double SLIDE_CUBE_HEIGHT = 0.90;
         public static final double TELLER_CONE_HEIGHT = 1.35;
         public static final double TELLER_CUBE_HEIGHT = 1.27;
+        public static final double SHOOT_CUBE_HEIGHT = 1.35;
+        public static final double SHOOT_CONE_HEIGHT = 1.35;
     }
 
     public static class Shoulder {
@@ -178,7 +183,7 @@ public final class Constants {
         // Scoring Angles
         public static final Rotation2d SCORING_CONE_ANGLE = Rotation2d.fromRadians(-0.6);
         public static final Rotation2d SCORING_CUBE_ANGLE = Rotation2d.fromDegrees(60);
-
+        public static final Rotation2d SHOOTING_CUBE_ANGLE = Rotation2d.fromDegrees(90);
         // Slide
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromDegrees(51);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
@@ -194,6 +199,8 @@ public final class Constants {
         public static final double INTAKE_CUBE = 0.5;
         public static final double OUTTAKE_CONE = 0.5;
         public static final double OUTTAKE_CUBE = -.6;
+        public static final double SHOOT_CUBE = -1.0;
+        public static final double SHOOT_CONE = 1.0;
         public static final double HOLDING_PIECE_VELOCITY = 250;
 
         public static final int ECHO_CHANNEL = 1;
