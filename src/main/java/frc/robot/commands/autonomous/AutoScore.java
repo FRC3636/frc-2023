@@ -19,7 +19,7 @@ public class AutoScore extends SequentialCommandGroup {
                 new AlignToSelectedNode(drivetrain, arm, poseEstimation, targetNode, 0.75)
                         .raceWith(
                                 new SequentialCommandGroup(
-                                        new WaitUntilCommand(() -> drivetrain.getRelativeVelocity().getNorm() > 0.05),
+                                        new WaitUntilCommand(() -> drivetrain.getRelativeVelocity().getNorm() > 0.2),
                                         new WaitUntilCommand(() -> drivetrain.getRelativeVelocity().getNorm() < 0.05),
                                         new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake)),
                                         new WaitCommand(0.25),

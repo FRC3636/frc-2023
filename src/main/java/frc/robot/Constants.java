@@ -275,7 +275,7 @@ public final class Constants {
         public static final double TRANSLATION_TOLERANCE = 0.03;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
-        public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> 0.3;
+        public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> 0.2;
 
         public static final double BALANCE_X_POSITION = 3.9;
         public static final FollowTrajectoryToState.FieldPartition BALANCING_INNER_PARTITION = new FollowTrajectoryToState.FieldPartition(
