@@ -1,18 +1,23 @@
 package frc.robot.utils.autolang;
 
-import java.util.Iterator;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class Lexer {
-    private Iterator<Character> remainingChars;
+    private CharacterIterator remainingChars;
     private Optional<Character> lastChar;
     private SourceLocation sourceLoc;
 
-    public Lexer(Iterator<Character> chars) {
+    public Lexer(CharacterIterator chars) {
         this.remainingChars = chars;
         this.sourceLoc = new SourceLocation(0, 0);
         this.nextChar();
+    }
+
+    public Lexer(String tokString) {
+        this(new StringCharacterIterator(tokString));
     }
 
     public class SourceLocation {
