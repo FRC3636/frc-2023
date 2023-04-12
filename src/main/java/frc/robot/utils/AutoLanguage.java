@@ -53,6 +53,8 @@ public class AutoLanguage {
                 Node node = new Node(scorePiece, level, column, grid);
                 return new InstantCommand(() -> RobotContainer.arm.setGamePiece(scorePiece)).
                         andThen(new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node));
+            //case "shoot":
+            //    return new AutoShoot(RobotContainer.drivetrain, RobotContainer.poseEstimation);
             case "balance":
                 return new AutoBalance(RobotContainer.drivetrain, RobotContainer.poseEstimation);
             case "leave_community":
@@ -73,13 +75,18 @@ public class AutoLanguage {
             case "drop":
                 return new GenerateCommand(
                         () -> {
-                            FollowTrajectoryToPose driveCommand = new FollowTrajectoryToPose(
+                            Pose2d dropPose = AllianceUtils.allianceToField(new Pose2d(5.2, 0.7, Rotation2d.fromRotations(0.5)));
+                            FollowTrajectoryToState driveCommand = new FollowTrajectoryToState(
                                     RobotContainer.drivetrain,
                                     RobotContainer.poseEstimation,
-                                    AllianceUtils.allianceToField(new Pose2d(4.47, 0.70, Rotation2d.fromRotations(0.5))),
+                                    new PathPoint(
+                                            dropPose.getTranslation(),
+                                            dropPose.getRotation(),
+                                            dropPose.getRotation(),
+                                            2
+                                    ).withPrevControlLength(1.5),
                                     true);
-                            driveCommand.addTimedEvent(1, new InstantCommand(() -> RobotContainer.arm.setRollerState(Rollers.State.Outtake)));
-                            return driveCommand;
+                            return driveCommand.andThen(new InstantCommand(() -> RobotContainer.arm.setRollerState(Rollers.State.Outtake)));
                         },
                         Set.of(RobotContainer.drivetrain)
                 );
