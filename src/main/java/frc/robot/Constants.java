@@ -129,8 +129,8 @@ public final class Constants {
         public static final double SLIDE_CUBE_HEIGHT = 0.90;
         public static final double TELLER_CONE_HEIGHT = 1.35;
         public static final double TELLER_CUBE_HEIGHT = 1.27;
-        public static final double SHOOT_CUBE_HEIGHT = 1.35;
-        public static final double SHOOT_CONE_HEIGHT = 1.35;
+        public static final double SHOOT_CUBE_HEIGHT = 1.5708;
+        public static final double SHOOT_CONE_HEIGHT = 1.5708;
     }
 
     public static class Shoulder {
@@ -183,7 +183,8 @@ public final class Constants {
         // Scoring Angles
         public static final Rotation2d SCORING_CONE_ANGLE = Rotation2d.fromRadians(-0.6);
         public static final Rotation2d SCORING_CUBE_ANGLE = Rotation2d.fromDegrees(60);
-        public static final Rotation2d SHOOTING_CUBE_ANGLE = Rotation2d.fromDegrees(90);
+        public static final Rotation2d SHOOTING_CONE_ANGLE = Rotation2d.fromDegrees(17);
+        public static final Rotation2d SHOOTING_CUBE_ANGLE = Rotation2d.fromDegrees(117);
         // Slide
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromDegrees(51);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
