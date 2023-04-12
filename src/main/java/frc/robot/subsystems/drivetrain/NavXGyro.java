@@ -5,12 +5,14 @@ import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.GenericEntry;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 public class NavXGyro implements Gyro{
     private final AHRS navX = new AHRS();
-    private GenericEntry gyroAdjustment = RobotContainer.swerveTab.add("Gyro Adjustment", -2).getEntry();
+    private final GenericEntry gyroAdjustment = RobotContainer.swerveTab.add("Gyro Adjustment", DriveConstants.GYRO_ADJUSTMENT_RATE).getEntry();
 
     public NavXGyro() {
         navX.calibrate();
@@ -24,7 +26,7 @@ public class NavXGyro implements Gyro{
 
     @Override
     public Rotation2d getAngle() {
-        return navX.getRotation2d().rotateBy(getRate().times(gyroAdjustment.getDouble(-2)));
+        return navX.getRotation2d().rotateBy(getRate().times(gyroAdjustment.getDouble(Constants.DriveConstants.GYRO_ADJUSTMENT_RATE)));
     }
 
     @Override
@@ -55,6 +57,6 @@ public class NavXGyro implements Gyro{
 
     @Override
     public Rotation2d getRate() {
-        return Rotation2d.fromDegrees(navX.getRate());
+        return Rotation2d.fromDegrees(-navX.getRate() * 60);
     }
 }

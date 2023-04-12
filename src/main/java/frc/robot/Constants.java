@@ -86,6 +86,7 @@ public final class Constants {
 
         public static final double DEADZONE = 0.1;
 
+        public static final double GYRO_ADJUSTMENT_RATE = 0.017;
     }
 
     public static class Arm {
@@ -267,7 +268,7 @@ public final class Constants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
         public static final double MAX_SPEED_METERS_PER_SECOND = 10;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2.4;
 
         public static final PathConstraints DEFAULT_PATH_CONSTRAINTS = new PathConstraints(
                 MAX_SPEED_METERS_PER_SECOND,
@@ -305,7 +306,7 @@ public final class Constants {
         public static final double SLIDE_ALIGNMENT_CONTROL_HANDLE_LENGTH = 0.5;
         public static final double TELLER_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
 
-        public static final double INTAKE_CONTROL_HANDLE = 2.5;
+        public static final double INTAKE_CONTROL_HANDLE = 3;
     }
 
     public static final class NeoMotorConstants {
@@ -358,7 +359,7 @@ public final class Constants {
                 new FollowTrajectoryToState.Waypoint(
                         new Translation2d(0, 0.75),
                         Rotation2d.fromDegrees(167.5),
-                        1
+                        1.5
                 ),
                 new FollowTrajectoryToState.Waypoint(
                         new Translation2d(0, 4.75),
