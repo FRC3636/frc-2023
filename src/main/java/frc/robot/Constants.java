@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 import frc.robot.poseestimation.PhotonVisionBackend;
+import frc.robot.utils.GamePiece;
 import frc.robot.utils.PieceDependent;
 
 import java.util.Map;
@@ -85,7 +86,9 @@ public final class Constants {
 
         public static final double DEADZONE = 0.1;
 
+        public static final double GYRO_ADJUSTMENT_RATE = 0.017;
     }
+
     public static class Arm {
         public static final int UNLOCK_BUTTON_PORT = 2;
         public static final double HUMERUS_LENGTH = 0.969432;
@@ -100,6 +103,12 @@ public final class Constants {
 
         public static final double LOW_CONE_SCORING_DIST = 1.5;
         public static final double LOW_CUBE_SCORING_DIST = 1;
+
+        public static final double SHOOT_CONE_OPPOSITESIDE_DIST = 3.35;
+        public static final double SHOOT_CONE_CABLESIDE_DIST = 4.9;
+
+        public static final PieceDependent<Double> TELLER_INTAKE_DIST = (piece) -> 1.0;
+        public static final PieceDependent<Double> SLIDE_INTAKE_DIST = (piece) -> piece == GamePiece.Cone ? Units.inchesToMeters(19) : Units.inchesToMeters(30);
 
         public static final double RAISING_BUFFER_TIME = 0.5;
         public static final double INTAKING_BUFFER_TIME = 2;
@@ -121,6 +130,8 @@ public final class Constants {
         public static final double SLIDE_CUBE_HEIGHT = 0.90;
         public static final double TELLER_CONE_HEIGHT = 1.35;
         public static final double TELLER_CUBE_HEIGHT = 1.27;
+        public static final double SHOOT_CUBE_HEIGHT = 1.35;
+        public static final double SHOOT_CONE_HEIGHT = 1.35;
     }
 
     public static class Shoulder {
@@ -173,7 +184,7 @@ public final class Constants {
         // Scoring Angles
         public static final Rotation2d SCORING_CONE_ANGLE = Rotation2d.fromRadians(-0.6);
         public static final Rotation2d SCORING_CUBE_ANGLE = Rotation2d.fromDegrees(60);
-
+        public static final Rotation2d SHOOTING_CUBE_ANGLE = Rotation2d.fromDegrees(90);
         // Slide
         public static final Rotation2d SLIDE_CONE_ANGLE = Rotation2d.fromDegrees(51);
         public static final Rotation2d SLIDE_CUBE_ANGLE = Rotation2d.fromDegrees(107.388460);
@@ -189,6 +200,8 @@ public final class Constants {
         public static final double INTAKE_CUBE = 0.5;
         public static final double OUTTAKE_CONE = 0.5;
         public static final double OUTTAKE_CUBE = -.6;
+        public static final double SHOOT_CUBE = -1.0;
+        public static final double SHOOT_CONE = 1.0;
         public static final double HOLDING_PIECE_VELOCITY = 250;
 
         public static final int ECHO_CHANNEL = 1;
@@ -255,7 +268,7 @@ public final class Constants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
         public static final double MAX_SPEED_METERS_PER_SECOND = 10;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2.4;
 
         public static final PathConstraints DEFAULT_PATH_CONSTRAINTS = new PathConstraints(
                 MAX_SPEED_METERS_PER_SECOND,
@@ -270,7 +283,7 @@ public final class Constants {
         public static final double TRANSLATION_TOLERANCE = 0.03;
         public static final Rotation2d THETA_TOLERANCE = Rotation2d.fromDegrees(1);
 
-        public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> 0.3;
+        public static final PieceDependent<Double> INTAKE_OFFSET = (piece) -> 0.2;
 
         public static final double BALANCE_X_POSITION = 3.9;
         public static final FollowTrajectoryToState.FieldPartition BALANCING_INNER_PARTITION = new FollowTrajectoryToState.FieldPartition(
@@ -290,6 +303,10 @@ public final class Constants {
         public static final Pair<Double, Double> BALANCE_STARTING_Y = new Pair<>(2.0, 3.5);
         public static final double LEAVE_COMMUNITY_DISTANCE = 6.0;
         public static final double NODE_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
+        public static final double SLIDE_ALIGNMENT_CONTROL_HANDLE_LENGTH = 0.5;
+        public static final double TELLER_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
+
+        public static final double INTAKE_CONTROL_HANDLE = 3;
     }
 
     public static final class NeoMotorConstants {
@@ -342,7 +359,7 @@ public final class Constants {
                 new FollowTrajectoryToState.Waypoint(
                         new Translation2d(0, 0.75),
                         Rotation2d.fromDegrees(167.5),
-                        1
+                        1.5
                 ),
                 new FollowTrajectoryToState.Waypoint(
                         new Translation2d(0, 4.75),
@@ -396,6 +413,22 @@ public final class Constants {
                 }
             }
         }
+
+        public static final Pose2d SINGLE_SUBSTATION_POSE = new Pose2d(
+                        new Translation2d(14.218, 8.103),
+                        new Rotation2d(Math.PI / 2)
+        );
+
+        public static final Pose2d[] DOUBLE_SUBSTATION_POSES = new Pose2d[]{
+                new Pose2d(
+                        new Translation2d(16.189, 6.170),
+                        new Rotation2d()
+                ),
+                new Pose2d(
+                        new Translation2d(16.189, 7.330),
+                        new Rotation2d()
+                )
+        };
 
         public static final Map<Integer, Pose3d> aprilTags =
                 Map.of(
