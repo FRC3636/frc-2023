@@ -268,7 +268,7 @@ public final class Constants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
         public static final double MAX_SPEED_METERS_PER_SECOND = 10;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2.5;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
 
         public static final double STOPPED_SPEED_THRESHOLD = 0.4;
 
