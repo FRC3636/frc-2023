@@ -1,9 +1,9 @@
 package frc.robot.subsystems.arm;
 
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -14,7 +14,7 @@ public class Rollers {
     private Rollers.State rollerState = Rollers.State.Off;
     private GamePiece gamePiece = GamePiece.Cube;
 
-    private Ultrasonic ultrasonic = new Ultrasonic(Constants.Rollers.PING_CHANNEL, Constants.Rollers.ECHO_CHANNEL);
+    private TimeOfFlight TOF = new TimeOfFlight(0);
 
     private final CANSparkMax motor = new CANSparkMax(Constants.Rollers.ID, CANSparkMaxLowLevel.MotorType.kBrushless);
     private boolean holdingGamePiece = false;
@@ -22,11 +22,10 @@ public class Rollers {
     public Rollers() {
         motor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         motor.restoreFactoryDefaults();
-        ultrasonic.setEnabled(true);
-        Ultrasonic.setAutomaticMode(true);
+        TOF.setRangingMode(RangingMode.Short, 100);
         RobotContainer.armTab.addBoolean("Holding Game Piece", this::isHoldingGamePiece);
 
-        RobotContainer.armTab.add("Ultrasonic", ultrasonic);
+        RobotContainer.armTab.addDouble("Gamepiece distance", TOF::getRange);
     }
 
     public void setRollerState(State rollerState) {
@@ -34,10 +33,10 @@ public class Rollers {
     }
 
     public double getGamePieceOffset() {
-        if(!ultrasonic.isRangeValid() || gamePiece == GamePiece.Cube) {
+        if(!TOF.isRangeValid() || gamePiece == GamePiece.Cube) {
             return 0;
         }
-        return (Constants.Rollers.INTAKE_WIDTH / 2) - (Units.inchesToMeters(ultrasonic.getRangeInches()) + Constants.Rollers.CONE_WIDTH / 2);
+        return (Constants.Rollers.INTAKE_WIDTH / 2) - (TOF.getRange()/1000 + Constants.Rollers.CONE_WIDTH / 2);
     }
 
     public void setGamePiece(GamePiece gamePiece) {
@@ -49,7 +48,7 @@ public class Rollers {
     }
 
     public boolean isHoldingGamePiece() {
-        return Units.inchesToMeters(ultrasonic.getRangeInches()) < Constants.Rollers.INTAKE_WIDTH  - 0.05 || Robot.isSimulation();
+        return TOF.getRange()/1000 < Constants.Rollers.INTAKE_WIDTH  - 0.05 || Robot.isSimulation();
     }
 
     public void periodic() {
@@ -58,7 +57,7 @@ public class Rollers {
             holdingGamePiece = Math.abs(motor.getEncoder().getVelocity()) < Constants.Rollers.HOLDING_PIECE_VELOCITY;
         }
 
-        SmartDashboard.putNumber("Ultrasonic Sensor", getGamePieceOffset());
+        SmartDashboard.putNumber("Gamepiece Sensor", getGamePieceOffset());
     }
 
     public enum State {
