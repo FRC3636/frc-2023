@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.ArmMoveCommand;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
@@ -54,18 +55,17 @@ public class AlignToSelectedNode implements Command {
         Arm.State targetArmState = Arm.State.getTargetFromNode(targetNode.get());
         DriveToNode driveCommand = new DriveToNode(this.drivetrain, this.poseEstimation, targetNode.get().getWithGamePiece(arm.getRollers().getGamePieceOffset()), pidDeadline);
 
+        double armMoveDelay =
+                driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
+                (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME);
+
         if(AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) > Constants.FieldConstants.fieldLength / 2) {
             command = new InstantCommand();
             command.initialize();
             return;
         }
-
         if(
-                (
-                        driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() < ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME
-                        ||
-                        AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) < Constants.Arm.SAFE_RAISING_DISTANCE
-                )
+                AllianceUtils.getDistanceFromAlliance(poseEstimation.getEstimatedPose()) < Constants.Arm.SAFE_RAISING_DISTANCE
                 && ArmMoveCommand.pathIntersectsChargeStation(targetArmState, arm)
         ) {
             Pose2d initial = poseEstimation.getEstimatedPose();
@@ -98,12 +98,19 @@ public class AlignToSelectedNode implements Command {
                     })
             );
         }
+        else if(
+                armMoveDelay < 0
+        ) {
+            command = driveCommand.beforeStarting(
+                    new WaitCommand(-armMoveDelay)
+                            .alongWith(new InstantCommand(() -> arm.setTarget(targetArmState)))
+            );
+        }
         else {
             command = driveCommand;
 
             driveCommand.getTrajectoryCommand().addTimedEvent(
-                    driveCommand.trajectoryCommand.trajectory.getTotalTimeSeconds() -
-                            (ArmMoveCommand.generateProfile(targetArmState, arm).totalTime() + Constants.Arm.RAISING_BUFFER_TIME),
+                    armMoveDelay,
                     new InstantCommand(() -> arm.setTarget(targetArmState))
             );
 
