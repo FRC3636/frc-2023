@@ -20,7 +20,7 @@ public class AutoScore extends SequentialCommandGroup {
                         .raceWith(
                                 new SequentialCommandGroup(
                                         new WaitCommand(1),
-                                        new WaitUntilCommand(() -> drivetrain.getRelativeVelocity().getNorm() < 0.4),
+                                        new WaitUntilCommand(() -> drivetrain.getRelativeVelocity().getNorm() < Constants.AutoConstants.STOPPED_SPEED_THRESHOLD),
                                         new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake)),
                                         new WaitCommand(0.25),
                                         new InstantCommand(() -> arm.setRollerState(Rollers.State.Off))

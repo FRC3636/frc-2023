@@ -38,7 +38,7 @@ public class AutoIntake extends GenerateCommand {
                             drivetrain,
                             poseEstimation,
                             getTargetPoint(index, piece, poseEstimation.getEstimatedPose()),
-                            new PathConstraints(7, 2.3),
+                            new PathConstraints(7, 2.5),
                             avoidFieldElements,
                             gamePiecePartition);
                     driveCommand.addTimedEvent(

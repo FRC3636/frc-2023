@@ -114,7 +114,7 @@ public final class Constants {
         public static final double INTAKING_BUFFER_TIME = 2;
 
         public static final double SAFE_RAISING_DISTANCE = 2.5;
-        public static final double AUTO_RAISING_DISTANCE = 4;
+        public static final double AUTO_RAISING_DISTANCE = 4.5;
 
         public static final Translation2d RELATIVE_WRIST_POSE = new Translation2d(0, -HUMERUS_LENGTH);
 
@@ -268,7 +268,9 @@ public final class Constants {
         public static final String DEFAULT_PROGRAM = "score cube closest low cube;";
 
         public static final double MAX_SPEED_METERS_PER_SECOND = 10;
-        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2.4;
+        public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2.5;
+
+        public static final double STOPPED_SPEED_THRESHOLD = 0.4;
 
         public static final PathConstraints DEFAULT_PATH_CONSTRAINTS = new PathConstraints(
                 MAX_SPEED_METERS_PER_SECOND,
@@ -305,6 +307,12 @@ public final class Constants {
         public static final double NODE_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
         public static final double SLIDE_ALIGNMENT_CONTROL_HANDLE_LENGTH = 0.5;
         public static final double TELLER_ALIGNMENT_CONTROL_HANDLE_LENGTH = 1;
+
+        public static final Pose2d[] GAME_PIECE_DROP_POSITIONS = new Pose2d[] {
+                new Pose2d(5.2, 0.75, Rotation2d.fromRotations(0.5)),
+                new Pose2d(5.2, 4.75, Rotation2d.fromRotations(0.5))
+
+        };
 
         public static final double INTAKE_CONTROL_HANDLE = 3;
     }

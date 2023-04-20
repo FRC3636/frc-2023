@@ -116,7 +116,7 @@ public class FollowTrajectoryToState implements Command {
         waypoints.add(
                 new PathPoint(
                         initial.getTranslation(),
-                        initialV.getNorm() < 0.1 ?
+                        initialV.getNorm() < AutoConstants.STOPPED_SPEED_THRESHOLD ?
                                 target.position.minus(initial.getTranslation()).getAngle() :
                                 initialV.getAngle(),
                         initial.getRotation(),
