@@ -12,6 +12,7 @@ import frc.robot.commands.Balance;
 import frc.robot.commands.autonomous.AutoBalance;
 import frc.robot.commands.autonomous.AutoIntake;
 import frc.robot.commands.autonomous.AutoScore;
+import frc.robot.commands.autonomous.DropGamePiece;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToPose;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 import frc.robot.subsystems.arm.Rollers;
@@ -71,23 +72,8 @@ public class AutoLanguage {
                 double time = Double.parseDouble(tokens[1]);
                 return new WaitCommand(time);
             case "drop":
-                return new GenerateCommand(
-                        () -> {
-                            Pose2d dropPose = AllianceUtils.allianceToField(new Pose2d(5.2, 0.7, Rotation2d.fromRotations(0.5)));
-                            FollowTrajectoryToState driveCommand = new FollowTrajectoryToState(
-                                    RobotContainer.drivetrain,
-                                    RobotContainer.poseEstimation,
-                                    new PathPoint(
-                                            dropPose.getTranslation(),
-                                            dropPose.getRotation(),
-                                            dropPose.getRotation(),
-                                            2
-                                    ).withPrevControlLength(1.5),
-                                    true);
-                            return driveCommand.andThen(new InstantCommand(() -> RobotContainer.arm.setRollerState(Rollers.State.Outtake)));
-                        },
-                        Set.of(RobotContainer.drivetrain)
-                );
+                int dropIndex = Integer.parseInt(tokens[1]) - 1;
+                return new DropGamePiece(dropIndex, RobotContainer.drivetrain);
             default:
                 throw new RuntimeException("Attempted to compile invalid statement of type: '" + tokens[0] + "'");
         }
