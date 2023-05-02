@@ -1,12 +1,16 @@
 package frc.robot.poseestimation;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
@@ -73,7 +77,7 @@ public class PoseEstimation {
                 backends[i].getMeasurement().map((measurement) -> {
                     measurement.timestamp += timestampOffset;
                     return measurement;
-                }).ifPresent(this::addVisionMeasurement);
+                }).ifPresent(this::addPredictionMeasurement);
             }
         }
 
@@ -125,11 +129,23 @@ public class PoseEstimation {
         poseEstimator.resetPosition(RobotContainer.drivetrain.getRotation(), RobotContainer.drivetrain.getModulePositions(), pose);
     }
 
-    private void addVisionMeasurement(VisionBackend.Measurement measurement) {
+    public void addPredictionMeasurement(Measurement measurement) {
         poseEstimator.addVisionMeasurement(measurement.pose.toPose2d(), measurement.timestamp, measurement.stdDeviation);
     }
 
     private static double translationDot(Translation2d a, Translation2d b) {
         return a.getX() * b.getX() + a.getY() * b.getY();
+    }
+
+    public static class Measurement {
+        public double timestamp;
+        public Pose3d pose;
+        public Matrix<N3, N1> stdDeviation;
+
+        public Measurement(double timestamp, Pose3d pose, Matrix<N3, N1> stdDeviation) {
+            this.timestamp = timestamp;
+            this.pose = pose;
+            this.stdDeviation = stdDeviation;
+        }
     }
 }

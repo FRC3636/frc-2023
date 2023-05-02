@@ -25,7 +25,7 @@ public class LimelightBackend extends VisionBackend {
 
 
     @Override
-    public Optional<VisionBackend.Measurement> getMeasurement() {
+    public Optional<PoseEstimation.Measurement> getMeasurement() {
         TimestampedDoubleArray[] updates = botPose.readQueue();
 
         if (updates.length == 0) {
@@ -50,7 +50,7 @@ public class LimelightBackend extends VisionBackend {
         double timestamp = (update.timestamp * 1e-6) - (latency * 1e-3);
         Pose3d pose = new Pose3d(new Translation3d(x, y, z), new Rotation3d(roll, pitch, yaw));
 
-        return Optional.of(new Measurement(
+        return Optional.of(new PoseEstimation.Measurement(
                 timestamp,
                 pose,
                 Constants.VisionConstants.LIMELIGHT_STD_DEV

@@ -29,7 +29,7 @@ public class PhotonVisionBackend extends VisionBackend {
     }
 
     @Override
-    public Optional<Measurement> getMeasurement() {
+    public Optional<PoseEstimation.Measurement> getMeasurement() {
         return poseEstimator.update().flatMap((result) -> {
             RobotContainer.field.getObject("Vision Measurement " + camera.getName()).setPose(result.estimatedPose.toPose2d());
 
@@ -43,7 +43,7 @@ public class PhotonVisionBackend extends VisionBackend {
                 return Optional.empty();
             }
 
-            return Optional.of(new Measurement(
+            return Optional.of(new PoseEstimation.Measurement(
                     result.timestampSeconds,
                     result.estimatedPose,
                     Constants.VisionConstants.PHOTON_VISION_STD_DEV.forMeasurement(result.targetsUsed.get(0).getBestCameraToTarget().getX(), result.targetsUsed.size())

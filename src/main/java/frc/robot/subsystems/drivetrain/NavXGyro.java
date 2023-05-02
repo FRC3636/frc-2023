@@ -1,16 +1,18 @@
 package frc.robot.subsystems.drivetrain;
 
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.math.geometry.Quaternion;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.GenericEntry;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.poseestimation.PoseEstimation;
 
-public class NavXGyro implements Gyro{
+public class NavXGyro implements Gyro {
     private final AHRS navX = new AHRS();
     private final GenericEntry gyroAdjustment = RobotContainer.swerveTab.add("Gyro Adjustment", DriveConstants.GYRO_ADJUSTMENT_RATE).getEntry();
 
@@ -32,11 +34,19 @@ public class NavXGyro implements Gyro{
     @Override
     public Rotation3d getRotation3d() {
         return DriveConstants.GYRO_ROTATION.rotateBy(new Rotation3d(new Quaternion(
-            navX.getQuaternionW(),
-            navX.getQuaternionX(),
-            navX.getQuaternionY(),
-            navX.getQuaternionZ()
+                navX.getQuaternionW(),
+                navX.getQuaternionX(),
+                navX.getQuaternionY(),
+                navX.getQuaternionZ()
         ))).rotateBy(DriveConstants.GYRO_ROTATION.unaryMinus());
+    }
+
+    public Translation3d getDisplacement() {
+        return new Translation3d(
+                navX.getDisplacementX(),
+                navX.getDisplacementY(),
+                navX.getDisplacementZ()
+        );
     }
 
     @Override
@@ -47,7 +57,11 @@ public class NavXGyro implements Gyro{
 
     @Override
     public void update() {
-
+        RobotContainer.poseEstimation.addPredictionMeasurement(new PoseEstimation.Measurement(
+                navX.getLastSensorTimestamp(),
+                new Pose3d(getDisplacement(), getRotation3d()),
+                VecBuilder.fill(0.1, 0.1, 0.1)
+        ));
     }
 
     @Override
