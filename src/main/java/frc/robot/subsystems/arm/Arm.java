@@ -217,22 +217,6 @@ public class Arm extends SubsystemBase {
         wrist.setIdleMode(idleMode);
     }
 
-    public void setTargetFromNode(Node node) {
-        switch (node.getLevel()) {
-            case Low:
-                this.target = State.Low;
-                new ArmMoveCommand(this).schedule();
-                break;
-            case Mid:
-                target = State.Mid;
-                this.setGamePiece(node.getNodeType());
-                break;
-            case High:
-                target = State.High;
-                this.setGamePiece(node.getNodeType());
-        }
-    }
-
     public void setTarget(State target) {
         this.target = target;
         new ArmMoveCommand(this).schedule();

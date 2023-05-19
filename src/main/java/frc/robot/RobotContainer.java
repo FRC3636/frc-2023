@@ -79,8 +79,10 @@ public class RobotContainer {
         public void initSendable(SendableBuilder builder) {
             super.initSendable(builder);
             builder.addStringProperty("Auto Program", () -> this.getSelected().getProgram(), (program) -> autoSelector.getSelected().setProgram(program));
-            builder.addStringProperty("Auto Compilation Error", () -> this.getSelected().getCompilationError().map(Exception::getMessage).orElse(""), (e) -> {});
-            builder.addBooleanProperty("Auto Compilation Good", () -> this.getSelected().getCompilationOutput().isPresent(), (g) -> {});
+            builder.addStringProperty("Auto Compilation Error", () -> this.getSelected().getCompilationError().map(Exception::getMessage).orElse(""), (e) -> {
+            });
+            builder.addBooleanProperty("Auto Compilation Good", () -> this.getSelected().getCompilationOutput().isPresent(), (g) -> {
+            });
         }
     };
 
@@ -131,6 +133,11 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
+        // Deadman E-Stop Switch
+        new JoystickButton(controller, XboxController.Button.kY.value).onFalse(new InstantCommand(() -> {
+            throw new RuntimeException("deadman switch released");
+        }));
+
         // Pose Estimation
         new JoystickButton(joystickLeft, 6)
                 .onTrue(new InstantCommand(driveCommand::resetFieldOrientation));
@@ -249,34 +256,37 @@ public class RobotContainer {
                         new RunCommand(() -> arm.setTemporaryAngleOffset(Rotation2d.fromRadians(controller.getRightTriggerAxis() / 1.5))))
                 .onFalse(new InstantCommand(() -> arm.setTemporaryAngleOffset(new Rotation2d())));
 
-        new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {
-            arm.setTarget(Arm.State.Stowed);
-        }));
-        new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {
-            arm.setTarget(Arm.State.Low);
-        }));
-        new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {
-            arm.setTarget(Arm.State.Mid);
-        }));
-        new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {
-            arm.setTarget(Arm.State.High);
-        }));
-        new JoystickButton(controller, XboxController.Button.kStart.value).onTrue(new InstantCommand(() -> {
-            arm.setTarget(Arm.State.Slide);
-        }));
-        new JoystickButton(controller, XboxController.Button.kBack.value).onTrue(new InstantCommand(() -> {
-            arm.setTarget(Arm.State.Teller);
-        }));
+//        new JoystickButton(controller, XboxController.Button.kA.value).onTrue(new InstantCommand(() -> {
+//            arm.setTarget(Arm.State.Stowed);
+//        }));
+//        new JoystickButton(controller, XboxController.Button.kB.value).onTrue(new InstantCommand(() -> {
+//            arm.setTarget(Arm.State.Low);
+//        }));
+//        new JoystickButton(controller, XboxController.Button.kX.value).onTrue(new InstantCommand(() -> {
+//            arm.setTarget(Arm.State.Mid);
+//        }));
+//        new JoystickButton(controller, XboxController.Button.kY.value).onTrue(new InstantCommand(() -> {
+//            arm.setTarget(Arm.State.High);
+//        }));
+//        new JoystickButton(controller, XboxController.Button.kStart.value).onTrue(new InstantCommand(() -> {
+//            arm.setTarget(Arm.State.Slide);
+//        }));
+//        new JoystickButton(controller, XboxController.Button.kBack.value).onTrue(new InstantCommand(() -> {
+//            arm.setTarget(Arm.State.Teller);
+//        }));
 
         // Arm Disabling
         DigitalInput armButton = new DigitalInput(Constants.Arm.UNLOCK_BUTTON_PORT);
         new Trigger(() -> !armButton.get() && DriverStation.isDisabled()).toggleOnTrue(
                 new FunctionalCommand(
                         () -> arm.setIdleMode(CANSparkMax.IdleMode.kCoast),
-                        () -> {},
-                        (interrupted) -> {arm.setIdleMode(CANSparkMax.IdleMode.kBrake);},
+                        () -> {
+                        },
+                        (interrupted) -> {
+                            arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
+                        },
                         DriverStation::isEnabled
-                        ) {
+                ) {
                     @Override
                     public boolean runsWhenDisabled() {
                         return true;
@@ -296,11 +306,12 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        autoSelector.getSelected().recompile();
-        return autoSelector.getSelected()
-                .getCompilationOutput()
-                .orElse(AutoLanguage.compile(Constants.AutoConstants.DEFAULT_PROGRAM))
-                .beforeStarting(() -> poseEstimation.resetPose(startingPosition.getPose()));
+//        autoSelector.getSelected().recompile();
+//        return autoSelector.getSelected()
+//                .getCompilationOutput()
+//                .orElse(AutoLanguage.compile(Constants.AutoConstants.DEFAULT_PROGRAM))
+//                .beforeStarting(() -> poseEstimation.resetPose(startingPosition.getPose()));
+        return null;
     }
 
     public void setTargetNode(Node targetNode) {

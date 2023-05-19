@@ -88,15 +88,17 @@ public class Sensitivity extends CommandBase {
     }
 
     public double getRotationalSensitivity() {
-        return knobSensitivityEnabled.getBoolean(false)
-                ? RotationalSensitivityEntry.getDouble(1) * getTellerSensitivity()
-                : getTellerSensitivity();
+//        return knobSensitivityEnabled.getBoolean(false)
+//                ? RotationalSensitivityEntry.getDouble(1) * getTellerSensitivity()
+//                : getTellerSensitivity();
+        return 0.33;
     }
 
     public double getTranslationalSensitivity() {
-        return knobSensitivityEnabled.getBoolean(false)
-                ? TranslationalSensitivityEntry.getDouble(1) * getTellerSensitivity()
-                : getTellerSensitivity();
+//        return knobSensitivityEnabled.getBoolean(false)
+//                ? TranslationalSensitivityEntry.getDouble(1) * getTellerSensitivity()
+//                : getTellerSensitivity();
+        return 0.33;
     }
 
     public boolean inTellerZone() {
