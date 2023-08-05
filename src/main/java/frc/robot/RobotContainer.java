@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -38,11 +37,8 @@ import frc.robot.utils.AllianceUtils;
 import frc.robot.utils.AutoLanguage;
 import frc.robot.utils.GamePiece;
 import frc.robot.utils.Node;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Supplier;
+
 
 public class RobotContainer {
     // Dashboard
