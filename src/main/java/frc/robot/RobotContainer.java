@@ -104,15 +104,18 @@ public class RobotContainer {
     // This was suggested by Ron just so if we're at a competition we don't make silly mistakes like forgetting to swap the battery. 
     // Hopefully next season we can add things like checking to make sure everything on the CAN bus is responding and stuff like that.
     // The intention is to avoid an "oh crap I forgot to plug that CAN wire back in and we're going on the field" moment.
+    // TODO: Add a command where we can re-run this diagnostics check at any time.
     private void startupDiagnostics() {
         // Check battery voltage
         // Note: The 12.1 value is just an arbitrary value should probably be changed
-        if(RobotController.getBatteryVoltage() < 12.1) {
+        if (RobotController.getBatteryVoltage() < 12.1) {
                 System.out.println("WARNING: Battery voltage is low. Did you forget to swap the battery?");
                 diagnosticsTab.addBoolean("Battery Test Pass", () -> false);
         } else {
                 diagnosticsTab.addBoolean("Battery Test Pass", () -> true);
         }
+
+        diagnosticsTab.addBoolean("NavX Connection Test Pass", () -> drivetrain.getNavXStatus());
 
     }
 
