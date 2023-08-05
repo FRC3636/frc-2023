@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -38,7 +39,10 @@ import frc.robot.utils.AutoLanguage;
 import frc.robot.utils.GamePiece;
 import frc.robot.utils.Node;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class RobotContainer {
     // Dashboard
@@ -46,6 +50,7 @@ public class RobotContainer {
     public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     public static final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
     public static final ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
+    public static final ShuffleboardTab diagnosticsTab = Shuffleboard.getTab("Diagnostics");
 
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
@@ -90,11 +95,29 @@ public class RobotContainer {
         }
         DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
 
+        startupDiagnostics();
+
         setDefaultCommands();
         configureAutoTab();
         configureButtonBindings();
 
         enableLogging();
+    }
+
+
+    // This was suggested by Ron just so if we're at a competition we don't make silly mistakes like forgetting to swap the battery. 
+    // Hopefully next season we can add things like checking to make sure everything on the CAN bus is responding and stuff like that.
+    // The intention is to avoid an "oh crap I forgot to plug that CAN wire back in and we're going on the field" moment.
+    private void startupDiagnostics() {
+        // Check battery voltage
+        // Note: The 12.1 value is just an arbitrary value should probably be changed
+        if(RobotController.getBatteryVoltage() < 12.1) {
+                System.out.println("WARNING: Battery voltage is low. Did you forget to swap the battery?");
+                diagnosticsTab.addBoolean("Battery Test Pass", () -> false);
+        } else {
+                diagnosticsTab.addBoolean("Battery Test Pass", () -> true);
+        }
+
     }
 
     private void enableLogging() {
