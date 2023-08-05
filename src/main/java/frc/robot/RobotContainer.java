@@ -108,12 +108,7 @@ public class RobotContainer {
     private void startupDiagnostics() {
         // Check battery voltage
         // Note: The 12.1 value is just an arbitrary value should probably be changed
-        if (RobotController.getBatteryVoltage() < 12.1) {
-                System.out.println("WARNING: Battery voltage is low. Did you forget to swap the battery?");
-                diagnosticsTab.addBoolean("Battery Test Pass", () -> false);
-        } else {
-                diagnosticsTab.addBoolean("Battery Test Pass", () -> true);
-        }
+        diagnosticsTab.addBoolean("Battery Test Pass", () -> (RobotController.getBatteryVoltage() < 12.1));
 
         diagnosticsTab.addBoolean("NavX Connection Test Pass", () -> drivetrain.getNavXStatus());
 
