@@ -19,8 +19,7 @@ public class AutoShoot extends SequentialCommandGroup {
         public AutoShoot(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation) {
                 this.addCommands(
                         new FollowTrajectoryToPose(drivetrain, poseEstimation, new Pose2d(new Translation2d(3.76, 4.86), new Rotation2d(0)), true),
-                        new InstantCommand(() -> arm.setTarget(Arm.State.Mid)),
-                        new InstantCommand(() -> arm.moveHeightOffset(-0.1)),
+                        new InstantCommand(() -> arm.setTarget(Arm.State.High)),
                         new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake))
                 );
         }
