@@ -56,7 +56,10 @@ public class AutoLanguage {
                 return new InstantCommand(() -> RobotContainer.arm.setGamePiece(scorePiece)).
                         andThen(new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node));
             case "shoot":
-               return new AutoShoot(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation);
+               return new GenerateCommand(
+                () -> new AutoShoot(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation),
+                Set.of(RobotContainer.drivetrain)
+               );
             case "balance":
                 return new AutoBalance(RobotContainer.drivetrain, RobotContainer.poseEstimation);
             case "leave_community":
