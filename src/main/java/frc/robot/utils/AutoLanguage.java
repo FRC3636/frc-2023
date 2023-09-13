@@ -56,8 +56,9 @@ public class AutoLanguage {
                 return new InstantCommand(() -> RobotContainer.arm.setGamePiece(scorePiece)).
                         andThen(new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node));
             case "shoot":
+                Boolean shouldShootInPlace = tokens.length > 1 ? Boolean.parseBoolean(tokens[1]) : false;
                return new GenerateCommand(
-                () -> new AutoShoot(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation),
+                () -> new AutoShoot(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, shouldShootInPlace),
                 Set.of(RobotContainer.drivetrain)
                );
             case "balance":

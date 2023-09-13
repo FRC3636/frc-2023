@@ -43,7 +43,7 @@ public class AutoBalance extends SequentialCommandGroup {
                 new GenerateCommand(
                         () -> {
                             try {
-                                Pose2d targetXPosition = new Pose2d(AllianceUtils.allianceToField(Constants.AutoConstants.BALANCE_X_POSITION), poseEstimation.getEstimatedPose().getY(), poseEstimation.getEstimatedPose().getRotation());
+                                Pose2d targetXPosition = new Pose2d(AllianceUtils.allianceToField(Constants.AutoConstants.BALANCE_X_POSITION), poseEstimation.getEstimatedPose().getY(), Rotation2d.fromDegrees(0));
                                 PathPoint targetPoint = Constants.AutoConstants.BALANCING_OUTER_PARTITION.queryWaypoint(poseEstimation.getEstimatedPose(), targetXPosition).orElseGet(
                                         () -> Constants.AutoConstants.BALANCING_INNER_PARTITION.queryWaypoint(poseEstimation.getEstimatedPose(), targetXPosition).orElseThrow()
                                 );

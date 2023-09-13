@@ -17,11 +17,17 @@ import frc.robot.utils.AllianceUtils;
 import com.pathplanner.lib.PathPoint;
 
 public class AutoShoot extends SequentialCommandGroup {
-        public AutoShoot(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation) {
+        public AutoShoot(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, boolean shouldShootInPlace) {
                 Pose2d shootPose = AllianceUtils.allianceToField(Constants.AutoConstants.CUBE_SHOOT_POSITION);
+                // I'm probably doing this wrong. Someone please tell me how to do this right.
+                if (!shouldShootInPlace) {
+                        this.addCommands(
+                                new FollowTrajectoryToState(drivetrain, poseEstimation, new PathPoint(shootPose.getTranslation(), shootPose.getRotation(), shootPose.getRotation(), 2), true)
+                        );
+                }
                 this.addCommands(
-                        // AllianceUtils.allianceToField(new Pose2d(new Translation2d(3.76, 4.86), new Rotation2d(180)))
                         new FollowTrajectoryToState(drivetrain, poseEstimation, new PathPoint(shootPose.getTranslation(), shootPose.getRotation(), shootPose.getRotation(), 2), true),
+                        // AllianceUtils.allianceToField(new Pose2d(new Translation2d(3.76, 4.86), new Rotation2d(180)))
                         new InstantCommand(() -> arm.setTarget(Arm.State.High)),
                         new WaitCommand(0.25),
                         new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake)),
