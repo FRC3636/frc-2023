@@ -28,7 +28,7 @@ public class AutoShoot extends SequentialCommandGroup {
                 this.addCommands(
                         // AllianceUtils.allianceToField(new Pose2d(new Translation2d(3.76, 4.86), new Rotation2d(180)))
                         new InstantCommand(() -> arm.setTarget(Arm.State.High)),
-                        new WaitCommand(0.25),
+                        new WaitCommand(1),
                         new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake)),
                         new WaitCommand(0.1),
                         new InstantCommand(() -> arm.setRollerState(Rollers.State.Off)),
