@@ -31,6 +31,7 @@ public class AutoShoot extends SequentialCommandGroup {
                         new InstantCommand(() -> arm.setTarget(Arm.State.High)),
                         new WaitCommand(0.25),
                         new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake)),
+                        new WaitCommand(0.1),
                         new InstantCommand(() -> arm.setRollerState(Rollers.State.Off)),
                         new InstantCommand(() -> arm.setTarget(Arm.State.Stowed))
                 );
