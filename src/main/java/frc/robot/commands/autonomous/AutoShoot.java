@@ -22,7 +22,9 @@ public class AutoShoot extends SequentialCommandGroup {
                 // I'm probably doing this wrong. Someone please tell me how to do this right.
                 if (!shouldShootInPlace) {
                         this.addCommands(
-                                new FollowTrajectoryToState(drivetrain, poseEstimation, new PathPoint(shootPose.getTranslation(), shootPose.getRotation(), shootPose.getRotation(), 2), true)
+                                new FollowTrajectoryToPose(drivetrain, poseEstimation, shootPose, true)
+                                
+                                // new FollowTrajectoryToPose(drivetrain, poseEstimation, new PathPoint(shootPose.getTranslation(), new Rotation2d(), shootPose.getRotation()).withPrevControlLength(1.5), true)
                         );
                 } 
                 this.addCommands(
