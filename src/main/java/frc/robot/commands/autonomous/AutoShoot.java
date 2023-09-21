@@ -35,7 +35,7 @@ public class AutoShoot extends GenerateCommand {
                                                         shootPose.getRotation(),
                                                         shootPose.getRotation()
                                                 ),
-                                                true);
+                                                false);
                                         return driveCommand.andThen(
                                                 new InstantCommand(() -> {
                                                         RobotContainer.arm.setTarget(Arm.State.High);
