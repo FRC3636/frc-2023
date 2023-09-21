@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToPose;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
 import frc.robot.poseestimation.PoseEstimation;
@@ -13,28 +14,53 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Rollers;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.utils.AllianceUtils;
+import frc.robot.utils.GenerateCommand;
+
+import java.time.Instant;
+import java.util.Set;
 
 import com.pathplanner.lib.PathPoint;
 
-public class AutoShoot extends SequentialCommandGroup {
-        public AutoShoot(Drivetrain drivetrain, Arm arm, PoseEstimation poseEstimation, boolean shouldShootInPlace) {
-                Pose2d shootPose = AllianceUtils.allianceToField(Constants.AutoConstants.CUBE_SHOOT_POSITION);
-                // I'm probably doing this wrong. Someone please tell me how to do this right.
-                if (!shouldShootInPlace) {
-                        this.addCommands(
-                                new FollowTrajectoryToPose(drivetrain, poseEstimation, shootPose, true)
+public class AutoShoot extends GenerateCommand {
+        public AutoShoot(Drivetrain drivetrain, boolean shouldShootInPlace) {
+                super(
+                        () -> { 
+                                if (!shouldShootInPlace) {
+                                        Pose2d shootPose = AllianceUtils.allianceToField(Constants.AutoConstants.CUBE_SHOOT_POSITION);
+                                        FollowTrajectoryToState driveCommand = new FollowTrajectoryToState(
+                                                drivetrain,
+                                                RobotContainer.poseEstimation,
+                                                new PathPoint(
+                                                        shootPose.getTranslation(),
+                                                        shootPose.getRotation(),
+                                                        shootPose.getRotation()
+                                                ),
+                                                true);
+                                        return driveCommand.andThen(
+                                                new InstantCommand(() -> {
+                                                        RobotContainer.arm.setTarget(Arm.State.High);
+                                                }),
+                                                new WaitCommand(1),
+                                                new InstantCommand(() -> {
+                                                        RobotContainer.arm.setRollerState(Rollers.State.Outtake);
+                                                }),
+                                                new InstantCommand(() -> RobotContainer.arm.setTarget(Arm.State.Stowed))
+                                        );
+                                } else {
+                                        return new SequentialCommandGroup(
+                                                new InstantCommand(() -> {
+                                                        RobotContainer.arm.setTarget(Arm.State.High);
+                                                }),
+                                                new WaitCommand(1),
+                                                new InstantCommand(() -> {
+                                                        RobotContainer.arm.setRollerState(Rollers.State.Outtake);
+                                                }),
+                                                new InstantCommand(() -> RobotContainer.arm.setTarget(Arm.State.Stowed))  
+                                        );
+                                }
                                 
-                                // new FollowTrajectoryToPose(drivetrain, poseEstimation, new PathPoint(shootPose.getTranslation(), new Rotation2d(), shootPose.getRotation()).withPrevControlLength(1.5), true)
-                        );
-                } 
-                this.addCommands(
-                        // AllianceUtils.allianceToField(new Pose2d(new Translation2d(3.76, 4.86), new Rotation2d(180)))
-                        new InstantCommand(() -> arm.setTarget(Arm.State.High)),
-                        new WaitCommand(1),
-                        new InstantCommand(() -> arm.setRollerState(Rollers.State.Outtake)),
-                        new WaitCommand(0.1),
-                        new InstantCommand(() -> arm.setRollerState(Rollers.State.Off)),
-                        new InstantCommand(() -> arm.setTarget(Arm.State.Stowed))
+                        }, 
+                        Set.of(drivetrain)
                 );
         }
 }

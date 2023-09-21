@@ -57,10 +57,7 @@ public class AutoLanguage {
                         andThen(new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node));
             case "shoot":
                 Boolean shouldShootInPlace = tokens.length > 1 ? Boolean.parseBoolean(tokens[1]) : false;
-               return new GenerateCommand(
-                () -> new AutoShoot(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, shouldShootInPlace),
-                Set.of(RobotContainer.drivetrain)
-               );
+               return new AutoShoot(RobotContainer.drivetrain, shouldShootInPlace);
             case "balance":
                 return new AutoBalance(RobotContainer.drivetrain, RobotContainer.poseEstimation);
             case "leave_community":
