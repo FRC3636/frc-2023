@@ -44,6 +44,8 @@ public class AutoShoot extends GenerateCommand {
                                                 new InstantCommand(() -> {
                                                         RobotContainer.arm.setRollerState(Rollers.State.Outtake);
                                                 }),
+                                                new WaitCommand(0.25),
+                                                new InstantCommand(() -> RobotContainer.arm.setRollerState(Rollers.State.Off)),
                                                 new InstantCommand(() -> RobotContainer.arm.setTarget(Arm.State.Stowed))
                                         );
                                 } else {
@@ -55,6 +57,8 @@ public class AutoShoot extends GenerateCommand {
                                                 new InstantCommand(() -> {
                                                         RobotContainer.arm.setRollerState(Rollers.State.Outtake);
                                                 }),
+                                                new WaitCommand(0.25),
+                                                new InstantCommand(() -> RobotContainer.arm.setRollerState(Rollers.State.Off)),
                                                 new InstantCommand(() -> RobotContainer.arm.setTarget(Arm.State.Stowed))  
                                         );
                                 }
