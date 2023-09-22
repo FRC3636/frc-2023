@@ -231,4 +231,11 @@ public class Drivetrain extends SubsystemBase {
         return gyro.getRate().getDegrees();
     }
 
+    public Boolean getNavXStatus() {
+        if (RobotBase.isSimulation()) 
+            return false;
+
+        return navXGyro.isConnected();
+    }
+
 }

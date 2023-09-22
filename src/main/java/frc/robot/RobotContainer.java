@@ -37,8 +37,8 @@ import frc.robot.utils.AllianceUtils;
 import frc.robot.utils.AutoLanguage;
 import frc.robot.utils.GamePiece;
 import frc.robot.utils.Node;
-
 import java.util.Optional;
+
 
 public class RobotContainer {
     // Dashboard
@@ -46,6 +46,7 @@ public class RobotContainer {
     public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     public static final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
     public static final ShuffleboardTab armTab = Shuffleboard.getTab("Arm");
+    public static final ShuffleboardTab diagnosticsTab = Shuffleboard.getTab("Diagnostics");
 
     // Subsystems
     public static final Drivetrain drivetrain = new Drivetrain();
@@ -90,11 +91,27 @@ public class RobotContainer {
         }
         DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
 
+        startupDiagnostics();
+
         setDefaultCommands();
         configureAutoTab();
         configureButtonBindings();
 
         enableLogging();
+    }
+
+
+    // This was suggested by Ron just so if we're at a competition we don't make silly mistakes like forgetting to swap the battery. 
+    // Hopefully next season we can add things like checking to make sure everything on the CAN bus is responding and stuff like that.
+    // The intention is to avoid an "oh crap I forgot to plug that CAN wire back in and we're going on the field" moment.
+    // TODO: Add a command where we can re-run this diagnostics check at any time.
+    private void startupDiagnostics() {
+        // Check battery voltage
+        // Note: The 12.1 value is just an arbitrary value should probably be changed
+        diagnosticsTab.addBoolean("Battery Test Pass", () -> (RobotController.getBatteryVoltage() < 12.1));
+
+        diagnosticsTab.addBoolean("NavX Connection Test Pass", () -> drivetrain.getNavXStatus());
+
     }
 
     private void enableLogging() {
