@@ -33,14 +33,14 @@ public class AutoShoot extends GenerateCommand {
                                                 new PathPoint(
                                                         shootPose.getTranslation(),
                                                         shootPose.getRotation(),
-                                                        shootPose.getRotation()
+                                                        shootPose.getRotation(),
+                                                        2
                                                 ),
                                                 false);
                                         return driveCommand.andThen(
                                                 new InstantCommand(() -> {
                                                         RobotContainer.arm.setTarget(Arm.State.High);
                                                 }),
-                                                new WaitCommand(1),
                                                 new InstantCommand(() -> {
                                                         RobotContainer.arm.setRollerState(Rollers.State.Outtake);
                                                 }),
@@ -53,7 +53,6 @@ public class AutoShoot extends GenerateCommand {
                                                 new InstantCommand(() -> {
                                                         RobotContainer.arm.setTarget(Arm.State.High);
                                                 }),
-                                                new WaitCommand(1),
                                                 new InstantCommand(() -> {
                                                         RobotContainer.arm.setRollerState(Rollers.State.Outtake);
                                                 }),
