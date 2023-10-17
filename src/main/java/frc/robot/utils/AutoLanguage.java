@@ -12,6 +12,7 @@ import frc.robot.commands.Balance;
 import frc.robot.commands.autonomous.AutoBalance;
 import frc.robot.commands.autonomous.AutoIntake;
 import frc.robot.commands.autonomous.AutoScore;
+import frc.robot.commands.autonomous.AutoShoot;
 import frc.robot.commands.autonomous.DropGamePiece;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToPose;
 import frc.robot.commands.pathgeneration.FollowTrajectoryToState;
@@ -54,8 +55,9 @@ public class AutoLanguage {
                 Node node = new Node(scorePiece, level, column, grid);
                 return new InstantCommand(() -> RobotContainer.arm.setGamePiece(scorePiece)).
                         andThen(new AutoScore(RobotContainer.drivetrain, RobotContainer.arm, RobotContainer.poseEstimation, () -> node));
-            //case "shoot":
-            //    return new AutoShoot(RobotContainer.drivetrain, RobotContainer.poseEstimation);
+            case "shoot":
+                Boolean shouldShootInPlace = tokens.length > 1 ? Boolean.parseBoolean(tokens[1]) : false;
+               return new AutoShoot(RobotContainer.drivetrain, shouldShootInPlace);
             case "balance":
                 return new AutoBalance(RobotContainer.drivetrain, RobotContainer.poseEstimation);
             case "leave_community":

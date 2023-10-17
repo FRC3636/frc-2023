@@ -315,6 +315,8 @@ public final class Constants {
 
         };
 
+        public static final Pose2d CUBE_SHOOT_POSITION = new Pose2d(new Translation2d(3.76, 4.86), Rotation2d.fromRotations(0.5)); // leave it
+
         public static final double INTAKE_CONTROL_HANDLE = 3;
     }
 
